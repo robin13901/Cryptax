@@ -10,24 +10,24 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 1 of 7 in current phase
+Plan: 2 of 7 in current phase
 Status: In progress
-Last activity: 2026-03-21 — Completed 01-01-PLAN.md (monorepo scaffold)
+Last activity: 2026-03-21 — Completed 01-02-PLAN.md (Hono backend server + Vite proxy)
 
-Progress: [█░░░░░░░░░] 2% (1/50 plans)
+Progress: [██░░░░░░░░] 4% (2/50 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 1
-- Average duration: 8 min
-- Total execution time: 8 min
+- Total plans completed: 2
+- Average duration: 6 min
+- Total execution time: 11 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-ci-cd | 1/7 | 8 min | 8 min |
+| 01-foundation-ci-cd | 2/7 | 11 min | 5-8 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -50,6 +50,8 @@ Recent decisions affecting current work:
 - 01-01: Biome 2.4.8 uses `files.includes` with negation patterns (not `files.ignore`) — update any future Biome configs accordingly
 - 01-01: Aurora WebGL (ogl) deferred to 01-05 — placeholder CSS gradient used in scaffold
 - 01-01: All nav buttons must have explicit `type="button"` to satisfy Biome a11y rules
+- 01-02: Route registration pattern: each feature exports `registerXxxRoutes(app: Hono)` — index.ts only wires middleware and route modules
+- 01-02: Biome requires semicolons — apply `npx biome format --write` after writing TypeScript files
 
 ### Pending Todos
 
@@ -63,6 +65,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:14:01Z
-Stopped at: Completed 01-01-PLAN.md — monorepo scaffold with 3 packages, TypeScript, Biome
+Last session: 2026-03-21T16:20:03Z
+Stopped at: Completed 01-02-PLAN.md — Hono backend server on port 3001, health endpoint, Vite proxy
 Resume file: None
