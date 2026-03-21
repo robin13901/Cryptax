@@ -12,7 +12,7 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 Phase: 2 of 7 (CSV Import Pipeline) — In progress
 Plan: 6 of 7 in current phase
 Status: In progress — 02-06 complete
-Last activity: 2026-03-21 — Completed 02-06-PLAN.md (on-chain earn CSV parser, TDD, 16 tests)
+Last activity: 2026-03-21 — Completed 02-05-PLAN.md (futures order history CSV parser, TDD, 17 tests) + 02-06-PLAN.md (on-chain earn CSV parser, TDD, 16 tests)
 
 Progress: [█████████░] 26% (13/50 plans complete)
 
@@ -31,7 +31,7 @@ Progress: [█████████░] 26% (13/50 plans complete)
 | 02-csv-import-pipeline | 6/7 | ~21 min | ~4 min |
 
 **Recent Trend:**
-- Last 5 plans: 6 min
+- Last 5 plans: 5 min
 - Trend: consistent
 
 *Updated after each plan completion*
@@ -80,18 +80,18 @@ Recent decisions affecting current work:
 - 02-01: Migration auto-name renamed (0001_overconfident_banshee → 0001_import_batches); journal tag updated — same rename workflow as 0000_initial
 - 02-01: Biome organizeImports sorts export blocks alphabetically by source path — import.js before tax.js before transaction.js in barrel files
 
-- 02-03: rawType stored as-is in futures parser — no CanonicalType mapping in parser, deferred to type-map plan (02-07)
-- 02-03: Both Futures (trading pair e.g. 'POPCATUSDT') and Coin (settlement asset e.g. 'USDT') captured as distinct ParsedFuturesTx fields
-- 02-03: Bitget typo 'risk_captital_user_transfer' must NOT be corrected — type-map (02-07) must use same typo as key
-
-- 02-06: earn Reference column requires no tab stripping — csv-parse trim: true is a no-op on already-clean fields; normaliseRow() handles cased and lowercased keys uniformly
-- 02-06: ParsedEarn keeps coin (staked asset) and interestCoin (received asset) as separate fields — both needed for tax classification
-- 02-06: Biome organizeImports assist rule not applied by `--write` flag — must fix import order manually (type imports before value imports from same module)
-
 - 02-04: Average Price (not Price column) used for price field — Price is the limit order entry price; Average Price is the actual fill price
 - 02-04: Direction column mapped to rawType (not Type column) — Type in spot order history is Limit/Market; Direction is Buy/Sell
 - 02-04: Symbol derived as baseAsset + '/' + quoteAsset — Trading pair column lacks slash separator (e.g. 'BTCEUR' vs 'BTC/EUR')
 - 02-04: Biome useLiteralKeys — single-word normalised map keys use dot notation; multi-word keys (e.g. 'order id') stay bracket notation
+
+- 02-05: Average Price stored as empty string (not null) for Market futures orders — avoids null-checks in downstream normalisation
+- 02-05: Map-based normalised column lookup (Map not Record) used for 'realized p/l', 'order source' — avoids Biome useLiteralKeys on keys with special chars/spaces
+- 02-05: parseFuturesOrder get() helper trims values — safe even when csv-parse trim:true already ran upstream
+
+- 02-06: earn Reference column requires no tab stripping — csv-parse trim: true is a no-op on already-clean fields; normaliseRow() handles cased and lowercased keys uniformly
+- 02-06: ParsedEarn keeps coin (staked asset) and interestCoin (received asset) as separate fields — both needed for tax classification
+- 02-06: Biome organizeImports assist rule not applied by `--write` flag — must fix import order manually (type imports before value imports from same module)
 
 ### Pending Todos
 
@@ -101,11 +101,11 @@ None yet.
 
 - Phase 4 research flag: Complex FIFO edge cases and §22 vs §23 earn income classification — consider `/gsd:research-phase` before Phase 4 planning
 - Phase 7 research flag: ccxt Bitget v2 deep history pagination is untested — consider `/gsd:research-phase` before Phase 7 planning
-- German tax law: Haltefrist exact day count (≥365 interpretation used) and 10-year staking Haltefrist (1-year used per mainstream tools) — Steuerberater review recommended before relying on output
+- German tax law: Haltefrist exact day count (>=365 interpretation used) and 10-year staking Haltefrist (1-year used per mainstream tools) — Steuerberater review recommended before relying on output
 - Migration workflow: After any future `npm run db:generate`, developer MUST manually add STRICT to new CREATE TABLE statements before running `npm run db:migrate`
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:48:32Z
-Stopped at: 02-03-PLAN.md complete — futures tx CSV parser (parseFuturesTx, ParsedFuturesTx, 19 tests, TDD, all 9 rawType strings)
+Last session: 2026-03-21T20:48:20Z
+Stopped at: 02-05-PLAN.md complete — futures order history parser (parseFuturesOrder, ParsedFuturesOrder, 17 tests)
 Resume file: None
