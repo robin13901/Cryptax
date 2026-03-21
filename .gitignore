@@ -1,2 +1,20 @@
 # GSD intel (auto-generated, can be regenerated)
 .planning/intel/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+
+# Test coverage
+coverage/
+
+# SQLite database files
+*.db
+*.db-wal
+*.db-shm
+
+# Environment files
+.env
+.env.local
