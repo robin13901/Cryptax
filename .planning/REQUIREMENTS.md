@@ -152,94 +152,96 @@
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| FOUN-01 | Phase 1 | Pending |
-| FOUN-02 | Phase 1 | Pending |
-| FOUN-03 | Phase 1 | Pending |
-| FOUN-04 | Phase 1 | Pending |
-| FOUN-05 | Phase 1 | Pending |
-| FOUN-06 | Phase 1 | Pending |
-| IMPT-01 | Phase 2 | Pending |
-| IMPT-02 | Phase 2 | Pending |
-| IMPT-03 | Phase 2 | Pending |
-| IMPT-04 | Phase 2 | Pending |
-| IMPT-05 | Phase 2 | Pending |
-| IMPT-06 | Phase 2 | Pending |
-| IMPT-07 | Phase 2 | Pending |
-| IMPT-08 | Phase 2 | Pending |
-| IMPT-09 | Phase 2 | Pending |
-| IMPT-10 | Phase 2 | Pending |
-| IMPT-11 | Phase 2 | Pending |
-| PRCE-01 | Phase 3 | Pending |
-| PRCE-02 | Phase 3 | Pending |
-| PRCE-03 | Phase 3 | Pending |
-| PRCE-04 | Phase 3 | Pending |
-| PRCE-05 | Phase 3 | Pending |
-| PRCE-06 | Phase 3 | Pending |
-| PRCE-07 | Phase 3 | Pending |
-| TAXC-01 | Phase 4 | Pending |
-| TAXC-02 | Phase 4 | Pending |
-| TAXC-03 | Phase 4 | Pending |
-| TAXC-04 | Phase 4 | Pending |
-| TAXC-05 | Phase 4 | Pending |
-| TAXC-06 | Phase 4 | Pending |
-| TAXC-07 | Phase 4 | Pending |
-| TAXC-08 | Phase 4 | Pending |
-| TAXC-09 | Phase 4 | Pending |
-| TAXC-10 | Phase 4 | Pending |
-| TAXC-11 | Phase 4 | Pending |
-| DASH-01 | Phase 5 | Pending |
-| DASH-02 | Phase 5 | Pending |
-| DASH-03 | Phase 5 | Pending |
-| DASH-04 | Phase 5 | Pending |
-| DASH-05 | Phase 5 | Pending |
-| DASH-06 | Phase 5 | Pending |
-| DASH-07 | Phase 5 | Pending |
-| DASH-08 | Phase 5 | Pending |
-| TRAN-01 | Phase 5 | Pending |
-| TRAN-02 | Phase 5 | Pending |
-| TRAN-03 | Phase 5 | Pending |
-| TRAN-04 | Phase 5 | Pending |
-| TRAN-05 | Phase 5 | Pending |
-| TRAN-06 | Phase 5 | Pending |
-| REPT-01 | Phase 6 | Pending |
-| REPT-02 | Phase 6 | Pending |
-| REPT-03 | Phase 6 | Pending |
-| REPT-04 | Phase 6 | Pending |
-| REPT-05 | Phase 6 | Pending |
-| REPT-06 | Phase 6 | Pending |
-| REPT-07 | Phase 6 | Pending |
-| REPT-08 | Phase 6 | Pending |
-| EXCH-01 | Phase 7 | Pending |
-| EXCH-02 | Phase 7 | Pending |
-| EXCH-03 | Phase 7 | Pending |
-| EXCH-04 | Phase 7 | Pending |
-| EXCH-05 | Phase 7 | Pending |
-| SECU-01 | Phase 8 | Pending |
-| SECU-02 | Phase 8 | Pending |
-| SECU-03 | Phase 8 | Pending |
-| SECU-04 | Phase 8 | Pending |
-| TEST-01 | Phase 9 | Pending |
-| TEST-02 | Phase 9 | Pending |
-| TEST-03 | Phase 9 | Pending |
-| TEST-04 | Phase 9 | Pending |
-| TEST-05 | Phase 9 | Pending |
-| TEST-06 | Phase 9 | Pending |
-| TEST-07 | Phase 9 | Pending |
-| TEST-08 | Phase 9 | Pending |
-| CICD-01 | Phase 10 | Pending |
-| CICD-02 | Phase 10 | Pending |
-| CICD-03 | Phase 10 | Pending |
-| CICD-04 | Phase 10 | Pending |
-| CICD-05 | Phase 10 | Pending |
-| CICD-06 | Phase 10 | Pending |
+Testing requirements are distributed to the phase where the code they test lives — tests are written alongside implementation, not in a separate testing phase.
+
+| Requirement | Phase | Notes | Status |
+|-------------|-------|-------|--------|
+| FOUN-01 | Phase 1 | Foundation + CI/CD | Pending |
+| FOUN-02 | Phase 1 | Foundation + CI/CD | Pending |
+| FOUN-03 | Phase 1 | Foundation + CI/CD | Pending |
+| FOUN-04 | Phase 1 | Foundation + CI/CD | Pending |
+| FOUN-05 | Phase 1 | Foundation + CI/CD | Pending |
+| FOUN-06 | Phase 1 | Foundation + CI/CD | Pending |
+| CICD-01 | Phase 1 | Foundation + CI/CD | Pending |
+| CICD-02 | Phase 1 | Foundation + CI/CD | Pending |
+| CICD-03 | Phase 1 | Foundation + CI/CD | Pending |
+| CICD-04 | Phase 1 | Foundation + CI/CD | Pending |
+| CICD-05 | Phase 1 | Foundation + CI/CD | Pending |
+| CICD-06 | Phase 1 | Foundation + CI/CD | Pending |
+| TEST-08 | Phase 1 | Coverage enforcement — set up from day one | Pending |
+| IMPT-01 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-02 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-03 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-04 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-05 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-06 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-07 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-08 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-09 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-10 | Phase 2 | CSV Import Pipeline | Pending |
+| IMPT-11 | Phase 2 | CSV Import Pipeline | Pending |
+| TEST-02 | Phase 2 | CSV parser tests — written with parsers | Pending |
+| PRCE-01 | Phase 3 | EUR Price Enrichment | Pending |
+| PRCE-02 | Phase 3 | EUR Price Enrichment | Pending |
+| PRCE-03 | Phase 3 | EUR Price Enrichment | Pending |
+| PRCE-04 | Phase 3 | EUR Price Enrichment | Pending |
+| PRCE-05 | Phase 3 | EUR Price Enrichment | Pending |
+| PRCE-06 | Phase 3 | EUR Price Enrichment | Pending |
+| PRCE-07 | Phase 3 | EUR Price Enrichment | Pending |
+| TEST-04 | Phase 3 | Price resolution tests — written with enrichment | Pending |
+| TAXC-01 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-02 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-03 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-04 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-05 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-06 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-07 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-08 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-09 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-10 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TAXC-11 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
+| TEST-01 | Phase 4 | FIFO engine unit tests — written with engine | Pending |
+| TEST-03 | Phase 4 | Tax calculation unit tests — written with engine | Pending |
+| DASH-01 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-02 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-03 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-04 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-05 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-06 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-07 | Phase 5 | Dashboard + Transaction UI | Pending |
+| DASH-08 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TRAN-01 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TRAN-02 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TRAN-03 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TRAN-04 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TRAN-05 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TRAN-06 | Phase 5 | Dashboard + Transaction UI | Pending |
+| TEST-05 | Phase 5 | React component tests — written with UI | Pending |
+| REPT-01 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-02 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-03 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-04 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-05 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-06 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-07 | Phase 6 | Steuerreport + PDF Export | Pending |
+| REPT-08 | Phase 6 | Steuerreport + PDF Export | Pending |
+| TEST-06 | Phase 6 | Integration tests — written with report pipeline | Pending |
+| TEST-07 | Phase 6 | E2E Playwright — written when full pipeline complete | Pending |
+| EXCH-01 | Phase 7 | Exchange API + Security | Pending |
+| EXCH-02 | Phase 7 | Exchange API + Security | Pending |
+| EXCH-03 | Phase 7 | Exchange API + Security | Pending |
+| EXCH-04 | Phase 7 | Exchange API + Security | Pending |
+| EXCH-05 | Phase 7 | Exchange API + Security | Pending |
+| SECU-01 | Phase 7 | Exchange API + Security | Pending |
+| SECU-02 | Phase 7 | Exchange API + Security | Pending |
+| SECU-03 | Phase 7 | Exchange API + Security | Pending |
+| SECU-04 | Phase 7 | Exchange API + Security | Pending |
 
 **Coverage:**
-- v1 requirements: 72 total
-- Mapped to phases: 72
-- Unmapped: 0 ✓
+- v1 requirements: 80 total (note: initial count of 72 was incorrect — 80 requirements enumerated across 11 categories)
+- Mapped to phases: 80
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-21*
-*Last updated: 2026-03-21 after initial definition*
+*Last updated: 2026-03-21 — traceability revised: TEST-* distributed per-phase, CICD-* moved to Phase 1, SECU-* merged into Phase 7 with EXCH-*; total count corrected to 80*
