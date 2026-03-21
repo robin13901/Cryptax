@@ -8,7 +8,9 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@cryptax/shared": "*"
+    "@cryptax/shared": "*",
+    "@hono/node-server": "^1.19.11",
+    "hono": "^4.12.8"
   },
   "devDependencies": {
     "@types/node": "^24.12.0",
