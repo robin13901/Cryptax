@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 2 of 7 (CSV Import Pipeline) — In progress
-Plan: 6 of 7 in current phase
-Status: In progress — 02-02 complete (backfilled), 02-06 complete
-Last activity: 2026-03-21 — Completed 02-02-PLAN.md (spot tx CSV parser, TDD, 23 tests, parseSpotTx + ParsedSpotTx)
+Plan: 7 of 8 in current phase
+Status: In progress — Wave 1+2+3 complete, 02-07 complete
+Last activity: 2026-03-21 — Completed 02-07-PLAN.md (format detection, type map, normalization, 210 tests)
 
-Progress: [█████████░] 28% (14/50 plans complete)
+Progress: [█████████░] 30% (15/50 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 14
+- Total plans completed: 15
 - Average duration: ~5 min
-- Total execution time: ~70 min
+- Total execution time: ~82 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
-| 02-csv-import-pipeline | 6/7 | ~26 min | ~4 min |
+| 02-csv-import-pipeline | 7/8 | ~38 min | ~5 min |
 
 **Recent Trend:**
 - Last 5 plans: 5 min
@@ -97,6 +97,11 @@ Recent decisions affecting current work:
 - 02-02: First-missing-field early exit per row — reports one error per invalid row, skips remaining fields for that row
 - 02-02: Tab-stripping on orderId as defensive guard even though csv-parse trim handles it
 
+- 02-07: checksum uses JSON.stringify(row) — safer than Object.values().join('|') for values containing pipe characters
+- 02-07: normalizeToTransaction receives raw csv-parse rows (Record<string,string>), not typed parser objects — keeps normalizer decoupled from parsers
+- 02-07: price and totalValue default to '0' (not null) — transactions table has NOT NULL on both columns; Phase 3+ will enrich with EUR price
+- 02-07: deriveSide: close_short -> 'buy', close_long -> 'sell' — closing a short = buying back the contract
+
 ### Pending Todos
 
 None yet.
@@ -110,6 +115,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:49:35Z
-Stopped at: 02-02-PLAN.md complete — spot tx CSV parser (parseSpotTx, ParsedSpotTx, 23 tests, TDD, both 2024+2025 formats)
+Last session: 2026-03-21T21:06:29Z
+Stopped at: 02-07-PLAN.md complete — format detection, canonical type map, normalization, barrel index (210 tests, 12 min)
 Resume file: None
