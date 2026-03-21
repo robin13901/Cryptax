@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vitest';
 import type { ImportFileError } from '@cryptax/shared';
-import { parseSpotOrder } from './spot-order.js';
+import { describe, expect, it } from 'vitest';
 import type { ParsedSpotOrder } from './spot-order.js';
+import { parseSpotOrder } from './spot-order.js';
 
 // ---------------------------------------------------------------------------
 // Test fixtures
@@ -111,7 +111,7 @@ describe('parseSpotOrder', () => {
     it('derives symbol from Base Asset + "/" + Quote Asset (not Trading pair)', () => {
       const { transactions } = parseSpotOrder(
         [makeBuyRow({ 'Base Asset': 'ETH', 'Quote Asset': 'EUR', 'Trading pair': 'ETHEUR' })],
-        'test.csv',
+        'test.csv'
       );
 
       expect(transactions[0].symbol).toBe('ETH/EUR');
@@ -263,11 +263,7 @@ describe('parseSpotOrder', () => {
     });
 
     it('mixes valid and invalid rows in the same batch', () => {
-      const rows = [
-        makeBuyRow(),
-        makeBuyRow({ 'Order Id': '' }),
-        makeSellRow(),
-      ];
+      const rows = [makeBuyRow(), makeBuyRow({ 'Order Id': '' }), makeSellRow()];
       const { transactions, errors } = parseSpotOrder(rows, 'test.csv');
 
       expect(transactions).toHaveLength(2);
