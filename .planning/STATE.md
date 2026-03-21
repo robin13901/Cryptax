@@ -10,28 +10,28 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 2 of 7 in current phase (01-05 at checkpoint — awaiting human visual verify)
+Plan: 3 of 7 in current phase (01-04 complete, 01-05 at checkpoint)
 Status: In progress
-Last activity: 2026-03-21 — 01-05 auto tasks complete, at checkpoint:human-verify
+Last activity: 2026-03-21 — Completed 01-04-PLAN.md (@cryptax/shared types and Decimal.js utilities)
 
-Progress: [██░░░░░░░░] 4% (2/50 plans)
+Progress: [███░░░░░░░] 6% (3/50 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: 6 min
-- Total execution time: 11 min
+- Total plans completed: 3
+- Average duration: 7 min
+- Total execution time: 17 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-ci-cd | 2/7 | 23 min | 7-12 min |
+| 01-foundation-ci-cd | 3/7 | 17 min | ~6 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min
-- Trend: —
+- Last 5 plans: 6 min
+- Trend: consistent
 
 *Updated after each plan completion*
 
@@ -52,6 +52,10 @@ Recent decisions affecting current work:
 - 01-01: All nav buttons must have explicit `type="button"` to satisfy Biome a11y rules
 - 01-02: Route registration pattern: each feature exports `registerXxxRoutes(app: Hono)` — index.ts only wires middleware and route modules
 - 01-02: Biome requires semicolons — apply `npx biome format --write` after writing TypeScript files
+- 01-04: MoneyString = string alias used for all monetary fields — explicit intent in domain interfaces
+- 01-04: Decimal.js configured globally (precision 36, ROUND_HALF_UP) in money.ts at module load
+- 01-04: toDecimal() handles null/undefined/empty → ZERO; fromDecimal() uses .toFixed() for no exponential notation
+- 01-04: TAX_CONSTANTS.SPOT_FREIGRENZE_EUR = '1000' (2024+ value); EARN_FREIGRENZE_EUR = '256'
 - 01-05: FloatingLines implemented with Three.js orthographic camera — manual implementation, not reactbits CLI
 - 01-05: mixBlendMode prop on FloatingLines applied in JSX only (not inside useEffect) — correct per React hooks exhaustive-deps rule
 - 01-05: Aurora component fully removed — no files, imports, or CSS classes remain
@@ -68,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:29:00Z
-Stopped at: 01-05 at checkpoint:human-verify — FloatingLines built, awaiting visual approval
+Last session: 2026-03-21T16:24:23Z
+Stopped at: Completed 01-04-PLAN.md — @cryptax/shared domain types and Decimal.js monetary utilities
 Resume file: None
