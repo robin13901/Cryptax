@@ -20,9 +20,17 @@ function App() {
       {/* FloatingLines background layer */}
       <div className="floating-lines-bg">
         <FloatingLines
-          lineCount={35}
-          animationSpeed={0.8}
           linesGradient={['#0070F2', '#354A5F', '#0070F2', '#5fdc8a']}
+          enabledWaves={['top', 'middle', 'bottom']}
+          lineCount={[6, 8, 6]}
+          lineDistance={[5, 4, 5]}
+          animationSpeed={0.8}
+          interactive={true}
+          bendRadius={5.0}
+          bendStrength={-0.5}
+          mouseDamping={0.05}
+          parallax={true}
+          parallaxStrength={0.2}
           mixBlendMode="screen"
         />
       </div>
