@@ -67,17 +67,17 @@ Plans:
 4. Rows with missing or invalid critical fields (missing price, unrecognized type) are flagged in the import summary rather than silently dropped or crashing the import.
 5. Transactions from 2024 and 2025 CSVs are tagged with their correct tax year and appear separately filterable in the database.
 
-**Estimated Plans:** 8
+**Plans:** 8 plans in 4 waves
 
 Plans:
-- [ ] 02-01: CSV parsing infrastructure — install csv-parse, BOM stripping, tab trimming, delimiter auto-detection; shared parser base
-- [ ] 02-02: Spot transactions parser (IMPT-01) — semicolon/comma auto-detect, `order;Date;Coin;Type;Amount;Fee;Available` schema
-- [ ] 02-03: Futures transactions parser (IMPT-02) — `Order,Date,Coin,Futures,Margin Mode,Type,Amount,Fee,Wallet balance` schema
-- [ ] 02-04: Spot order history parser (IMPT-03) — `Date,Type,Order Id,Trading pair,...` schema; direction + trading pair normalization
-- [ ] 02-05: Futures order history parser (IMPT-04) — `Date,Order ID,Direction,Coin,...,Realized P/L,NetProfits` schema
-- [ ] 02-06: On-chain earn parser (IMPT-05) — `Reference,Start time,Coin,Type,Interest coin,Amount,...` schema
-- [ ] 02-07: Format detector + normalizer — auto-detect by header signature (IMPT-06), canonical_type mapping for all known Bitget transaction types (IMPT-07), unknown type flagging
-- [ ] 02-08: Import API + UI — POST /api/import endpoint, drag & drop + file picker frontend (IMPT-08), duplicate detection (IMPT-09), import validation summary (IMPT-10), multi-year tagging (IMPT-11); unit tests for all 5 parsers with edge cases (TEST-02)
+- [ ] 02-01-PLAN.md — CSV parsing infrastructure: schema migration, csv-parse install, shared types (Wave 1)
+- [ ] 02-02-PLAN.md — Spot transactions parser with TDD (Wave 2)
+- [ ] 02-03-PLAN.md — Futures transactions parser with TDD (Wave 2)
+- [ ] 02-04-PLAN.md — Spot order history parser with TDD (Wave 2)
+- [ ] 02-05-PLAN.md — Futures order history parser with TDD (Wave 2)
+- [ ] 02-06-PLAN.md — On-chain earn parser with TDD (Wave 2)
+- [ ] 02-07-PLAN.md — Format detector + canonical type map + normalizer (Wave 3)
+- [ ] 02-08-PLAN.md — Import API + UI: insert layer, orchestrator, routes, drag & drop (Wave 4)
 
 ---
 
@@ -228,7 +228,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + CI/CD | 7/7 | ✓ Complete | 2026-03-21 |
-| 2. CSV Import Pipeline | 0/8 | Not started | - |
+| 2. CSV Import Pipeline | 0/8 | Planned | - |
 | 3. EUR Price Enrichment | 0/6 | Not started | - |
 | 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
 | 5. Dashboard + Transaction UI | 0/7 | Not started | - |
