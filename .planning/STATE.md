@@ -10,25 +10,25 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 2 of 7 (CSV Import Pipeline) — In progress
-Plan: 1 of 7 in current phase
-Status: In progress — 02-01 complete
-Last activity: 2026-03-21 — Completed 02-01-PLAN.md (import_batches table + batch_id FK + csv-parse + shared import types)
+Plan: 6 of 7 in current phase
+Status: In progress — 02-06 complete
+Last activity: 2026-03-21 — Completed 02-06-PLAN.md (on-chain earn CSV parser, TDD, 16 tests)
 
-Progress: [████████░░] 16% (8/50 plans complete)
+Progress: [█████████░] 26% (13/50 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 8
-- Average duration: ~6 min
-- Total execution time: ~49 min
+- Total plans completed: 13
+- Average duration: ~5 min
+- Total execution time: ~65 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
-| 02-csv-import-pipeline | 1/7 | ~5 min | ~5 min |
+| 02-csv-import-pipeline | 6/7 | ~21 min | ~4 min |
 
 **Recent Trend:**
 - Last 5 plans: 6 min
@@ -80,6 +80,10 @@ Recent decisions affecting current work:
 - 02-01: Migration auto-name renamed (0001_overconfident_banshee → 0001_import_batches); journal tag updated — same rename workflow as 0000_initial
 - 02-01: Biome organizeImports sorts export blocks alphabetically by source path — import.js before tax.js before transaction.js in barrel files
 
+- 02-06: earn Reference column requires no tab stripping — csv-parse trim: true is a no-op on already-clean fields; normaliseRow() handles cased and lowercased keys uniformly
+- 02-06: ParsedEarn keeps coin (staked asset) and interestCoin (received asset) as separate fields — both needed for tax classification
+- 02-06: Biome organizeImports assist rule not applied by `--write` flag — must fix import order manually (type imports before value imports from same module)
+
 ### Pending Todos
 
 None yet.
@@ -93,6 +97,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:40:11Z
-Stopped at: 02-01-PLAN.md complete — import_batches table, batch_id FK, csv-parse, shared import types
+Last session: 2026-03-21T20:47:58Z
+Stopped at: 02-06-PLAN.md complete — on-chain earn CSV parser (parseEarn, ParsedEarn, 16 tests)
 Resume file: None
