@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 6 of 7 in current phase (01-06 complete)
-Status: In progress
-Last activity: 2026-03-21 — Completed 01-06-PLAN.md (Vitest workspace, coverage, Codecov, 31 initial tests)
+Plan: 7 of 7 in current phase (01-07 auto tasks complete, awaiting checkpoint approval)
+Status: Checkpoint — awaiting user verification of CI/CD workflows + secrets/branch protection setup
+Last activity: 2026-03-21 — Executed 01-07-PLAN.md auto tasks (6 workflow files created, paused at human-verify checkpoint)
 
-Progress: [██████░░░░] 12% (6/50 plans)
+Progress: [██████░░░░] 12% (6/50 plans — 01-07 in progress)
 
 ## Performance Metrics
 
@@ -69,6 +69,11 @@ Recent decisions affecting current work:
 - 01-06: fromDecimal() used in test assertions for small decimals — Decimal.toString() returns 1e-8 form for 0.00000001
 - 01-06: Inline test.projects pattern used (not vitest.workspace.ts) per Vitest v3 workspace API
 
+- 01-07: codecov/codecov-action@v4 with fail_ci_if_error: false — CI does not hard-fail if Codecov is unreachable
+- 01-07: actions/labeler@v5 on pull_request_target — write permissions needed for labeling fork PRs
+- 01-07: Build job uses needs: [lint, test] — prevents broken builds from running unnecessarily
+- 01-07: Claude review prompt includes FIFO correctness check in addition to Decimal.js/SQL rules
+
 ### Pending Todos
 
 None yet.
@@ -82,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:51:22Z
-Stopped at: Completed 01-06-PLAN.md — Vitest workspace, v8 coverage, codecov.yml, 31 tests (health + Decimal.js + TAX_CONSTANTS)
+Last session: 2026-03-21T16:56:11Z
+Stopped at: 01-07-PLAN.md checkpoint — 2 auto tasks complete (6 workflow files), awaiting human-verify for secrets/branch protection
 Resume file: None
