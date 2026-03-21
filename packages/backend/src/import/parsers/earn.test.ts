@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parseEarn } from './earn.js';
 import type { ParsedEarn } from './earn.js';
+import { parseEarn } from './earn.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -169,9 +169,9 @@ describe('parseEarn', () => {
 
   it('collects errors without stopping on valid rows', () => {
     const rows = [
-      makeRow({ Reference: '9001' }),    // valid
-      makeRow({ Reference: '' }),         // invalid
-      makeRow({ Reference: '9003' }),    // valid
+      makeRow({ Reference: '9001' }), // valid
+      makeRow({ Reference: '' }), // invalid
+      makeRow({ Reference: '9003' }), // valid
     ];
     const { transactions, errors } = parseEarn(rows, 'mixed.csv');
 
