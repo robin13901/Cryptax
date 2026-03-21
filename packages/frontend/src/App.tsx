@@ -24,12 +24,12 @@ function App() {
           enabledWaves={['top', 'middle', 'bottom']}
           lineCount={[6, 8, 6]}
           lineDistance={[5, 4, 5]}
-          animationSpeed={0.8}
-          interactive={true}
-          bendRadius={5.0}
+          animationSpeed={1.3}
+          interactive
+          bendRadius={5}
           bendStrength={-0.5}
-          mouseDamping={0.05}
-          parallax={true}
+          mouseDamping={0.11}
+          parallax
           parallaxStrength={0.2}
           mixBlendMode="screen"
         />
