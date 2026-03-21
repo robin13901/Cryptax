@@ -18,11 +18,6 @@
   display: flex;
   flex-direction: column;
   padding: 2rem;
-  pointer-events: none;
-}
-
-.content * {
-  pointer-events: auto;
 }
 
 .header {
