@@ -11,24 +11,24 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 Phase: 2 of 7 (CSV Import Pipeline) — In progress
 Plan: 6 of 7 in current phase
-Status: In progress — 02-06 complete
-Last activity: 2026-03-21 — Completed 02-05-PLAN.md (futures order history CSV parser, TDD, 17 tests) + 02-06-PLAN.md (on-chain earn CSV parser, TDD, 16 tests)
+Status: In progress — 02-02 complete (backfilled), 02-06 complete
+Last activity: 2026-03-21 — Completed 02-02-PLAN.md (spot tx CSV parser, TDD, 23 tests, parseSpotTx + ParsedSpotTx)
 
-Progress: [█████████░] 26% (13/50 plans complete)
+Progress: [█████████░] 28% (14/50 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 13
+- Total plans completed: 14
 - Average duration: ~5 min
-- Total execution time: ~65 min
+- Total execution time: ~70 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
-| 02-csv-import-pipeline | 6/7 | ~21 min | ~4 min |
+| 02-csv-import-pipeline | 6/7 | ~26 min | ~4 min |
 
 **Recent Trend:**
 - Last 5 plans: 5 min
@@ -93,6 +93,10 @@ Recent decisions affecting current work:
 - 02-06: ParsedEarn keeps coin (staked asset) and interestCoin (received asset) as separate fields — both needed for tax classification
 - 02-06: Biome organizeImports assist rule not applied by `--write` flag — must fix import order manually (type imports before value imports from same module)
 
+- 02-02: CANONICAL_DISPLAY map for error field names — when required field key absent from row, returns Bitget casing ('Date'/'Coin'/'Type'/'Amount') not lowercase fallback; 'order' stays lowercase to match actual header
+- 02-02: First-missing-field early exit per row — reports one error per invalid row, skips remaining fields for that row
+- 02-02: Tab-stripping on orderId as defensive guard even though csv-parse trim handles it
+
 ### Pending Todos
 
 None yet.
@@ -106,6 +110,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:48:20Z
-Stopped at: 02-05-PLAN.md complete — futures order history parser (parseFuturesOrder, ParsedFuturesOrder, 17 tests)
+Last session: 2026-03-21T20:49:35Z
+Stopped at: 02-02-PLAN.md complete — spot tx CSV parser (parseSpotTx, ParsedSpotTx, 23 tests, TDD, both 2024+2025 formats)
 Resume file: None
