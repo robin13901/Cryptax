@@ -126,7 +126,7 @@ export default function FloatingLines({
         const data = lineDataArr[i];
         if (!mesh || !data) continue;
 
-        const posAttr = mesh.geometry.attributes['position'] as THREE.BufferAttribute;
+        const posAttr = mesh.geometry.attributes.position as THREE.BufferAttribute;
 
         for (let j = 0; j <= data.segmentCount; j++) {
           const x = -1 + (j / data.segmentCount) * 2;
@@ -134,7 +134,7 @@ export default function FloatingLines({
           if (enabledWaves) {
             const wave1 = Math.sin(x * data.frequency + elapsed * data.speed + data.offset);
             const wave2 = Math.sin(
-              x * data.frequency * 0.5 + elapsed * data.speed * 0.7 + data.offset * 1.3,
+              x * data.frequency * 0.5 + elapsed * data.speed * 0.7 + data.offset * 1.3
             );
             y = data.yBase + (wave1 * 0.7 + wave2 * 0.3) * data.amplitude;
           }
@@ -160,7 +160,7 @@ export default function FloatingLines({
       }
       renderer.dispose();
     };
-  }, [lineCount, animationSpeed, linesGradient, mixBlendMode, enabledWaves]);
+  }, [lineCount, animationSpeed, linesGradient, enabledWaves]);
 
   return (
     <canvas

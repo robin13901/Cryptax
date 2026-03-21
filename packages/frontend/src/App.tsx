@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
-import Aurora from './components/Aurora/Aurora';
+import FloatingLines from './components/FloatingLines/FloatingLines';
 import GlassSurface from './components/GlassSurface/GlassSurface';
 import './App.css';
 
@@ -17,13 +17,13 @@ function App() {
 
   return (
     <div className="app">
-      {/* Aurora background layer */}
-      <div className="aurora-bg">
-        <Aurora
-          colorStops={['#0070F2', '#354A5F', '#0070F2']}
-          amplitude={0.6}
-          blend={0.4}
-          speed={0.4}
+      {/* FloatingLines background layer */}
+      <div className="floating-lines-bg">
+        <FloatingLines
+          lineCount={35}
+          animationSpeed={0.8}
+          linesGradient={['#0070F2', '#354A5F', '#0070F2', '#5fdc8a']}
+          mixBlendMode="screen"
         />
       </div>
 
