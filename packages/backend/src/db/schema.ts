@@ -1,6 +1,20 @@
 import { index, integer, sqliteTable, text, unique } from 'drizzle-orm/sqlite-core';
 
 // ---------------------------------------------------------------------------
+// import_batches
+// ---------------------------------------------------------------------------
+export const importBatches = sqliteTable('import_batches', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  filename: text('filename').notNull(),
+  sourceType: text('source_type').notNull(),
+  totalRows: integer('total_rows').notNull(),
+  importedCount: integer('imported_count').notNull(),
+  duplicatesCount: integer('duplicates_count').notNull(),
+  errorsCount: integer('errors_count').notNull(),
+  importedAt: text('imported_at').notNull(),
+});
+
+// ---------------------------------------------------------------------------
 // transactions
 // ---------------------------------------------------------------------------
 export const transactions = sqliteTable(
@@ -23,12 +37,14 @@ export const transactions = sqliteTable(
     rawRow: text('raw_row'),
     checksum: text('checksum').notNull(),
     importedAt: text('imported_at').notNull(),
+    batchId: integer('batch_id').references(() => importBatches.id, { onDelete: 'set null' }),
   },
   (t) => [
     unique('uq_transaction_order_exchange_checksum').on(t.orderId, t.exchange, t.checksum),
     index('idx_transactions_tax_year').on(t.taxYear),
     index('idx_transactions_symbol').on(t.symbol),
     index('idx_transactions_traded_at').on(t.tradedAt),
+    index('idx_transactions_batch_id').on(t.batchId),
   ]
 );
 
