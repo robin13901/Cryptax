@@ -1,5 +1,5 @@
-import type { Hono } from 'hono'
+import type { Hono } from 'hono';
 
 export function registerHealthRoutes(app: Hono) {
-  app.get('/api/health', (c) => c.json({ status: 'ok', ts: Date.now() }))
+  app.get('/api/health', (c) => c.json({ status: 'ok', ts: Date.now() }));
 }
