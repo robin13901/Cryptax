@@ -10,9 +10,9 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 2 of 7 in current phase
+Plan: 2 of 7 in current phase (01-05 at checkpoint — awaiting human visual verify)
 Status: In progress
-Last activity: 2026-03-21 — Completed 01-02-PLAN.md (Hono backend server + Vite proxy)
+Last activity: 2026-03-21 — 01-05 auto tasks complete, at checkpoint:human-verify
 
 Progress: [██░░░░░░░░] 4% (2/50 plans)
 
@@ -27,7 +27,7 @@ Progress: [██░░░░░░░░] 4% (2/50 plans)
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-ci-cd | 2/7 | 11 min | 5-8 min |
+| 01-foundation-ci-cd | 2/7 | 23 min | 7-12 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -52,6 +52,9 @@ Recent decisions affecting current work:
 - 01-01: All nav buttons must have explicit `type="button"` to satisfy Biome a11y rules
 - 01-02: Route registration pattern: each feature exports `registerXxxRoutes(app: Hono)` — index.ts only wires middleware and route modules
 - 01-02: Biome requires semicolons — apply `npx biome format --write` after writing TypeScript files
+- 01-05: FloatingLines implemented with Three.js orthographic camera — manual implementation, not reactbits CLI
+- 01-05: mixBlendMode prop on FloatingLines applied in JSX only (not inside useEffect) — correct per React hooks exhaustive-deps rule
+- 01-05: Aurora component fully removed — no files, imports, or CSS classes remain
 
 ### Pending Todos
 
@@ -65,6 +68,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:20:03Z
-Stopped at: Completed 01-02-PLAN.md — Hono backend server on port 3001, health endpoint, Vite proxy
+Last session: 2026-03-21T16:29:00Z
+Stopped at: 01-05 at checkpoint:human-verify — FloatingLines built, awaiting visual approval
 Resume file: None
