@@ -29,15 +29,20 @@ Accurate German crypto tax calculation with FIFO-based holding period tracking, 
 - [ ] Transaction tab with CSV import (drag & drop + file picker), transaction list with filters/search/sort, and category display (Spot, Futures, Earn, Gebühren)
 - [ ] Steuerreport tab with Anlage SO summary view, full trade-level detail appendix, and PDF/CSV export
 - [ ] Replace Aurora background with Floating Lines from reactbits.dev
+- [ ] Multi-exchange support: manual import from other sources with predefined formats
+- [ ] Exchange API connections via ccxt for pulling trade history directly from exchanges (Bitget first, extensible)
+- [ ] Local authentication with password protection and encrypted storage for exchange API credentials
+- [ ] Extensive test suite: unit tests (Vitest), component tests (Testing Library), integration tests, E2E tests (Playwright) — target 90%+ coverage
+- [ ] CI/CD pipeline with GitHub Actions (lint → test → build), Claude Code Action for AI-powered PR reviews, Codecov integration
+- [ ] GitHub project management: Issues for feature tracking, PRs for all changes, automated labeling and release notes
 
 ### Out of Scope
 
 - Cloud deployment — local-only app, no hosting
 - Real-time portfolio tracking / live price feeds — this is a tax tool for historical data
-- Exchanges other than Bitget — only Bitget CSVs supported
 - Mobile app — web-only, desktop-first (tablet-friendly via responsive design)
-- User authentication / multi-user — single-user local tool
 - Tailwind / UI framework — custom CSS with Glassmorphism design system
+- ELSTER XML direct submission — generate human-readable report, not machine-to-machine filing
 
 ## Context
 
@@ -59,9 +64,11 @@ Accurate German crypto tax calculation with FIFO-based holding period tracking, 
 - **Design**: Custom CSS with Glassmorphism, Floating Lines background — no Tailwind, no UI frameworks
 - **Charts**: Recharts 3.8 — already installed
 - **Animations**: motion/react 12.36 — already installed
-- **Testing**: Vitest for unit/integration tests, Playwright for UI testing
+- **Testing**: Vitest for unit/integration tests, Testing Library for components, Playwright for E2E — 90%+ coverage target
+- **CI/CD**: GitHub Actions + Claude Code Action (anthropics/claude-code-action@v1) + Codecov
 - **Tax law**: German crypto tax rules as of 2024 (1.000€ Freigrenze, FIFO, Haltefrist rules)
 - **Local only**: No server deployment, runs via `npm run dev`
+- **Quality**: Best practices researched before every major implementation decision
 
 ## Key Decisions
 
@@ -72,6 +79,11 @@ Accurate German crypto tax calculation with FIFO-based holding period tracking, 
 | Bitget API for price resolution | Need historical EUR prices at trade timestamps for accurate tax calculation. Research needed for best approach. | — Pending |
 | Multi-year from v1 | User trades across years, needs year-over-year comparison and per-year tax reports | — Pending |
 | Anlage SO summary + full appendix | Finanzamt expects summary matching tax form fields, plus detailed evidence | — Pending |
+| Multi-exchange via ccxt | Extensible exchange support, Bitget v2 certified, adapter pattern for future exchanges | — Pending |
+| Local auth + encrypted credentials | Professional security for API keys, AES-256-GCM with PBKDF2, no external deps (node:crypto) | — Pending |
+| Hono over Express | TypeScript-first, web-standard APIs, lighter than Express, modern | — Pending |
+| Decimal.js for financial math | IEEE 754 float drift is a correctness risk for tax calculations, TEXT storage in SQLite | — Pending |
+| GitHub Actions CI/CD | Automated lint/test/build on PRs, Claude Code Action for AI review, Codecov for coverage | — Pending |
 
 ---
-*Last updated: 2026-03-21 after initialization*
+*Last updated: 2026-03-21 after research phase — added multi-exchange, auth, CI/CD, testing requirements*
