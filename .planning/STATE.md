@@ -10,24 +10,24 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 4 of 7 in current phase (01-05 complete)
+Plan: 5 of 7 in current phase (01-03 complete)
 Status: In progress
-Last activity: 2026-03-21 — Completed 01-05-PLAN.md (FloatingLines WebGL background, Aurora removed)
+Last activity: 2026-03-21 — Completed 01-03-PLAN.md (Drizzle ORM schema, STRICT SQLite migrations, WAL client)
 
-Progress: [████░░░░░░] 8% (4/50 plans)
+Progress: [█████░░░░░] 10% (5/50 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
+- Total plans completed: 5
 - Average duration: 7 min
-- Total execution time: 29 min
+- Total execution time: 35 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-ci-cd | 4/7 | 29 min | ~7 min |
+| 01-foundation-ci-cd | 5/7 | 35 min | ~7 min |
 
 **Recent Trend:**
 - Last 5 plans: 6 min
@@ -59,6 +59,11 @@ Recent decisions affecting current work:
 - 01-05: FloatingLines implemented with Three.js orthographic camera — manual implementation, not reactbits CLI
 - 01-05: mixBlendMode prop on FloatingLines applied in JSX only (not inside useEffect) — correct per React hooks exhaustive-deps rule
 - 01-05: Aurora component fully removed — no files, imports, or CSS classes remain
+- 01-03: drizzle-kit generate does NOT add STRICT — manual edit of migration SQL required after each generate run (critical workflow step)
+- 01-03: Migration file renamed 0000_strange_runaways.sql → 0000_initial.sql; journal tag updated to match
+- 01-03: WAL pragma runs in client.ts at app startup — migration-created DB starts in delete mode until first client connection
+- 01-03: DB_PATH env var allows test isolation (set DB_PATH=:memory: or temp file in tests)
+- 01-03: All monetary Drizzle columns use text() — matches MoneyString = string convention from 01-04
 
 ### Pending Todos
 
@@ -69,9 +74,10 @@ None yet.
 - Phase 4 research flag: Complex FIFO edge cases and §22 vs §23 earn income classification — consider `/gsd:research-phase` before Phase 4 planning
 - Phase 7 research flag: ccxt Bitget v2 deep history pagination is untested — consider `/gsd:research-phase` before Phase 7 planning
 - German tax law: Haltefrist exact day count (≥365 interpretation used) and 10-year staking Haltefrist (1-year used per mainstream tools) — Steuerberater review recommended before relying on output
+- Migration workflow: After any future `npm run db:generate`, developer MUST manually add STRICT to new CREATE TABLE statements before running `npm run db:migrate`
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:26:48Z
-Stopped at: Completed 01-05-PLAN.md — FloatingLines WebGL background (Three.js), Aurora removed
+Last session: 2026-03-21T16:35:57Z
+Stopped at: Completed 01-03-PLAN.md — Drizzle ORM schema, STRICT SQLite migrations, WAL+FK client singleton
 Resume file: None
