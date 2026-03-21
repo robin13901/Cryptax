@@ -26,11 +26,10 @@ function App() {
           lineDistance={[5, 4, 5]}
           animationSpeed={1.3}
           interactive
-          bendRadius={5}
-          bendStrength={-0.5}
-          mouseDamping={0.11}
-          parallax
-          parallaxStrength={0.2}
+          bendRadius={3}
+          bendStrength={-1.0}
+          mouseDamping={0.08}
+          parallax={false}
           mixBlendMode="screen"
         />
       </div>
