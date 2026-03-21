@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parseSpotTx } from './spot-tx.js';
 import type { ParsedSpotTx } from './spot-tx.js';
+import { parseSpotTx } from './spot-tx.js';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -67,10 +67,7 @@ describe('parseSpotTx - happy path', () => {
   });
 
   it('preserves all fields on a fully-populated row', () => {
-    const result = parseSpotTx(
-      [makeRow({ Available: '163.73784613735' })],
-      'full-row.csv',
-    );
+    const result = parseSpotTx([makeRow({ Available: '163.73784613735' })], 'full-row.csv');
 
     const tx = result.transactions[0];
     expect(tx.available).toBe('163.73784613735');
@@ -195,10 +192,10 @@ describe('parseSpotTx - validation errors', () => {
 
   it('collects multiple errors across rows, valid rows still parsed', () => {
     const rows = [
-      makeRow({ order: '' }),       // invalid — row 0
-      makeRow({ order: '100' }),    // valid — row 1
-      makeRow({ Amount: '' }),      // invalid — row 2
-      makeRow({ order: '200' }),    // valid — row 3
+      makeRow({ order: '' }), // invalid — row 0
+      makeRow({ order: '100' }), // valid — row 1
+      makeRow({ Amount: '' }), // invalid — row 2
+      makeRow({ order: '200' }), // valid — row 3
     ];
     const result = parseSpotTx(rows, 'mixed.csv');
 
@@ -231,7 +228,7 @@ describe('parseSpotTx - real CSV fixture rows', () => {
   // csv-parse with { trim: true, bom: true } strips the leading \t from order col
   it('parses 2024 spot fixture row (Interest, after csv-parse trim)', () => {
     const row2024: Record<string, string> = {
-      order: '1258113040865390595',   // tab already stripped by csv-parse trim
+      order: '1258113040865390595', // tab already stripped by csv-parse trim
       Date: '2024-12-31 23:17:21',
       Coin: 'USDE',
       Type: 'Interest',
@@ -254,7 +251,7 @@ describe('parseSpotTx - real CSV fixture rows', () => {
 
   it('parses 2025 spot fixture row (Sell, after csv-parse trim)', () => {
     const row2025: Record<string, string> = {
-      order: '1389650902004740097',   // tab already stripped by csv-parse trim
+      order: '1389650902004740097', // tab already stripped by csv-parse trim
       Date: '2025-12-29 22:41:54',
       Coin: 'EUR',
       Type: 'Sell',
@@ -288,7 +285,10 @@ describe('parseSpotTx - real CSV fixture rows', () => {
     };
 
     const result2024 = parseSpotTx([{ ...sharedRow }], '2024 Export spot transactions.csv');
-    const result2025 = parseSpotTx([{ ...sharedRow }], 'Export spot transactions-2026-01-05 05_40_51.csv');
+    const result2025 = parseSpotTx(
+      [{ ...sharedRow }],
+      'Export spot transactions-2026-01-05 05_40_51.csv'
+    );
 
     // Both produce a valid transaction
     expect(result2024.errors).toHaveLength(0);
