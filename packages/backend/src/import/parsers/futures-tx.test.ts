@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { parseFuturesTx } from './futures-tx.js';
 import type { ParsedFuturesTx } from './futures-tx.js';
+import { parseFuturesTx } from './futures-tx.js';
 
 // ---------------------------------------------------------------------------
 // Helpers: build raw CSV row objects matching the futures_tx header set
@@ -190,11 +190,11 @@ describe('parseFuturesTx', () => {
 
   it('splits mixed rows into transactions and errors correctly', () => {
     const rows = [
-      makeRow({ Type: 'open_long' }),          // valid — row 1
-      makeRow({ Order: '' }),                   // invalid — row 2
-      makeRow({ Type: 'close_short' }),         // valid — row 3
-      makeRow({ Date: '' }),                    // invalid — row 4
-      makeRow({ Type: 'burst_close_short' }),   // valid — row 5
+      makeRow({ Type: 'open_long' }), // valid — row 1
+      makeRow({ Order: '' }), // invalid — row 2
+      makeRow({ Type: 'close_short' }), // valid — row 3
+      makeRow({ Date: '' }), // invalid — row 4
+      makeRow({ Type: 'burst_close_short' }), // valid — row 5
     ];
     const { transactions, errors } = parseFuturesTx(rows, 'mixed.csv');
 
@@ -241,9 +241,7 @@ describe('parseFuturesTx', () => {
   // --- Both key columns captured -------------------------------------------
 
   it('captures both Futures (symbol) and Coin (settlement) columns independently', () => {
-    const rows = [
-      makeRow({ Futures: 'POPCATUSDT', Coin: 'USDT' }),
-    ];
+    const rows = [makeRow({ Futures: 'POPCATUSDT', Coin: 'USDT' })];
     const { transactions } = parseFuturesTx(rows, 'test.csv');
 
     const tx = transactions[0] as ParsedFuturesTx;
@@ -255,15 +253,12 @@ describe('parseFuturesTx', () => {
   // --- sourceFile propagation ----------------------------------------------
 
   it('attaches sourceFile to every parsed transaction', () => {
-    const rows = [
-      makeRow({ Type: 'open_long' }),
-      makeRow({ Type: 'close_short' }),
-    ];
+    const rows = [makeRow({ Type: 'open_long' }), makeRow({ Type: 'close_short' })];
     const { transactions } = parseFuturesTx(rows, 'my-futures.csv');
 
-    transactions.forEach((tx) => {
+    for (const tx of transactions) {
       expect(tx.sourceFile).toBe('my-futures.csv');
-    });
+    }
   });
 
   // --- Error rawData preservation -------------------------------------------
