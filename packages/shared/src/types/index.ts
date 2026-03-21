@@ -1,20 +1,19 @@
 export type {
-  MoneyString,
-  SourceType,
+  DashboardKpi,
+  EarnIncome,
+  FifoLot,
+  FuturesPosition,
+  LotConsumption,
+  TaxBucket,
+  TaxSummary,
+} from './tax.js';
+export type {
   CanonicalType,
-  TransactionSide,
-  Transaction,
-  TransactionListItem,
   ImportError,
   ImportSummary,
+  MoneyString,
+  SourceType,
+  Transaction,
+  TransactionListItem,
+  TransactionSide,
 } from './transaction.js';
-
-export type {
-  TaxBucket,
-  FifoLot,
-  LotConsumption,
-  FuturesPosition,
-  EarnIncome,
-  TaxSummary,
-  DashboardKpi,
-} from './tax.js';
