@@ -10,24 +10,24 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 5 of 7 in current phase (01-03 complete)
+Plan: 6 of 7 in current phase (01-06 complete)
 Status: In progress
-Last activity: 2026-03-21 — Completed 01-03-PLAN.md (Drizzle ORM schema, STRICT SQLite migrations, WAL client)
+Last activity: 2026-03-21 — Completed 01-06-PLAN.md (Vitest workspace, coverage, Codecov, 31 initial tests)
 
-Progress: [█████░░░░░] 10% (5/50 plans)
+Progress: [██████░░░░] 12% (6/50 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 7 min
-- Total execution time: 35 min
+- Total execution time: 41 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-ci-cd | 5/7 | 35 min | ~7 min |
+| 01-foundation-ci-cd | 6/7 | 41 min | ~7 min |
 
 **Recent Trend:**
 - Last 5 plans: 6 min
@@ -64,6 +64,10 @@ Recent decisions affecting current work:
 - 01-03: WAL pragma runs in client.ts at app startup — migration-created DB starts in delete mode until first client connection
 - 01-03: DB_PATH env var allows test isolation (set DB_PATH=:memory: or temp file in tests)
 - 01-03: All monetary Drizzle columns use text() — matches MoneyString = string convention from 01-04
+- 01-06: Vitest 3 used (not v4) — Node v23 is outside Vitest 4 engine range (^20 || ^22 || >=24)
+- 01-06: Coverage thresholds omitted from vitest.config.ts — 90% enforced by codecov.yml patch threshold only (overall codebase not yet at 90%)
+- 01-06: fromDecimal() used in test assertions for small decimals — Decimal.toString() returns 1e-8 form for 0.00000001
+- 01-06: Inline test.projects pattern used (not vitest.workspace.ts) per Vitest v3 workspace API
 
 ### Pending Todos
 
@@ -78,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:35:57Z
-Stopped at: Completed 01-03-PLAN.md — Drizzle ORM schema, STRICT SQLite migrations, WAL+FK client singleton
+Last session: 2026-03-21T16:51:22Z
+Stopped at: Completed 01-06-PLAN.md — Vitest workspace, v8 coverage, codecov.yml, 31 tests (health + Decimal.js + TAX_CONSTANTS)
 Resume file: None
