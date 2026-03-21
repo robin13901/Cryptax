@@ -84,6 +84,11 @@ Recent decisions affecting current work:
 - 02-06: ParsedEarn keeps coin (staked asset) and interestCoin (received asset) as separate fields — both needed for tax classification
 - 02-06: Biome organizeImports assist rule not applied by `--write` flag — must fix import order manually (type imports before value imports from same module)
 
+- 02-04: Average Price (not Price column) used for price field — Price is the limit order entry price; Average Price is the actual fill price
+- 02-04: Direction column mapped to rawType (not Type column) — Type in spot order history is Limit/Market; Direction is Buy/Sell
+- 02-04: Symbol derived as baseAsset + '/' + quoteAsset — Trading pair column lacks slash separator (e.g. 'BTCEUR' vs 'BTC/EUR')
+- 02-04: Biome useLiteralKeys — single-word normalised map keys use dot notation; multi-word keys (e.g. 'order id') stay bracket notation
+
 ### Pending Todos
 
 None yet.
@@ -97,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:47:58Z
-Stopped at: 02-06-PLAN.md complete — on-chain earn CSV parser (parseEarn, ParsedEarn, 16 tests)
+Last session: 2026-03-21T20:48:14Z
+Stopped at: 02-04-PLAN.md complete — spot order history CSV parser (parseSpotOrder, ParsedSpotOrder, 22 tests, TDD)
 Resume file: None
