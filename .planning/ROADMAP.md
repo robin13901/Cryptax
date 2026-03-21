@@ -12,7 +12,7 @@ Cryptax is built in 7 phases following a strict data dependency chain: foundatio
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation + CI/CD** — Monorepo, SQLite schema, Hono server skeleton, CI pipeline, Decimal.js enforced from day one
+- [x] **Phase 1: Foundation + CI/CD** — Monorepo, SQLite schema, Hono server skeleton, CI pipeline, Decimal.js enforced from day one
 - [ ] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
 - [ ] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
 - [ ] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
@@ -42,13 +42,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 7 plans in 4 waves
 
 Plans:
-- [ ] 01-01-PLAN.md — Monorepo scaffold (Wave 1)
-- [ ] 01-02-PLAN.md — Backend skeleton: Hono server + health endpoint + Vite proxy (Wave 2)
-- [ ] 01-03-PLAN.md — Database layer: Drizzle ORM + better-sqlite3 + STRICT + WAL (Wave 2)
-- [ ] 01-04-PLAN.md — Decimal.js + shared types in @cryptax/shared (Wave 2)
-- [ ] 01-05-PLAN.md — Floating Lines background replacing Aurora (Wave 2)
-- [ ] 01-06-PLAN.md — Vitest + coverage setup + initial tests (Wave 3)
-- [ ] 01-07-PLAN.md — CI/CD pipeline: GitHub Actions + Claude review + Codecov (Wave 4)
+- [x] 01-01-PLAN.md — Monorepo scaffold (Wave 1)
+- [x] 01-02-PLAN.md — Backend skeleton: Hono server + health endpoint + Vite proxy (Wave 2)
+- [x] 01-03-PLAN.md — Database layer: Drizzle ORM + better-sqlite3 + STRICT + WAL (Wave 2)
+- [x] 01-04-PLAN.md — Decimal.js + shared types in @cryptax/shared (Wave 2)
+- [x] 01-05-PLAN.md — Floating Lines background replacing Aurora (Wave 2)
+- [x] 01-06-PLAN.md — Vitest + coverage setup + initial tests (Wave 3)
+- [x] 01-07-PLAN.md — CI/CD pipeline: GitHub Actions + Claude review + Codecov (Wave 4)
 
 ---
 
@@ -227,7 +227,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + CI/CD | 0/7 | Planned | - |
+| 1. Foundation + CI/CD | 7/7 | ✓ Complete | 2026-03-21 |
 | 2. CSV Import Pipeline | 0/8 | Not started | - |
 | 3. EUR Price Enrichment | 0/6 | Not started | - |
 | 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |

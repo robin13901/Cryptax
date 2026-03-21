@@ -7,12 +7,12 @@
 
 ### Foundation (FOUN)
 
-- [ ] **FOUN-01**: Monorepo structure with `packages/frontend`, `packages/backend`, `packages/shared`
-- [ ] **FOUN-02**: Hono server with SQLite (better-sqlite3 + Drizzle ORM) serves API and static frontend
-- [ ] **FOUN-03**: Vite dev proxy routes `/api/*` to backend during development
-- [ ] **FOUN-04**: All monetary values stored as TEXT in SQLite, computed with Decimal.js
-- [ ] **FOUN-05**: Database migration system via Drizzle Kit
-- [ ] **FOUN-06**: Replace Aurora background with Floating Lines from reactbits.dev
+- [x] **FOUN-01**: Monorepo structure with `packages/frontend`, `packages/backend`, `packages/shared`
+- [x] **FOUN-02**: Hono server with SQLite (better-sqlite3 + Drizzle ORM) serves API and static frontend
+- [x] **FOUN-03**: Vite dev proxy routes `/api/*` to backend during development
+- [x] **FOUN-04**: All monetary values stored as TEXT in SQLite, computed with Decimal.js
+- [x] **FOUN-05**: Database migration system via Drizzle Kit
+- [x] **FOUN-06**: Replace Aurora background with Floating Lines from reactbits.dev
 
 ### Data Import (IMPT)
 
@@ -107,16 +107,16 @@
 - [ ] **TEST-05**: Component tests for React components with Testing Library
 - [ ] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
 - [ ] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
-- [ ] **TEST-08**: 90%+ code coverage enforced via Vitest + Codecov
+- [x] **TEST-08**: 90%+ code coverage enforced via Vitest + Codecov
 
 ### CI/CD & DevOps (CICD)
 
-- [ ] **CICD-01**: GitHub Actions workflow: lint → test → build on every PR
-- [ ] **CICD-02**: Claude Code Action v1 for AI-powered PR code review
-- [ ] **CICD-03**: Codecov integration with 90%+ coverage threshold on PRs
-- [ ] **CICD-04**: Auto-labeling for PRs based on file paths
-- [ ] **CICD-05**: Automated release notes / changelog generation
-- [ ] **CICD-06**: Branch protection on main — require PR, passing CI, code review
+- [x] **CICD-01**: GitHub Actions workflow: lint → test → build on every PR
+- [x] **CICD-02**: Claude Code Action v1 for AI-powered PR code review
+- [x] **CICD-03**: Codecov integration with 90%+ coverage threshold on PRs
+- [x] **CICD-04**: Auto-labeling for PRs based on file paths
+- [x] **CICD-05**: Automated release notes / changelog generation
+- [x] **CICD-06**: Branch protection on main — require PR, passing CI, code review
 
 ## v2 Requirements
 
@@ -156,19 +156,19 @@ Testing requirements are distributed to the phase where the code they test lives
 
 | Requirement | Phase | Notes | Status |
 |-------------|-------|-------|--------|
-| FOUN-01 | Phase 1 | Foundation + CI/CD | Pending |
-| FOUN-02 | Phase 1 | Foundation + CI/CD | Pending |
-| FOUN-03 | Phase 1 | Foundation + CI/CD | Pending |
-| FOUN-04 | Phase 1 | Foundation + CI/CD | Pending |
-| FOUN-05 | Phase 1 | Foundation + CI/CD | Pending |
-| FOUN-06 | Phase 1 | Foundation + CI/CD | Pending |
-| CICD-01 | Phase 1 | Foundation + CI/CD | Pending |
-| CICD-02 | Phase 1 | Foundation + CI/CD | Pending |
-| CICD-03 | Phase 1 | Foundation + CI/CD | Pending |
-| CICD-04 | Phase 1 | Foundation + CI/CD | Pending |
-| CICD-05 | Phase 1 | Foundation + CI/CD | Pending |
-| CICD-06 | Phase 1 | Foundation + CI/CD | Pending |
-| TEST-08 | Phase 1 | Coverage enforcement — set up from day one | Pending |
+| FOUN-01 | Phase 1 | Foundation + CI/CD | Complete |
+| FOUN-02 | Phase 1 | Foundation + CI/CD | Complete |
+| FOUN-03 | Phase 1 | Foundation + CI/CD | Complete |
+| FOUN-04 | Phase 1 | Foundation + CI/CD | Complete |
+| FOUN-05 | Phase 1 | Foundation + CI/CD | Complete |
+| FOUN-06 | Phase 1 | Foundation + CI/CD | Complete |
+| CICD-01 | Phase 1 | Foundation + CI/CD | Complete |
+| CICD-02 | Phase 1 | Foundation + CI/CD | Complete |
+| CICD-03 | Phase 1 | Foundation + CI/CD | Complete |
+| CICD-04 | Phase 1 | Foundation + CI/CD | Complete |
+| CICD-05 | Phase 1 | Foundation + CI/CD | Complete |
+| CICD-06 | Phase 1 | Foundation + CI/CD | Complete |
+| TEST-08 | Phase 1 | Coverage enforcement — set up from day one | Complete |
 | IMPT-01 | Phase 2 | CSV Import Pipeline | Pending |
 | IMPT-02 | Phase 2 | CSV Import Pipeline | Pending |
 | IMPT-03 | Phase 2 | CSV Import Pipeline | Pending |
