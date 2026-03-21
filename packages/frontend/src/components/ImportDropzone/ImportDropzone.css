@@ -1,0 +1,129 @@
+.import-dropzone {
+  position: relative;
+  border: 2px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 14px;
+  padding: 2.5rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: default;
+  min-height: 200px;
+}
+
+.import-dropzone--dragging {
+  border-color: rgba(0, 112, 242, 0.8);
+  background: rgba(0, 112, 242, 0.06);
+  box-shadow: 0 0 0 3px rgba(0, 112, 242, 0.15);
+}
+
+.import-dropzone--uploading {
+  border-color: rgba(0, 112, 242, 0.4);
+  animation: dropzone-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes dropzone-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Hidden native file input */
+.import-dropzone__file-input {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.import-dropzone__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.import-dropzone__icon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.import-dropzone__label {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.import-dropzone__sublabel {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.75rem;
+  margin: 0;
+  max-width: 340px;
+}
+
+.import-dropzone__browse-btn {
+  margin-top: 0.5rem;
+  background: rgba(0, 112, 242, 0.35);
+  border: 1px solid rgba(0, 112, 242, 0.6);
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1.4rem;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.import-dropzone__browse-btn:hover {
+  background: rgba(0, 112, 242, 0.55);
+  transform: translateY(-1px);
+}
+
+.import-dropzone__browse-btn:active {
+  transform: translateY(0);
+}
+
+/* Uploading state */
+.import-dropzone__uploading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.import-dropzone__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(0, 112, 242, 0.2);
+  border-top-color: rgba(0, 112, 242, 0.9);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.import-dropzone__progress {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  margin: 0;
+}

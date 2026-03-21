@@ -1,13 +1,17 @@
+import type { ImportResponse } from '@cryptax/shared';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 import FloatingLines from './components/FloatingLines/FloatingLines';
 import GlassSurface from './components/GlassSurface/GlassSurface';
+import ImportDropzone from './components/ImportDropzone/ImportDropzone';
+import ImportSummary from './components/ImportSummary/ImportSummary';
 import './App.css';
 
 type TabId = 'dashboard' | 'transactions' | 'report';
 
 function App() {
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
+  const [importResponse, setImportResponse] = useState<ImportResponse | null>(null);
 
   const tabs: { id: TabId; label: string }[] = [
     { id: 'dashboard', label: 'Dashboard' },
@@ -139,12 +143,15 @@ function App() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
-                <div className="empty-state">
-                  <div className="empty-state-icon">&#128196;</div>
-                  <p>Transaktionen</p>
-                  <p style={{ fontSize: '0.78rem' }}>
-                    CSV-Import und Transaktionsliste kommen hier hin
-                  </p>
+                <div className="transactions-import-area">
+                  {importResponse ? (
+                    <ImportSummary
+                      response={importResponse}
+                      onDismiss={() => setImportResponse(null)}
+                    />
+                  ) : (
+                    <ImportDropzone onImportComplete={setImportResponse} />
+                  )}
                 </div>
               </motion.div>
             )}

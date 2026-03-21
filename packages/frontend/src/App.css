@@ -229,3 +229,10 @@
   background: rgba(46, 160, 67, 0.5);
   color: #ffffff;
 }
+
+/* Transactions tab import area */
+.transactions-import-area {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
