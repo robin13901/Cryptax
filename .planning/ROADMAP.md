@@ -36,19 +36,19 @@ Decimal phases appear between their surrounding integers in numeric order.
 1. Running `npm run dev` starts both the Vite frontend and the Hono backend from a single command, and `GET /api/health` returns a 200 response.
 2. The database schema migrates cleanly via `drizzle-kit migrate` with all tables created, all monetary columns typed as TEXT, and a `PRAGMA journal_mode = WAL` set on startup.
 3. The Aurora background is replaced by Floating Lines from reactbits.dev across all three tabs with no visual regressions.
-4. Pushing a PR triggers the GitHub Actions workflow (lint → test → build) and fails the PR if any step fails; 90% coverage threshold is enforced by Codecov on the PR diff.
+4. Pushing a PR triggers the GitHub Actions workflow (lint -> test -> build) and fails the PR if any step fails; 90% coverage threshold is enforced by Codecov on the PR diff.
 5. The Claude Code Action posts an AI review comment on every PR, and branch protection prevents merging without passing CI.
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 4 waves
 
 Plans:
-- [ ] 01-01: Monorepo scaffold — npm workspaces with `packages/frontend`, `packages/backend`, `packages/shared`; TypeScript configs per package
-- [ ] 01-02: Backend skeleton — Hono server with `@hono/node-server`, health endpoint, Vite dev proxy wiring (`/api/*`)
-- [ ] 01-03: Database layer — better-sqlite3 + Drizzle ORM schema (all tables, TEXT monetary columns, WAL mode, STRICT); Drizzle Kit migration workflow
-- [ ] 01-04: Decimal.js + shared types — install Decimal.js, define shared TypeScript interfaces in `packages/shared`, enforce no `number` for monetary fields
-- [ ] 01-05: Floating Lines background — replace Aurora with reactbits.dev Floating Lines component; verify across all 3 tabs
-- [ ] 01-06: Vitest + coverage setup — Vitest workspace config (jsdom for frontend, node for backend), `@vitest/coverage-v8`, coverage thresholds, TEST-08 enforcement
-- [ ] 01-07: CI/CD pipeline — GitHub Actions (lint → test → build), Claude Code Action, Codecov integration, auto-labeler, release-drafter, branch protection
+- [ ] 01-01-PLAN.md — Monorepo scaffold (Wave 1)
+- [ ] 01-02-PLAN.md — Backend skeleton: Hono server + health endpoint + Vite proxy (Wave 2)
+- [ ] 01-03-PLAN.md — Database layer: Drizzle ORM + better-sqlite3 + STRICT + WAL (Wave 2)
+- [ ] 01-04-PLAN.md — Decimal.js + shared types in @cryptax/shared (Wave 2)
+- [ ] 01-05-PLAN.md — Floating Lines background replacing Aurora (Wave 2)
+- [ ] 01-06-PLAN.md — Vitest + coverage setup + initial tests (Wave 3)
+- [ ] 01-07-PLAN.md — CI/CD pipeline: GitHub Actions + Claude review + Codecov (Wave 4)
 
 ---
 
@@ -91,7 +91,7 @@ Plans:
 
 **Success Criteria:**
 1. After triggering price enrichment, all transactions with a direct COIN/EUR Bitget market have their EUR price populated from the Bitget candle API using the 1-minute candle closest to the trade timestamp.
-2. Transactions for coins without a direct EUR pair fall back to COIN/USDT × USDT/EUR conversion at the same timestamp, with the fallback path visible in the price_cache record.
+2. Transactions for coins without a direct EUR pair fall back to COIN/USDT x USDT/EUR conversion at the same timestamp, with the fallback path visible in the price_cache record.
 3. Transactions for coins not listed on Bitget (delisted or obscure tokens) fall back to CoinGecko's historical price API without blocking enrichment of other transactions.
 4. Re-running price enrichment for already-resolved transactions completes instantly (cache hit, no API calls); the price resolution status UI shows which transactions still have NULL prices.
 5. All timestamp conversions correctly handle Europe/Berlin DST boundaries — a trade at 2024-03-31 02:30 (spring-forward night) resolves to the correct UTC timestamp.
@@ -99,8 +99,8 @@ Plans:
 **Estimated Plans:** 6
 
 Plans:
-- [ ] 03-01: Bitget price client — port Python reference script to TypeScript; `/api/v2/spot/market/history-candles` endpoint; COIN→EUR primary strategy; Europe/Berlin timezone handling via date-fns-tz (PRCE-01, PRCE-06)
-- [ ] 03-02: USDT fallback strategy — COIN→USDT × USDT→EUR two-step conversion; same timestamp for both legs (PRCE-02)
+- [ ] 03-01: Bitget price client — port Python reference script to TypeScript; `/api/v2/spot/market/history-candles` endpoint; COIN->EUR primary strategy; Europe/Berlin timezone handling via date-fns-tz (PRCE-01, PRCE-06)
+- [ ] 03-02: USDT fallback strategy — COIN->USDT x USDT->EUR two-step conversion; same timestamp for both legs (PRCE-02)
 - [ ] 03-03: CoinGecko fallback client — historical price lookup for delisted/obscure coins; free tier rate limiting (PRCE-03)
 - [ ] 03-04: Price cache layer — SQLite price_cache table; cache-first lookup; record source (bitget-direct, bitget-usdt, coingecko) (PRCE-04)
 - [ ] 03-05: Bulk enrichment engine — p-throttle rate limiting at 10 req/s for Bitget, 0.5 req/s for CoinGecko; progress tracking; NULL price status endpoint (PRCE-05, PRCE-07)
@@ -127,7 +127,7 @@ Plans:
 
 Plans:
 - [ ] 04-01: FIFO lot engine core — FifoEngine class; lot creation on buy (asset-isolated); lot consumption on sell with `lot.remaining` (not `original_amount`); partial lot splitting (TAXC-01, TAXC-02)
-- [ ] 04-02: Haltefrist + spot tax calculator — per-lot ≥365-day calculation; §23 EStG tax-free vs. taxable split; Freigrenze cliff at 1.000 EUR; fee deduction as Werbungskosten (TAXC-03, TAXC-04, TAXC-07)
+- [ ] 04-02: Haltefrist + spot tax calculator — per-lot >=365-day calculation; §23 EStG tax-free vs. taxable split; Freigrenze cliff at 1.000 EUR; fee deduction as Werbungskosten (TAXC-03, TAXC-04, TAXC-07)
 - [ ] 04-03: Futures P&L engine — FuturesPnlEngine; aggregate signed realized P&L per position; Abgeltungssteuer 26.375% on all realized gains; no Haltefrist, no Freigrenze; strict isolation from FIFO (TAXC-05)
 - [ ] 04-04: Earn income engine — EarnIncomeEngine; §22 Nr. 3 EStG income at EUR value at Zufluss timestamp; 256 EUR Freigrenze cliff; new FIFO lots created for received coins (TAXC-06)
 - [ ] 04-05: Tax bucket isolation + orchestrator — TaxCalculator orchestrating all three engines; §23/§20/§22 buckets never mixed; cross-year FIFO lot continuity (2024 lots feed 2025 disposals) (TAXC-08, TAXC-09)
@@ -146,7 +146,7 @@ Plans:
 **Requirements:** DASH-01, DASH-02, DASH-03, DASH-04, DASH-05, DASH-06, DASH-07, DASH-08, TRAN-01, TRAN-02, TRAN-03, TRAN-04, TRAN-05, TRAN-06, TEST-05
 
 **Success Criteria:**
-1. Selecting a tax year on the Dashboard updates all four KPI cards (Gesamtgewinn, Anzahl Trades, steuerpflichtiger Betrag, geschätzte Steuer) with real calculated values — no placeholder text visible anywhere.
+1. Selecting a tax year on the Dashboard updates all four KPI cards (Gesamtgewinn, Anzahl Trades, steuerpflichtiger Betrag, geschaetzte Steuer) with real calculated values — no placeholder text visible anywhere.
 2. All six charts render with real data: P&L over time (line), portfolio distribution (donut), gain/loss per coin (bar), monthly performance (bar), spot vs futures comparison (grouped bar), and year-over-year comparison — each chart responds to the year selector.
 3. The Transaktionen tab lists all imported transactions with correct category badges (Spot, Futures, Earn, Fee); filtering by type + coin + date range reduces the list correctly; searching by coin name or order ID works.
 4. Clicking a transaction opens a detail view showing full row data, associated FIFO lots consumed, and the tax impact of that specific trade.
@@ -176,9 +176,9 @@ Plans:
 **Success Criteria:**
 1. Clicking "Report generieren" for a selected year displays a preview in the browser containing Anlage SO summary (total taxable spot gains, Freigrenze status, transaction count), Anlage KAP summary (futures gains, Abgeltungssteuer amount), and staking income summary.
 2. The full trade appendix lists every taxable transaction with: coin, buy date, sell date, cost basis in EUR, proceeds in EUR, gain/loss, Haltefrist status (met/not met) — and paginates correctly for 50, 100, and 200+ rows.
-3. Downloading the PDF produces a valid PDF file with correct German Umlauts (ä ö ü ß €), an embedded TTF font, and formatting consistent with Finanzamt document expectations.
+3. Downloading the PDF produces a valid PDF file with correct German Umlauts (ae oe ue ss EUR), an embedded TTF font, and formatting consistent with Finanzamt document expectations.
 4. Downloading the CSV export produces a machine-readable file with all taxable transactions, suitable for import by a Steuerberater.
-5. The full import → price enrichment → tax calculation → report generation flow completes without errors in a Playwright E2E test using the actual 2024 and 2025 Bitget CSV test fixtures.
+5. The full import -> price enrichment -> tax calculation -> report generation flow completes without errors in a Playwright E2E test using the actual 2024 and 2025 Bitget CSV test fixtures.
 
 **Estimated Plans:** 7
 
@@ -189,7 +189,7 @@ Plans:
 - [ ] 06-04: CSV export — machine-readable CSV of all taxable transactions; column mapping for Steuerberater compatibility (REPT-06)
 - [ ] 06-05: Report API + year selection — GET /api/report/:year/preview (JSON), GET /api/report/:year/pdf, GET /api/report/:year/csv; year selection UI (REPT-07, REPT-08)
 - [ ] 06-06: Report preview UI — browser preview in Steuerreport tab; section navigation; download buttons
-- [ ] 06-07: Integration + E2E tests — integration tests for full API flow (import → calculate → report) (TEST-06); Playwright E2E test for complete user journey: drag CSV → enrich prices → run engine → view dashboard → export PDF (TEST-07)
+- [ ] 06-07: Integration + E2E tests — integration tests for full API flow (import -> calculate -> report) (TEST-06); Playwright E2E test for complete user journey: drag CSV -> enrich prices -> run engine -> view dashboard -> export PDF (TEST-07)
 
 ---
 
@@ -223,11 +223,11 @@ Plans:
 
 ## Progress
 
-**Execution Order:** Phases execute sequentially 1 → 2 → 3 → 4 → 5 → 6 → 7 (strict data dependency chain).
+**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 (strict data dependency chain).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + CI/CD | 0/7 | Not started | - |
+| 1. Foundation + CI/CD | 0/7 | Planned | - |
 | 2. CSV Import Pipeline | 0/8 | Not started | - |
 | 3. EUR Price Enrichment | 0/6 | Not started | - |
 | 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
