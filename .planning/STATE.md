@@ -80,6 +80,10 @@ Recent decisions affecting current work:
 - 02-01: Migration auto-name renamed (0001_overconfident_banshee → 0001_import_batches); journal tag updated — same rename workflow as 0000_initial
 - 02-01: Biome organizeImports sorts export blocks alphabetically by source path — import.js before tax.js before transaction.js in barrel files
 
+- 02-03: rawType stored as-is in futures parser — no CanonicalType mapping in parser, deferred to type-map plan (02-07)
+- 02-03: Both Futures (trading pair e.g. 'POPCATUSDT') and Coin (settlement asset e.g. 'USDT') captured as distinct ParsedFuturesTx fields
+- 02-03: Bitget typo 'risk_captital_user_transfer' must NOT be corrected — type-map (02-07) must use same typo as key
+
 - 02-06: earn Reference column requires no tab stripping — csv-parse trim: true is a no-op on already-clean fields; normaliseRow() handles cased and lowercased keys uniformly
 - 02-06: ParsedEarn keeps coin (staked asset) and interestCoin (received asset) as separate fields — both needed for tax classification
 - 02-06: Biome organizeImports assist rule not applied by `--write` flag — must fix import order manually (type imports before value imports from same module)
@@ -102,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T20:48:14Z
-Stopped at: 02-04-PLAN.md complete — spot order history CSV parser (parseSpotOrder, ParsedSpotOrder, 22 tests, TDD)
+Last session: 2026-03-21T20:48:32Z
+Stopped at: 02-03-PLAN.md complete — futures tx CSV parser (parseFuturesTx, ParsedFuturesTx, 19 tests, TDD, all 9 rawType strings)
 Resume file: None
