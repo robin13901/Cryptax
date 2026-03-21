@@ -70,7 +70,7 @@ completed: 2026-03-21
 - **Duration:** 3 min
 - **Started:** 2026-03-21T16:54:04Z
 - **Completed:** 2026-03-21T16:56:11Z
-- **Tasks:** 2 auto-tasks complete (checkpoint awaiting user verification)
+- **Tasks:** 3 (2 auto + 1 checkpoint verified, all complete)
 - **Files modified:** 6
 
 ## Accomplishments
@@ -87,7 +87,7 @@ Each task was committed atomically:
 1. **Task 1: Create CI workflow and Codecov integration** - `abecde4` (feat)
 2. **Task 2: Create Claude review, auto-labeler, and release-drafter workflows** - `5593109` (feat)
 
-**Plan metadata:** TBD after checkpoint approval
+**Plan metadata:** TBD (docs commit follows this update)
 
 ## Files Created/Modified
 - `.github/workflows/ci.yml` - Three-job pipeline: lint (Biome), test+coverage (Codecov upload), build (workspaces)
@@ -110,20 +110,18 @@ None - plan executed exactly as written. One minor enhancement to the Claude rev
 ## Issues Encountered
 None.
 
-## User Setup Required
+## User Setup Completed
 
-Three manual setup steps required before CI is active:
+User confirmed the following setup on 2026-03-21:
 
-1. **Codecov token** (`CODECOV_TOKEN`): Connect repo at codecov.io -> Add new repository, then copy the upload token to GitHub repo Settings -> Secrets -> CODECOV_TOKEN
-2. **Anthropic API key** (`ANTHROPIC_API_KEY`): Create key at console.anthropic.com -> API Keys, add to GitHub repo Settings -> Secrets -> ANTHROPIC_API_KEY
-3. **Branch protection on `main`** (GitHub Settings -> Branches -> Add rule for "main"):
-   - Require pull request before merging
-   - Require status checks: `Lint`, `Test & Coverage`, `Build`
-   - Require branches to be up to date before merging
+1. **CODECOV_TOKEN** — Added to GitHub repo secrets. Coverage upload active on all CI runs.
+2. **Branch protection on `main`** — Ruleset configured: PR required before merging, status checks required (CI / lint, test, build), restrict deletions, block force pushes.
+3. **ANTHROPIC_API_KEY** — Not added (company proxy prevents direct Anthropic API access). Claude Code Action workflow is in place; key can be added when accessible. Claude review will silently skip until the secret is present.
 
 ## Next Phase Readiness
-- Phase 1 is complete once checkpoint is approved and branch protection is configured
-- Phase 2 (Transaction Ingestion) can begin — all PRs will automatically run lint/test/build, get AI review, auto-labeling, and release notes
+- Phase 1 Foundation + CI/CD is complete — all 7 plans executed
+- Phase 2 (Transaction Ingestion) can begin — all PRs will automatically run lint/test/build, get auto-labeling, and generate release notes
+- Claude review is wired and ready; activate by adding ANTHROPIC_API_KEY secret when company proxy situation changes
 - codecov.yml 90% patch threshold (from 01-06) already in place at repo root
 
 ---

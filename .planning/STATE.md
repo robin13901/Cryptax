@@ -5,29 +5,29 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 1 — Foundation + CI/CD
+**Current focus:** Phase 2 — Transaction Ingestion (Phase 1 complete)
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation + CI/CD)
-Plan: 7 of 7 in current phase (01-07 auto tasks complete, awaiting checkpoint approval)
-Status: Checkpoint — awaiting user verification of CI/CD workflows + secrets/branch protection setup
-Last activity: 2026-03-21 — Executed 01-07-PLAN.md auto tasks (6 workflow files created, paused at human-verify checkpoint)
+Phase: 1 of 7 (Foundation + CI/CD) — COMPLETE
+Plan: 7 of 7 in current phase (phase complete)
+Status: Phase 1 complete — ready to begin Phase 2
+Last activity: 2026-03-21 — Completed 01-07-PLAN.md (CI/CD pipeline, CODECOV_TOKEN + branch protection configured; ANTHROPIC_API_KEY deferred — company proxy)
 
-Progress: [██████░░░░] 12% (6/50 plans — 01-07 in progress)
+Progress: [███████░░░] 14% (7/50 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 7 min
-- Total execution time: 41 min
+- Total plans completed: 7
+- Average duration: ~6 min
+- Total execution time: ~44 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01-foundation-ci-cd | 6/7 | 41 min | ~7 min |
+| 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 
 **Recent Trend:**
 - Last 5 plans: 6 min
@@ -73,6 +73,7 @@ Recent decisions affecting current work:
 - 01-07: actions/labeler@v5 on pull_request_target — write permissions needed for labeling fork PRs
 - 01-07: Build job uses needs: [lint, test] — prevents broken builds from running unnecessarily
 - 01-07: Claude review prompt includes FIFO correctness check in addition to Decimal.js/SQL rules
+- 01-07: ANTHROPIC_API_KEY deferred — company proxy prevents direct API access; claude-review.yml is in place and activates once key is added
 
 ### Pending Todos
 
@@ -87,6 +88,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T16:56:11Z
-Stopped at: 01-07-PLAN.md checkpoint — 2 auto tasks complete (6 workflow files), awaiting human-verify for secrets/branch protection
+Last session: 2026-03-21T17:57:24Z (updated after checkpoint approval)
+Stopped at: 01-07-PLAN.md complete — Phase 1 fully done
 Resume file: None
