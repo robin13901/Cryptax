@@ -1,0 +1,33 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review_comment:
+    types: [created]
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude-review:
+    if: |
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Review this PR for the Cryptax project (German crypto tax calculator). Check for:
+            1. Monetary arithmetic: Must use Decimal.js (from @cryptax/shared), never native `number` for money
+            2. Type safety: No `any`, no monetary values typed as `number`
+            3. SQL safety: No raw string concatenation in queries (use Drizzle ORM parameterized queries)
+            4. Error handling: API routes must handle errors gracefully with appropriate HTTP status codes
+            5. SQLite TEXT columns for all monetary values (matches MoneyString = string convention)
+            6. FIFO correctness: Transaction ordering by date must be preserved for tax calculations
+            Provide constructive feedback. Be concise. Focus on correctness over style.
