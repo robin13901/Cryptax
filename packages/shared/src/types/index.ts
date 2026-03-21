@@ -1,4 +1,10 @@
 export type {
+  ImportBatch,
+  ImportFileError,
+  ImportResponse,
+  PerFileResult,
+} from './import.js';
+export type {
   DashboardKpi,
   EarnIncome,
   FifoLot,

@@ -16,6 +16,12 @@ export {
   ZERO,
 } from './decimal/index.js';
 export type {
+  ImportBatch,
+  ImportFileError,
+  ImportResponse,
+  PerFileResult,
+} from './types/import.js';
+export type {
   DashboardKpi,
   EarnIncome,
   FifoLot,
