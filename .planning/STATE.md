@@ -9,25 +9,26 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 ## Current Position
 
-Phase: 1 of 7 (Foundation + CI/CD) — COMPLETE
-Plan: 7 of 7 in current phase (phase complete)
-Status: Phase 1 complete — ready to begin Phase 2
-Last activity: 2026-03-21 — Completed 01-07-PLAN.md (CI/CD pipeline, CODECOV_TOKEN + branch protection configured; ANTHROPIC_API_KEY deferred — company proxy)
+Phase: 2 of 7 (CSV Import Pipeline) — In progress
+Plan: 1 of 7 in current phase
+Status: In progress — 02-01 complete
+Last activity: 2026-03-21 — Completed 02-01-PLAN.md (import_batches table + batch_id FK + csv-parse + shared import types)
 
-Progress: [███████░░░] 14% (7/50 plans complete)
+Progress: [████████░░] 16% (8/50 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
+- Total plans completed: 8
 - Average duration: ~6 min
-- Total execution time: ~44 min
+- Total execution time: ~49 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
+| 02-csv-import-pipeline | 1/7 | ~5 min | ~5 min |
 
 **Recent Trend:**
 - Last 5 plans: 6 min
@@ -75,6 +76,10 @@ Recent decisions affecting current work:
 - 01-07: Claude review prompt includes FIFO correctness check in addition to Decimal.js/SQL rules
 - 01-07: ANTHROPIC_API_KEY deferred — company proxy prevents direct API access; claude-review.yml is in place and activates once key is added
 
+- 02-01: importBatches defined before transactions in schema.ts — Drizzle requires FK target tables declared before referencing tables
+- 02-01: Migration auto-name renamed (0001_overconfident_banshee → 0001_import_batches); journal tag updated — same rename workflow as 0000_initial
+- 02-01: Biome organizeImports sorts export blocks alphabetically by source path — import.js before tax.js before transaction.js in barrel files
+
 ### Pending Todos
 
 None yet.
@@ -88,6 +93,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-21T17:57:24Z (updated after checkpoint approval)
-Stopped at: 01-07-PLAN.md complete — Phase 1 fully done
+Last session: 2026-03-21T20:40:11Z
+Stopped at: 02-01-PLAN.md complete — import_batches table, batch_id FK, csv-parse, shared import types
 Resume file: None
