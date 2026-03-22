@@ -22,32 +22,41 @@ export function registerImportRoutes(app: Hono) {
   // POST /api/import/csv
   // -------------------------------------------------------------------------
   app.post('/api/import/csv', async (c) => {
-    const formData = await c.req.formData();
-    const files = formData.getAll('files') as File[];
+    try {
+      const formData = await c.req.formData();
+      const files = formData.getAll('files') as File[];
 
-    if (files.length === 0) {
-      return c.json({ error: 'No files provided' }, 400);
+      if (files.length === 0) {
+        return c.json({ error: 'No files provided' }, 400);
+      }
+
+      const results = await Promise.all(
+        files.map(async (file) => {
+          const text = await file.text();
+          return importCSVFile(text, file.name);
+        })
+      );
+
+      const response: ImportResponse = {
+        results,
+        summary: {
+          totalFiles: results.length,
+          totalRows: results.reduce((sum, r) => sum + r.totalRows, 0),
+          totalImported: results.reduce((sum, r) => sum + r.imported, 0),
+          totalDuplicates: results.reduce((sum, r) => sum + r.duplicatesSkipped, 0),
+          totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
+        },
+      };
+
+      return c.json(response, 200);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      console.error('[import/csv] Error:', message);
+      if (err instanceof Error) {
+        console.error('[import/csv] Stack:', err.stack);
+      }
+      return c.json({ error: message }, 500);
     }
-
-    const results = await Promise.all(
-      files.map(async (file) => {
-        const text = await file.text();
-        return importCSVFile(text, file.name);
-      })
-    );
-
-    const response: ImportResponse = {
-      results,
-      summary: {
-        totalFiles: results.length,
-        totalRows: results.reduce((sum, r) => sum + r.totalRows, 0),
-        totalImported: results.reduce((sum, r) => sum + r.imported, 0),
-        totalDuplicates: results.reduce((sum, r) => sum + r.duplicatesSkipped, 0),
-        totalErrors: results.reduce((sum, r) => sum + r.errors.length, 0),
-      },
-    };
-
-    return c.json(response, 200);
   });
 
   // -------------------------------------------------------------------------
