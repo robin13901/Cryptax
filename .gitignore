@@ -6,6 +6,13 @@ node_modules/
 
 # Build outputs
 dist/
+*.tsbuildinfo
+
+# TypeScript build outputs in shared/src (declarations emitted alongside source)
+packages/shared/src/**/*.d.ts
+packages/shared/src/**/*.d.ts.map
+packages/shared/src/**/*.js
+packages/shared/src/**/*.js.map
 
 # Test coverage
 coverage/
