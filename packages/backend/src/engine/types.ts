@@ -2,10 +2,11 @@
  * Engine-internal types for the FIFO tax calculation engine.
  * These types are NOT shared types — they exist only for in-memory processing.
  */
+
+import type { CanonicalType, SourceType } from '@cryptax/shared';
 import type { Decimal } from 'decimal.js';
 import type { BetterSQLite3Database } from 'drizzle-orm/better-sqlite3';
 import type * as schema from '../db/schema.js';
-import type { CanonicalType, SourceType } from '@cryptax/shared';
 
 // ---------------------------------------------------------------------------
 // Database alias
