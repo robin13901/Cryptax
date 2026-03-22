@@ -94,7 +94,7 @@ export async function fetchBitgetCandleClose(
  * @param fetchFn - Optional fetch function override (for testing).
  */
 export function createBitgetClient(fetchFn?: FetchFn): BitgetClient {
-  const throttle = pThrottle({ limit: 10, interval: 1000 });
+  const throttle = pThrottle({ limit: 20, interval: 1000 });
 
   const throttledFetch = throttle((symbol: string, targetMs: number, granularity: string) =>
     fetchBitgetCandleClose(symbol, targetMs, granularity, fetchFn)
