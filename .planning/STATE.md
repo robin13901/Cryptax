@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 3 in progress — Plans 01, 02, 03, 04 complete
+**Current focus:** Phase 3 in progress — Plans 01, 02, 03, 04, 05 complete (checkpoint pending)
 
 ## Current Position
 
 Phase: 3 of 7 (EUR Price Enrichment) — In progress
-Plan: 4 of 8 in current phase (plans 01, 02, 03, 04 complete)
-Status: In progress — plan 03-04 executed, committed
-Last activity: 2026-03-22 — Completed 03-04-PLAN.md
+Plan: 5 of 8 in current phase (plans 01, 02, 03, 04, 05 complete — checkpoint pending approval)
+Status: In progress — plan 03-05 executed, awaiting checkpoint:human-verify approval
+Last activity: 2026-03-22 — Completed 03-05-PLAN.md (tasks 1+2 committed, checkpoint at task 3)
 
-Progress: [████████░░] 38% (19/50 plans complete)
+Progress: [████████░░] 40% (20/50 plans complete)
 
 ## Performance Metrics
 
@@ -127,6 +127,11 @@ Recent decisions affecting current work:
 - 03-04: skippedCacheHit = 0 always in EnrichmentResult — cache hits are transparent to the engine (resolution strategy returns early); detailed source tracking deferred
 - 03-04: Exception catch in runEnrichment uses bare catch (no err binding) — Biome flags unused err; api-error written to DB for observability
 
+- 03-05: streamSSE from hono/streaming confirmed available in Hono v4 — hono/dist/helper/streaming/index.js exports streamSSE
+- 03-05: Auto-trigger uses exported triggerEnrichmentBackground() helper from prices.ts — avoids duplicating isRunning guard in import.ts
+- 03-05: PATCH /api/prices/manual rejects 400 if already resolved by non-manual source; allows overwriting another manual entry
+- 03-05: PriceFailureReason null coerced to 'unknown' in EnrichmentResponse failures mapping — satisfies reason: string contract
+
 ### Pending Todos
 
 None yet.
@@ -142,5 +147,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-22
-Stopped at: Completed 03-04-PLAN.md
-Resume file: None
+Stopped at: 03-05-PLAN.md checkpoint — tasks 1+2 committed, awaiting human-verify at task 3
+Resume file: .planning/phases/03-eur-price-enrichment/03-05-SUMMARY.md
