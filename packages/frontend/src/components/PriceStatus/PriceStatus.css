@@ -14,22 +14,22 @@
 }
 
 .price-status__title {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.95rem;
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 1.05rem;
+  font-weight: 700;
   margin: 0;
 }
 
 /* Enrich button */
 .price-status__enrich-btn {
-  background: rgba(0, 112, 242, 0.2);
-  border: 1px solid rgba(0, 112, 242, 0.45);
+  background: rgba(0, 112, 242, 0.18);
+  border: 1px solid rgba(0, 112, 242, 0.35);
   border-radius: 6px;
-  color: rgba(100, 180, 255, 0.9);
+  color: rgba(140, 195, 255, 0.95);
   cursor: pointer;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.35rem 0.85rem;
+  padding: 0.4rem 0.9rem;
   transition:
     background 0.15s ease,
     opacity 0.15s ease;
@@ -37,7 +37,7 @@
 }
 
 .price-status__enrich-btn:hover:not(:disabled) {
-  background: rgba(0, 112, 242, 0.35);
+  background: rgba(0, 112, 242, 0.3);
 }
 
 .price-status__enrich-btn:disabled,
@@ -49,33 +49,34 @@
 /* Alert banners */
 .price-status__alert {
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: 0.84rem;
+  font-weight: 500;
   padding: 0.55rem 0.85rem;
 }
 
 .price-status__alert--error {
-  background: rgba(200, 60, 60, 0.15);
-  border: 1px solid rgba(200, 60, 60, 0.3);
-  color: #f56060;
+  background: rgba(180, 60, 60, 0.12);
+  border: 1px solid rgba(180, 60, 60, 0.22);
+  color: rgba(240, 130, 130, 0.95);
 }
 
 .price-status__alert--warning {
-  background: rgba(200, 160, 0, 0.12);
-  border: 1px solid rgba(200, 160, 0, 0.28);
-  color: #f5c842;
+  background: rgba(180, 150, 40, 0.1);
+  border: 1px solid rgba(180, 150, 40, 0.2);
+  color: rgba(230, 200, 100, 0.95);
 }
 
 .price-status__alert--success {
-  background: rgba(46, 160, 67, 0.12);
-  border: 1px solid rgba(46, 160, 67, 0.28);
-  color: #5cd67b;
+  background: rgba(50, 140, 70, 0.1);
+  border: 1px solid rgba(50, 140, 70, 0.2);
+  color: rgba(120, 210, 150, 0.95);
 }
 
 .price-status__alert--info {
   align-items: center;
-  background: rgba(0, 112, 242, 0.12);
-  border: 1px solid rgba(0, 112, 242, 0.28);
-  color: rgba(100, 180, 255, 0.9);
+  background: rgba(0, 90, 200, 0.1);
+  border: 1px solid rgba(0, 90, 200, 0.2);
+  color: rgba(140, 190, 255, 0.95);
   display: flex;
   gap: 0.5rem;
 }
@@ -83,7 +84,7 @@
 /* Enriching dot (pulsing indicator next to title) */
 .price-status__enriching-dot {
   animation: pulse 1.2s ease-in-out infinite;
-  color: #5fdc8a;
+  color: rgba(120, 210, 150, 0.9);
   font-size: 0.6rem;
   margin-left: 0.5rem;
   vertical-align: middle;
@@ -102,9 +103,9 @@
 /* Inline spinner */
 .price-status__spinner {
   animation: spin 0.8s linear infinite;
-  border: 2px solid rgba(100, 180, 255, 0.2);
+  border: 2px solid rgba(100, 180, 255, 0.15);
   border-radius: 50%;
-  border-top-color: rgba(100, 180, 255, 0.9);
+  border-top-color: rgba(140, 190, 255, 0.8);
   display: inline-block;
   flex-shrink: 0;
   height: 14px;
@@ -128,17 +129,18 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.84rem;
+  font-weight: 500;
 }
 
 .price-status__progress-pct {
-  color: rgba(255, 255, 255, 0.7);
-  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 700;
 }
 
 .price-status__progress-track {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
   height: 6px;
   overflow: hidden;
@@ -169,10 +171,10 @@
 
 /* Section label */
 .price-status__section-label {
-  color: rgba(255, 255, 255, 0.35);
-  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -192,58 +194,43 @@
 
 .price-status__badge {
   border-radius: 4px;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 600;
-  padding: 0.15rem 0.5rem;
+  padding: 0.2rem 0.55rem;
 }
 
-/* Source-specific badge colours */
-.price-status__badge--self {
-  background: rgba(200, 200, 200, 0.12);
-  border: 1px solid rgba(200, 200, 200, 0.28);
-  color: rgba(200, 200, 200, 0.9);
-}
-
-.price-status__badge--csv-pair {
-  background: rgba(95, 220, 138, 0.2);
-  border: 1px solid rgba(95, 220, 138, 0.4);
-  color: #5fdc8a;
-}
-
+/* All source badges: unified muted blue-grey tones */
+.price-status__badge--self,
+.price-status__badge--csv-pair,
 .price-status__badge--csv-fill {
-  background: rgba(95, 220, 138, 0.15);
-  border: 1px solid rgba(95, 220, 138, 0.3);
-  color: #5fdc8a;
+  background: rgba(140, 190, 255, 0.08);
+  border: 1px solid rgba(140, 190, 255, 0.18);
+  color: rgba(160, 200, 255, 0.85);
 }
 
-.price-status__badge--bitget-direct {
-  background: rgba(0, 112, 242, 0.18);
-  border: 1px solid rgba(0, 112, 242, 0.35);
-  color: rgba(100, 180, 255, 0.9);
-}
-
+.price-status__badge--bitget-direct,
 .price-status__badge--bitget-usdt {
-  background: rgba(0, 90, 200, 0.18);
-  border: 1px solid rgba(0, 90, 200, 0.35);
-  color: rgba(80, 160, 255, 0.9);
+  background: rgba(0, 90, 200, 0.1);
+  border: 1px solid rgba(0, 90, 200, 0.22);
+  color: rgba(140, 190, 255, 0.85);
 }
 
 .price-status__badge--coingecko {
-  background: rgba(141, 74, 226, 0.18);
-  border: 1px solid rgba(141, 74, 226, 0.35);
-  color: rgba(190, 150, 255, 0.9);
+  background: rgba(120, 100, 180, 0.1);
+  border: 1px solid rgba(120, 100, 180, 0.22);
+  color: rgba(170, 160, 220, 0.85);
 }
 
 .price-status__badge--manual {
-  background: rgba(245, 200, 66, 0.15);
-  border: 1px solid rgba(245, 200, 66, 0.3);
-  color: #f5c842;
+  background: rgba(200, 180, 80, 0.08);
+  border: 1px solid rgba(200, 180, 80, 0.18);
+  color: rgba(220, 200, 120, 0.85);
 }
 
 .price-status__badge--failure {
-  background: rgba(200, 60, 60, 0.15);
-  border: 1px solid rgba(200, 60, 60, 0.3);
-  color: #f56060;
+  background: rgba(180, 70, 70, 0.1);
+  border: 1px solid rgba(180, 70, 70, 0.2);
+  color: rgba(230, 140, 140, 0.9);
 }
 
 /* Unresolved list */
@@ -255,34 +242,35 @@
 
 .price-status__unresolved-toggle {
   align-items: center;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
   display: flex;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
+  font-weight: 500;
   gap: 0.4rem;
   justify-content: space-between;
-  padding: 0.45rem 0.8rem;
+  padding: 0.5rem 0.85rem;
   text-align: left;
   transition: background 0.15s ease;
   width: 100%;
 }
 
 .price-status__unresolved-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .price-status__unresolved-arrow {
   flex-shrink: 0;
   font-size: 0.65rem;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
 .price-status__unresolved-list {
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -291,12 +279,12 @@
 }
 
 .price-status__unresolved-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   display: grid;
-  font-size: 0.75rem;
-  grid-template-columns: 5rem 1fr 1fr;
+  font-size: 0.8rem;
+  grid-template-columns: 6rem 1fr 1fr;
   gap: 0.5rem;
-  padding: 0.45rem 0.75rem;
+  padding: 0.5rem 0.85rem;
 }
 
 .price-status__unresolved-row:last-child {
@@ -304,16 +292,16 @@
 }
 
 .price-status__unresolved-symbol {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
 }
 
 .price-status__unresolved-date {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.45);
   font-family: monospace;
 }
 
 .price-status__unresolved-reason {
-  color: rgba(245, 96, 96, 0.8);
+  color: rgba(230, 140, 140, 0.85);
   text-align: right;
 }

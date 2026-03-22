@@ -118,7 +118,7 @@ function PriceStatus() {
   // Render
   // -------------------------------------------------------------------------
   return (
-    <GlassSurface width="auto" height="auto" borderRadius={14} backgroundOpacity={0.06}>
+    <GlassSurface width="auto" height="auto" borderRadius={14} backgroundOpacity={0.14}>
       <div className="price-status">
         {/* Header */}
         <div className="price-status__header">

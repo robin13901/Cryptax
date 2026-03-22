@@ -72,3 +72,17 @@ export function usesCsvFillPrice(sourceType: SourceType, symbol: string, price: 
   if (price === '0' || price === '') return false;
   return true;
 }
+
+/**
+ * Returns true when the transaction has a USDT-denominated fill price from the CSV:
+ *   - spot_order with USDT quote (e.g. "MOZ/USDT") and non-zero price
+ *   - futures_order with USDT quote (e.g. "POPCATUSDT") and non-zero price
+ *
+ * When true, the CSV price is in USDT and needs × USDT/EUR conversion.
+ */
+export function usesCsvUsdtPrice(sourceType: SourceType, symbol: string, price: string): boolean {
+  if (price === '0' || price === '') return false;
+  if (sourceType === 'spot_order' && symbol.includes('/USDT')) return true;
+  if (sourceType === 'futures_order' && symbol.toUpperCase().endsWith('USDT')) return true;
+  return false;
+}

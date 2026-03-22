@@ -3,7 +3,7 @@ import { Decimal } from '@cryptax/shared';
 import { and, eq } from 'drizzle-orm';
 import { CoinGeckoOutOfRangeError } from './coingecko-client.js';
 import type { lookupPriceCache, upsertPriceCache } from './price-cache.js';
-import { parseSymbol, usesCsvFillPrice } from './symbol-parser.js';
+import { parseSymbol, usesCsvFillPrice, usesCsvUsdtPrice } from './symbol-parser.js';
 import { berlinToUtcMs } from './timezone.js';
 
 // ---------------------------------------------------------------------------
@@ -247,11 +247,43 @@ export async function resolvePrice(
   }
 
   // -------------------------------------------------------------------------
-  // Step 3: CSV fill-price shortcut
+  // Step 3: CSV fill-price shortcut (EUR-quoted spot orders)
   // -------------------------------------------------------------------------
   // biome-ignore lint/suspicious/noExplicitAny: sourceType comes from DB as string
   if (usesCsvFillPrice(tx.sourceType as any, tx.symbol, tx.price)) {
     return { ok: true, result: { eurPrice: tx.price, source: 'csv-fill' } };
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 3b: CSV USDT fill-price (USDT-quoted spot/futures orders)
+  // The CSV "Average Price" is in USDT — multiply by USDT/EUR rate.
+  // -------------------------------------------------------------------------
+  // biome-ignore lint/suspicious/noExplicitAny: sourceType comes from DB as string
+  if (usesCsvUsdtPrice(tx.sourceType as any, tx.symbol, tx.price)) {
+    const targetMsUsdt = berlinToUtcMs(tx.tradedAt);
+    const usdtInEur =
+      (await bitgetClient.fetchClose('USDTEUR', targetMsUsdt, '1min')) ??
+      (await bitgetClient.fetchClose('USDTEUR', targetMsUsdt, '5min'));
+
+    if (usdtInEur !== null) {
+      const eurPrice = new Decimal(tx.price).mul(new Decimal(usdtInEur)).toString();
+      const timestampMinuteUsdt = toTimestampMinute(targetMsUsdt);
+      // biome-ignore lint/suspicious/noExplicitAny: sourceType from DB
+      const parsed = parseSymbol(tx.symbol, tx.sourceType as any);
+      await cache.upsert(db, {
+        symbol: parsed.bitgetSymbol,
+        timestamp: timestampMinuteUsdt,
+        eurPrice,
+        source: 'csv-fill',
+        usdtPrice: tx.price,
+        usdtEurRate: usdtInEur,
+        fetchedAt: new Date().toISOString(),
+      });
+      return {
+        ok: true,
+        result: { eurPrice, source: 'csv-fill', usdtPrice: tx.price, usdtEurRate: usdtInEur },
+      };
+    }
   }
 
   // -------------------------------------------------------------------------
