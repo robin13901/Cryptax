@@ -31,7 +31,6 @@ const FAILURE_LABELS: Record<string, string> = {
 function PriceStatus() {
   const [status, setStatus] = useState<PriceStatusResponse | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [manualTrigger, setManualTrigger] = useState(false);
   const [unresolvedExpanded, setUnresolvedExpanded] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -76,10 +75,6 @@ function PriceStatus() {
         clearInterval(pollRef.current);
         pollRef.current = null;
       }
-      // Reset manual trigger flag when enrichment finishes
-      if (manualTrigger) {
-        setManualTrigger(false);
-      }
     }
 
     return () => {
@@ -88,31 +83,22 @@ function PriceStatus() {
         pollRef.current = null;
       }
     };
-  }, [status?.isEnriching, fetchStatus, manualTrigger]);
+  }, [status?.isEnriching, fetchStatus]);
 
   // -------------------------------------------------------------------------
   // Trigger enrichment
   // -------------------------------------------------------------------------
-  const handleEnrich = async () => {
+  const handleEnrich = () => {
     if (status?.isEnriching) return;
 
-    setManualTrigger(true);
+    // Fire POST without awaiting — it blocks until enrichment finishes.
+    // We poll /status instead to get real-time progress.
+    fetch('/api/prices/enrich', { method: 'POST' }).catch(() => {
+      // Swallow — polling will show the final state regardless
+    });
 
-    try {
-      const res = await fetch('/api/prices/enrich', { method: 'POST' });
-      if (res.status === 409) {
-        // Already running — just start polling
-        void fetchStatus();
-        return;
-      }
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      // Done — refresh status
-      await fetchStatus();
-    } catch (err) {
-      setLoadError(err instanceof Error ? err.message : 'Fehler bei der Anreicherung');
-      setManualTrigger(false);
-    }
+    // Immediately poll to pick up isEnriching=true from the backend
+    setTimeout(() => void fetchStatus(), 300);
   };
 
   // -------------------------------------------------------------------------
