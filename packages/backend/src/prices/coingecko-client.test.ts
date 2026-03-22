@@ -59,9 +59,9 @@ describe('fetchCoinGeckoPrice', () => {
       },
     });
 
-    await expect(
-      fetchCoinGeckoPrice('bitcoin', 1_000_000_000, fetch),
-    ).rejects.toThrow(CoinGeckoOutOfRangeError);
+    await expect(fetchCoinGeckoPrice('bitcoin', 1_000_000_000, fetch)).rejects.toThrow(
+      CoinGeckoOutOfRangeError
+    );
   });
 
   it('CoinGeckoOutOfRangeError message contains coinId and date', async () => {
@@ -105,11 +105,7 @@ describe('fetchCoinGeckoPrice', () => {
   });
 
   it('returns null on network error', async () => {
-    const result = await fetchCoinGeckoPrice(
-      'bitcoin',
-      1_717_200_000_000,
-      mockFetchNetworkError(),
-    );
+    const result = await fetchCoinGeckoPrice('bitcoin', 1_717_200_000_000, mockFetchNetworkError());
     expect(result).toBeNull();
   });
 
@@ -154,9 +150,7 @@ describe('loadCoinGeckoSymbolMap', () => {
   });
 
   it('lowercases symbols from mixed-case API response', async () => {
-    const fetch = mockFetch([
-      { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin' },
-    ]);
+    const fetch = mockFetch([{ id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin' }]);
     const map = await loadCoinGeckoSymbolMap(fetch);
     expect(map.get('btc')).toBe('bitcoin');
     expect(map.has('BTC')).toBe(false);
@@ -178,9 +172,7 @@ describe('loadCoinGeckoSymbolMap', () => {
   });
 
   it('throws on network error (caller must handle — startup operation)', async () => {
-    await expect(loadCoinGeckoSymbolMap(mockFetchNetworkError())).rejects.toThrow(
-      'Network error',
-    );
+    await expect(loadCoinGeckoSymbolMap(mockFetchNetworkError())).rejects.toThrow('Network error');
   });
 
   it('sends request to /coins/list endpoint', async () => {
@@ -198,17 +190,9 @@ describe('loadCoinGeckoSymbolMap', () => {
 
 describe('SYMBOL_OVERRIDES', () => {
   it('overrides known ambiguous symbol "comp" → "compound-governance-token"', async () => {
-    // Build a map where "comp" would normally resolve to something else
-    const fetch = mockFetch([
-      { id: 'compound-coin', symbol: 'COMP', name: 'Compound Coin' },
-    ]);
-    const map = await loadCoinGeckoSymbolMap(fetch);
-
-    // The dynamic map from above API response would give 'compound-coin'
-    // But the SYMBOL_OVERRIDES should override it when used through the full resolution path.
     // We test SYMBOL_OVERRIDES are exported and contain 'comp'.
     const { SYMBOL_OVERRIDES } = await import('./coingecko-client.js');
-    expect(SYMBOL_OVERRIDES['comp']).toBe('compound-governance-token');
+    expect(SYMBOL_OVERRIDES.comp).toBe('compound-governance-token');
   });
 });
 
@@ -233,9 +217,7 @@ describe('createCoinGeckoClient', () => {
   });
 
   it('loadSymbolMap returns map (unthrottled)', async () => {
-    const fetch = mockFetch([
-      { id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin' },
-    ]);
+    const fetch = mockFetch([{ id: 'bitcoin', symbol: 'BTC', name: 'Bitcoin' }]);
     const client = createCoinGeckoClient(fetch);
     const map = await client.loadSymbolMap();
     expect(map.get('btc')).toBe('bitcoin');
@@ -247,7 +229,7 @@ describe('createCoinGeckoClient', () => {
     });
     const client = createCoinGeckoClient(fetch);
     await expect(client.fetchPrice('bitcoin', 1_000_000_000)).rejects.toThrow(
-      CoinGeckoOutOfRangeError,
+      CoinGeckoOutOfRangeError
     );
   });
 });
