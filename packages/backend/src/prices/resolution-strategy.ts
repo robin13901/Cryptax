@@ -1,5 +1,5 @@
 import type { PriceFailureReason, PriceSource } from '@cryptax/shared';
-import { Decimal } from '@cryptax/shared';
+import { Decimal } from 'decimal.js';
 import { and, eq } from 'drizzle-orm';
 import { CoinGeckoOutOfRangeError } from './coingecko-client.js';
 import type { lookupPriceCache, upsertPriceCache } from './price-cache.js';

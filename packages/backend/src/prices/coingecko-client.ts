@@ -1,4 +1,4 @@
-import { Decimal } from '@cryptax/shared';
+import { Decimal } from 'decimal.js';
 import pThrottle from 'p-throttle';
 
 // ---------------------------------------------------------------------------

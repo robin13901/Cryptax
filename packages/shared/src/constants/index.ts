@@ -4,9 +4,11 @@
 export const TAX_CONSTANTS = {
   /**
    * §23 EStG: Minimum holding period for tax-free private sales.
-   * Assets held ≥ 365 days are exempt from capital gains tax.
+   * Assets held >= 366 days are exempt from capital gains tax.
+   * Conservative interpretation: bought Jan 1 → tax-free from Jan 2 next year
+   * (366 days elapsed, not merely 365 calendar days since the buy date).
    */
-  HALTEFRIST_DAYS: 365,
+  HALTEFRIST_DAYS: 366,
 
   /**
    * §23 EStG: Annual Freigrenze for private sales (Veräußerungsgeschäfte).
