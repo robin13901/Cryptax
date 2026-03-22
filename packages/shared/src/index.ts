@@ -35,6 +35,8 @@ export type {
   ImportError,
   ImportSummary,
   MoneyString,
+  PriceFailureReason,
+  PriceSource,
   SourceType,
   Transaction,
   TransactionListItem,

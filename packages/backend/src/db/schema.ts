@@ -38,6 +38,10 @@ export const transactions = sqliteTable(
     checksum: text('checksum').notNull(),
     importedAt: text('imported_at').notNull(),
     batchId: integer('batch_id').references(() => importBatches.id, { onDelete: 'set null' }),
+    eurPrice: text('eur_price'),
+    priceSource: text('price_source'),
+    priceResolvedAt: text('price_resolved_at'),
+    priceFailureReason: text('price_failure_reason'),
   },
   (t) => [
     unique('uq_transaction_order_exchange_checksum').on(t.orderId, t.exchange, t.checksum),

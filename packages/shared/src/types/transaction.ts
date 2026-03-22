@@ -2,6 +2,16 @@ export type MoneyString = string;
 
 export type SourceType = 'spot_tx' | 'futures_tx' | 'spot_order' | 'futures_order' | 'earn';
 
+export type PriceSource =
+  | 'bitget-direct'
+  | 'bitget-usdt'
+  | 'csv-fill'
+  | 'coingecko'
+  | 'manual'
+  | null;
+
+export type PriceFailureReason = 'no-bitget-pair' | 'coingecko-miss' | 'api-error' | null;
+
 export type CanonicalType =
   | 'buy'
   | 'sell'
@@ -39,6 +49,10 @@ export interface Transaction {
   rawRow: string | null;
   checksum: string;
   importedAt: string;
+  eurPrice: MoneyString | null;
+  priceSource: PriceSource;
+  priceResolvedAt: string | null;
+  priceFailureReason: PriceFailureReason;
 }
 
 export interface TransactionListItem {
