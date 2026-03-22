@@ -41,10 +41,22 @@ export function registerImportRoutes(app: Hono) {
         results,
         summary: {
           totalFiles: results.length,
-          totalRows: results.reduce((sum: number, r: { totalRows: number }) => sum + r.totalRows, 0),
-          totalImported: results.reduce((sum: number, r: { imported: number }) => sum + r.imported, 0),
-          totalDuplicates: results.reduce((sum: number, r: { duplicatesSkipped: number }) => sum + r.duplicatesSkipped, 0),
-          totalErrors: results.reduce((sum: number, r: { errors: unknown[] }) => sum + r.errors.length, 0),
+          totalRows: results.reduce(
+            (sum: number, r: { totalRows: number }) => sum + r.totalRows,
+            0
+          ),
+          totalImported: results.reduce(
+            (sum: number, r: { imported: number }) => sum + r.imported,
+            0
+          ),
+          totalDuplicates: results.reduce(
+            (sum: number, r: { duplicatesSkipped: number }) => sum + r.duplicatesSkipped,
+            0
+          ),
+          totalErrors: results.reduce(
+            (sum: number, r: { errors: unknown[] }) => sum + r.errors.length,
+            0
+          ),
         },
       };
 
