@@ -96,15 +96,14 @@ Plans:
 4. Re-running price enrichment for already-resolved transactions completes instantly (cache hit, no API calls); the price resolution status UI shows which transactions still have NULL prices.
 5. All timestamp conversions correctly handle Europe/Berlin DST boundaries — a trade at 2024-03-31 02:30 (spring-forward night) resolves to the correct UTC timestamp.
 
-**Estimated Plans:** 6
+**Plans:** 5 plans in 4 waves
 
 Plans:
-- [ ] 03-01: Bitget price client — port Python reference script to TypeScript; `/api/v2/spot/market/history-candles` endpoint; COIN->EUR primary strategy; Europe/Berlin timezone handling via date-fns-tz (PRCE-01, PRCE-06)
-- [ ] 03-02: USDT fallback strategy — COIN->USDT x USDT->EUR two-step conversion; same timestamp for both legs (PRCE-02)
-- [ ] 03-03: CoinGecko fallback client — historical price lookup for delisted/obscure coins; free tier rate limiting (PRCE-03)
-- [ ] 03-04: Price cache layer — SQLite price_cache table; cache-first lookup; record source (bitget-direct, bitget-usdt, coingecko) (PRCE-04)
-- [ ] 03-05: Bulk enrichment engine — p-throttle rate limiting at 10 req/s for Bitget, 0.5 req/s for CoinGecko; progress tracking; NULL price status endpoint (PRCE-05, PRCE-07)
-- [ ] 03-06: Price enrichment API + UI — POST /api/prices/enrich, GET /api/prices/status; frontend status indicator for unresolved prices; unit tests for all three resolution strategies including DST edge cases (TEST-04)
+- [ ] 03-01-PLAN.md — Schema migration + deps + timezone/symbol utils (Wave 1)
+- [ ] 03-02-PLAN.md — Bitget candle client + price cache layer (Wave 2)
+- [ ] 03-03-PLAN.md — CoinGecko fallback client (Wave 2)
+- [ ] 03-04-PLAN.md — Resolution strategy + enrichment engine (Wave 3)
+- [ ] 03-05-PLAN.md — Price enrichment API + UI + integration (Wave 4)
 
 ---
 
@@ -227,12 +226,12 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + CI/CD | 7/7 | ✓ Complete | 2026-03-21 |
-| 2. CSV Import Pipeline | 8/8 | ✓ Complete | 2026-03-22 |
-| 3. EUR Price Enrichment | 0/6 | Not started | - |
+| 1. Foundation + CI/CD | 7/7 | Complete | 2026-03-21 |
+| 2. CSV Import Pipeline | 8/8 | Complete | 2026-03-22 |
+| 3. EUR Price Enrichment | 0/5 | Planned | - |
 | 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
 | 5. Dashboard + Transaction UI | 0/7 | Not started | - |
 | 6. Steuerreport + PDF Export | 0/7 | Not started | - |
 | 7. Exchange API + Security | 0/7 | Not started | - |
 
-**Total plans:** 50 across 7 phases
+**Total plans:** 49 across 7 phases
