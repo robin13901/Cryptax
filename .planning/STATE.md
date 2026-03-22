@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 3 complete — ready for Phase 4
+**Current focus:** Phase 4 in progress — FIFO Engine + Tax Calculation
 
 ## Current Position
 
-Phase: 3 of 7 (EUR Price Enrichment) — Complete
-Plan: 5 of 5 in current phase
-Status: Complete — all plans executed, verified (5/5 criteria passed)
-Last activity: 2026-03-22 — Phase 3 verified and closed
+Phase: 4 of 7 (FIFO Engine + Tax Calculation) — In progress
+Plan: 1 of ? in current phase
+Status: In progress — 04-01 complete
+Last activity: 2026-03-22 — Completed 04-01-PLAN.md (engine types + null-price gate)
 
-Progress: [████████░░] 42% (21/49 plans complete)
+Progress: [████████░░] 43% (22/49 plans complete)
 
 ## Performance Metrics
 
@@ -30,6 +30,7 @@ Progress: [████████░░] 42% (21/49 plans complete)
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
+| 04-fifo-engine-tax-calculation | 1/? IN PROGRESS | ~14 min | ~14 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -62,6 +63,10 @@ Recent decisions affecting current work:
 - 03-05: POST /api/prices/enrich is fire-and-forget from frontend
 - 03-05: Auto-migration via drizzle-orm migrate() in client.ts on startup
 - 03-05: Concurrent enrichment guard: module-level isRunning flag, returns 409
+- 04-01: HALTEFRIST_DAYS=366 — conservative: Jan 1 buy is tax-free Jan 2 next year (366 days elapsed)
+- 04-01: Decimal import in NodeNext must be named export { Decimal } from 'decimal.js' — default/re-export resolves to namespace only
+- 04-01: checkNullPrices returns empty array on pass, array of NullPriceError on failure — caller decides abort
+- 04-01: SKIPPABLE_CANONICAL_TYPES = transfer_in/out, earn_withdrawal, fee, unknown — intentionally excluded from NULL price check
 
 ### Pending Todos
 
@@ -69,13 +74,13 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 4 research flag: Complex FIFO edge cases and §22 vs §23 earn income classification — consider `/gsd:research-phase` before Phase 4 planning
+- Phase 4 research flag: Complex FIFO edge cases and §22 vs §23 earn income classification — consider `/gsd:research-phase` before Phase 4 planning (04-01 foundation complete, proceed with planning)
 - Phase 7 research flag: ccxt Bitget v2 deep history pagination is untested
-- German tax law: Haltefrist exact day count (>=365) and 10-year staking Haltefrist (1-year used per mainstream tools) — Steuerberater review recommended
+- German tax law: Haltefrist exact day count — RESOLVED: using 366 days (conservative interpretation per 04-01)
 - Migration workflow: After `npm run db:generate`, manually add STRICT to new CREATE TABLE statements
 
 ## Session Continuity
 
-Last session: 2026-03-22
-Stopped at: Phase 3 complete — all 5 plans executed, verified, state updated
+Last session: 2026-03-22T21:22:28Z
+Stopped at: Completed 04-01-PLAN.md (engine types, HALTEFRIST_DAYS=366, null-price gate)
 Resume file: None
