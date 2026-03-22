@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 2 complete — ready for Phase 3
+**Current focus:** Phase 3 in progress — Plan 1 complete
 
 ## Current Position
 
-Phase: 2 of 7 (CSV Import Pipeline) — Complete
-Plan: 8 of 8 in current phase
-Status: Complete — all plans executed, verified (4/5 criteria passed, 1 low-severity gap noted)
-Last activity: 2026-03-22 — Phase 2 verified and closed
+Phase: 3 of 7 (EUR Price Enrichment) — In progress
+Plan: 1 of 8 in current phase
+Status: In progress — plan 03-01 executed, committed
+Last activity: 2026-03-22 — Completed 03-01-PLAN.md
 
-Progress: [████████░░] 32% (16/50 plans complete)
+Progress: [████████░░] 34% (17/50 plans complete)
 
 ## Performance Metrics
 
@@ -29,6 +29,7 @@ Progress: [████████░░] 32% (16/50 plans complete)
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
+| 03-eur-price-enrichment | 1/8 IN PROGRESS | ~11 min | ~11 min |
 
 **Recent Trend:**
 - Last 5 plans: 5 min
@@ -105,6 +106,11 @@ Recent decisions affecting current work:
 - 02-08: Backend dev server creates cryptax.db in packages/backend/ (its CWD), separate from repo-root DB — migrations must be applied to both
 - 02-08: POST /api/import/csv wrapped in try-catch with structured JSON error response (prevents silent 500 errors)
 
+- 03-01: date-fns-tz fromZonedTime spring-forward behaviour: treats non-existent 02:30 Berlin as 00:30 UTC (library resolves pre-gap equivalent, not CET+1h as naively expected)
+- 03-01: date-fns-tz fromZonedTime fall-back ambiguity: resolves 02:30 Berlin to CET second occurrence (01:30 UTC, not CEST first occurrence at 00:30 UTC)
+- 03-01: In-memory test migration lists must include all SQL files — each new migration requires updating insert.test.ts, orchestrator.test.ts, routes/import.test.ts migration arrays
+- 03-01: prices/ module placed in packages/backend/src/prices/ — all Phase 3 pure-function utilities live here
+
 ### Pending Todos
 
 None yet.
@@ -120,5 +126,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-22
-Stopped at: Phase 2 complete — all 8 plans executed, verified, state updated
+Stopped at: Completed 03-01-PLAN.md
 Resume file: None
