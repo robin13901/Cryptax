@@ -45,10 +45,10 @@ export function calculateSpotTax(consumptions: ConsumptionRecord[]): SpotTaxResu
   const results: SpotTaxResult[] = [];
 
   for (const [taxYear, records] of byYear) {
-    let totalGains = ZERO;       // taxable gains (haltefristMet=false, gainLoss > 0)
-    let totalLosses = ZERO;      // taxable losses (haltefristMet=false, gainLoss < 0) — stored negative
-    let taxFreeGain = ZERO;      // tax-exempt gains (haltefristMet=true, gainLoss > 0)
-    let totalFees = ZERO;        // all fees for the year (informational)
+    let totalGains = ZERO; // taxable gains (haltefristMet=false, gainLoss > 0)
+    let totalLosses = ZERO; // taxable losses (haltefristMet=false, gainLoss < 0) — stored negative
+    let taxFreeGain = ZERO; // tax-exempt gains (haltefristMet=true, gainLoss > 0)
+    let totalFees = ZERO; // all fees for the year (informational)
     const sellIds = new Set<number>();
 
     for (const record of records) {

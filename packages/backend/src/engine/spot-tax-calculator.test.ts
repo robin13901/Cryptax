@@ -59,10 +59,10 @@ describe('calculateSpotTax', () => {
     expect(result).toHaveLength(1);
     const year = result[0];
     expect(year.taxYear).toBe(2024);
-    expect(year.totalGainsEur).toBe('800');   // 500 + 300
-    expect(year.totalLossesEur).toBe('-100');  // -100
-    expect(year.netGainEur).toBe('700');        // 800 - 100
-    expect(year.totalFeesEur).toBe('18');       // 10 + 5 + 3
+    expect(year.totalGainsEur).toBe('800'); // 500 + 300
+    expect(year.totalLossesEur).toBe('-100'); // -100
+    expect(year.netGainEur).toBe('700'); // 800 - 100
+    expect(year.totalFeesEur).toBe('18'); // 10 + 5 + 3
   });
 
   it('separates tax-free gains (Haltefrist met)', () => {
@@ -84,7 +84,7 @@ describe('calculateSpotTax', () => {
     expect(result).toHaveLength(1);
     const year = result[0];
     expect(year.taxFreeGainEur).toBe('5000');
-    expect(year.totalGainsEur).toBe('200');   // only taxable gains
+    expect(year.totalGainsEur).toBe('200'); // only taxable gains
     expect(year.totalLossesEur).toBe('0');
     expect(year.netGainEur).toBe('200');
     // Net gain 200 <= 1000 → Freigrenze applies
@@ -106,7 +106,7 @@ describe('calculateSpotTax', () => {
     const year = result[0];
     expect(year.taxFreeGainEur).toBe('0');
     expect(year.totalGainsEur).toBe('2000');
-    expect(year.taxableAmountEur).toBe('2000');  // > 1000, full amount taxable
+    expect(year.taxableAmountEur).toBe('2000'); // > 1000, full amount taxable
   });
 
   it('Haltefrist boundary: 366 days IS tax-free', () => {
@@ -123,7 +123,7 @@ describe('calculateSpotTax', () => {
     expect(result).toHaveLength(1);
     const year = result[0];
     expect(year.taxFreeGainEur).toBe('2000');
-    expect(year.totalGainsEur).toBe('0');    // no taxable gains
+    expect(year.totalGainsEur).toBe('0'); // no taxable gains
     expect(year.taxableAmountEur).toBe('0'); // net 0 → Freigrenze
   });
 
@@ -227,7 +227,7 @@ describe('calculateSpotTax', () => {
     expect(result).toHaveLength(2);
     expect(result[0].taxYear).toBe(2024);
     expect(result[1].taxYear).toBe(2025);
-    expect(result[0].taxableAmountEur).toBe('0');    // 500 <= 1000
+    expect(result[0].taxableAmountEur).toBe('0'); // 500 <= 1000
     expect(result[1].taxableAmountEur).toBe('1200'); // > 1000, full amount
   });
 

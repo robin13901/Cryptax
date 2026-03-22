@@ -735,9 +735,7 @@ describe('Scenario 6: Haltefrist exact boundary — 365 vs 366 days', () => {
 
     // Tax-free: private_sale summary taxableAmountEur = 0
     const summaries = db.select().from(taxSummaries).all();
-    const privateSale = summaries.find(
-      (s) => s.bucket === 'private_sale' && s.taxYear === 2025
-    );
+    const privateSale = summaries.find((s) => s.bucket === 'private_sale' && s.taxYear === 2025);
     expect(privateSale?.taxableAmountEur).toBe('0');
   });
 });
