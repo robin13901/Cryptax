@@ -122,17 +122,17 @@ Plans:
 4. The engine refuses to run (returns an error) if any transaction has a NULL EUR price, and the error message identifies which transactions are missing prices.
 5. Truncating derived tables and rerunning the engine on the same transaction set produces byte-identical tax summaries both times (stateless re-runnable idempotency).
 
-**Estimated Plans:** 8
+**Plans:** 8 plans in 5 waves
 
 Plans:
-- [ ] 04-01: FIFO lot engine core — FifoEngine class; lot creation on buy (asset-isolated); lot consumption on sell with `lot.remaining` (not `original_amount`); partial lot splitting (TAXC-01, TAXC-02)
-- [ ] 04-02: Haltefrist + spot tax calculator — per-lot >=365-day calculation; §23 EStG tax-free vs. taxable split; Freigrenze cliff at 1.000 EUR; fee deduction as Werbungskosten (TAXC-03, TAXC-04, TAXC-07)
-- [ ] 04-03: Futures P&L engine — FuturesPnlEngine; aggregate signed realized P&L per position; Abgeltungssteuer 26.375% on all realized gains; no Haltefrist, no Freigrenze; strict isolation from FIFO (TAXC-05)
-- [ ] 04-04: Earn income engine — EarnIncomeEngine; §22 Nr. 3 EStG income at EUR value at Zufluss timestamp; 256 EUR Freigrenze cliff; new FIFO lots created for received coins (TAXC-06)
-- [ ] 04-05: Tax bucket isolation + orchestrator — TaxCalculator orchestrating all three engines; §23/§20/§22 buckets never mixed; cross-year FIFO lot continuity (2024 lots feed 2025 disposals) (TAXC-08, TAXC-09)
-- [ ] 04-06: Engine API + stateless re-run — POST /api/engine/run; truncate derived tables and recompute from transactions; NULL price gate (TAXC-10, TAXC-11)
-- [ ] 04-07: FIFO engine unit tests — golden master tests for known tax scenarios; Freigrenze boundary tests (999.99, 1000.00, 1000.01); Haltefrist boundary tests (364, 365, 366 days); fee deduction tests (TEST-01, TEST-03)
-- [ ] 04-08: Property-based FIFO tests — fast-check property testing for FIFO invariants: lot.remaining never negative, total consumed never exceeds total acquired per asset, bucket totals are additive across years
+- [ ] 04-01-PLAN.md — Engine types + null-price gate + HALTEFRIST_DAYS fix (Wave 1)
+- [ ] 04-02-PLAN.md — FIFO lot engine core: lot creation, consumption, partial splits (Wave 2, TDD)
+- [ ] 04-03-PLAN.md — Futures P&L engine: realized P&L, fees, isolation from FIFO (Wave 2, TDD)
+- [ ] 04-04-PLAN.md — Spot tax calculator: Haltefrist, Freigrenze cliff, fee deduction (Wave 3, TDD)
+- [ ] 04-05-PLAN.md — Earn income engine: income at Zufluss + FIFO lot creation (Wave 3, TDD)
+- [ ] 04-06-PLAN.md — Tax calculator orchestrator: wires all engines, DB writes, summaries (Wave 4)
+- [ ] 04-07-PLAN.md — Engine API route: POST /api/engine/run + shared response types (Wave 5)
+- [ ] 04-08-PLAN.md — Golden master tests + fast-check property-based FIFO invariant tests (Wave 5)
 
 ---
 
