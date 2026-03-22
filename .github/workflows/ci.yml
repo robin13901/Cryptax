@@ -66,8 +66,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build shared package first
-        run: npm run build --workspace=packages/shared
+      - name: TypeScript build (tsc --build)
+        run: npx tsc --build
 
-      - name: Build remaining packages
-        run: npm run build --workspace=packages/backend --workspace=packages/frontend
+      - name: Vite build frontend
+        run: npm run build --workspace=packages/frontend
