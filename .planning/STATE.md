@@ -111,6 +111,12 @@ Recent decisions affecting current work:
 - 03-01: In-memory test migration lists must include all SQL files — each new migration requires updating insert.test.ts, orchestrator.test.ts, routes/import.test.ts migration arrays
 - 03-01: prices/ module placed in packages/backend/src/prices/ — all Phase 3 pure-function utilities live here
 
+- 03-02: Fetch DI pattern: fetchBitgetCandleClose accepts optional fetchFn parameter (defaults to globalThis.fetch) — avoids global fetch mocking in tests
+- 03-02: createBitgetClient accepts optional fetchFn and propagates it into the p-throttle closure — DI survives the throttle wrapper
+- 03-02: fetchBitgetCandleClose wraps entire body in try-catch and returns null on any error — callers never need to handle exceptions
+- 03-02: Closest-candle selection by |candle[0] - targetMs| linear scan over limit=5 results — simple and correct
+- 03-02: lookupPriceCache returns first matching row regardless of source — resolution strategy callers do source-specific lookup when needed
+- 03-02: upsertPriceCache uses onConflictDoNothing on unique key (symbol, timestamp, source) — silent dedup, no error on duplicate
 - 03-03: p-throttle v8 ESM static import works correctly — no dynamic import needed in Node ESM context
 - 03-03: Decimal.toString() (not toFixed()) for CoinGecko price strings — no trailing zeros; toFixed() reserved for DB storage
 - 03-03: SYMBOL_OVERRIDES exported as separate constant (not baked into loadCoinGeckoSymbolMap) — enrichment orchestrator applies at lookup time
@@ -132,5 +138,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-22
-Stopped at: Completed 03-03-PLAN.md
+Stopped at: Completed 03-02-PLAN.md (03-03 also previously complete)
 Resume file: None
