@@ -1,0 +1,26 @@
+name-template: "v$RESOLVED_VERSION"
+tag-template: "v$RESOLVED_VERSION"
+categories:
+  - title: "Features"
+    labels: ["feature", "enhancement"]
+  - title: "Bug Fixes"
+    labels: ["fix", "bug"]
+  - title: "Infrastructure"
+    labels: ["ci", "database", "shared", "testing"]
+  - title: "Frontend"
+    labels: ["frontend"]
+  - title: "Backend"
+    labels: ["backend"]
+change-template: "- $TITLE (#$NUMBER)"
+version-resolver:
+  major:
+    labels: ["major"]
+  minor:
+    labels: ["feature"]
+  patch:
+    labels: ["fix", "bug", "ci"]
+  default: patch
+template: |
+  ## Changes
+
+  $CHANGES

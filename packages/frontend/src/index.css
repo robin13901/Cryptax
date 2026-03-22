@@ -1,0 +1,28 @@
+:root {
+  color-scheme: dark;
+  --crypto-blue: #0070f2;
+  --crypto-navy: #354a5f;
+  --crypto-dark: #1a2332;
+  --crypto-green: #5fdc8a;
+  --crypto-red: #e50000;
+  --crypto-orange: #e9730c;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--crypto-dark);
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+}

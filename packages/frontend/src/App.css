@@ -1,0 +1,238 @@
+.app {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.floating-lines-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  will-change: transform;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.header h1 {
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.header .subtitle {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.tab-bar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.main {
+  flex: 1;
+  position: relative;
+}
+
+/* Navigation pills */
+.nav-pills {
+  display: flex;
+  justify-content: center;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.nav-pill {
+  padding: 0.4rem 1rem;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.nav-pill:hover {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav-pill-active {
+  background: rgba(0, 112, 242, 0.35);
+  color: #fff;
+  font-weight: 600;
+}
+
+.nav-pill-active:hover {
+  background: rgba(0, 112, 242, 0.5);
+}
+
+/* KPI cards grid */
+.kpi-grid {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 0.8rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  min-width: 130px;
+}
+
+.kpi-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.kpi-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kpi-sub {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Charts grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.charts-row {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+/* Placeholder / empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.9rem;
+  gap: 0.5rem;
+}
+
+.empty-state-icon {
+  font-size: 2.5rem;
+  opacity: 0.4;
+}
+
+/* Buttons */
+.btn-primary {
+  background: rgba(0, 112, 242, 0.45);
+  border: 1px solid rgba(0, 112, 242, 0.6);
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1.5rem;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: rgba(0, 112, 242, 0.65);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.45rem 1.25rem;
+  transition: background 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-success {
+  background: rgba(46, 160, 67, 0.3);
+  border: 1px solid rgba(46, 160, 67, 0.55);
+  border-radius: 8px;
+  color: #5cd67b;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1.25rem;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.btn-success:hover {
+  background: rgba(46, 160, 67, 0.5);
+  color: #ffffff;
+}
+
+/* Transactions tab import area */
+.transactions-import-area {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}

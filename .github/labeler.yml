@@ -1,0 +1,29 @@
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: "packages/frontend/**"
+
+backend:
+  - changed-files:
+      - any-glob-to-any-file: "packages/backend/**"
+
+shared:
+  - changed-files:
+      - any-glob-to-any-file: "packages/shared/**"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+database:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "packages/backend/drizzle/**"
+          - "packages/backend/src/db/**"
+          - "drizzle.config.ts"
+
+testing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.test.ts"
+          - "**/*.test.tsx"
+          - "vitest.config.ts"
