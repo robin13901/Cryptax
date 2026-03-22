@@ -47,3 +47,4 @@ export type {
   ManualPriceEntry,
   PriceStatusResponse,
 } from './types/price.js';
+export type { EngineRunResponse } from './types/engine.js';
