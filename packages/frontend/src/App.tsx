@@ -5,6 +5,7 @@ import FloatingLines from './components/FloatingLines/FloatingLines';
 import GlassSurface from './components/GlassSurface/GlassSurface';
 import ImportDropzone from './components/ImportDropzone/ImportDropzone';
 import ImportSummary from './components/ImportSummary/ImportSummary';
+import PriceStatus from './components/PriceStatus/PriceStatus';
 import './App.css';
 
 type TabId = 'dashboard' | 'transactions' | 'report';
@@ -152,6 +153,9 @@ function App() {
                   ) : (
                     <ImportDropzone onImportComplete={setImportResponse} />
                   )}
+                </div>
+                <div className="transactions-price-area">
+                  <PriceStatus />
                 </div>
               </motion.div>
             )}

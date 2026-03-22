@@ -125,7 +125,7 @@ export function registerPriceRoutes(app: Hono) {
         failures: result.failures.map((f) => ({
           transactionId: f.transactionId,
           symbol: f.symbol,
-          reason: f.reason,
+          reason: f.reason ?? 'unknown',
         })),
       };
 
@@ -165,7 +165,7 @@ export function registerPriceRoutes(app: Hono) {
             failures: result.failures.map((f) => ({
               transactionId: f.transactionId,
               symbol: f.symbol,
-              reason: f.reason,
+              reason: f.reason ?? 'unknown',
             })),
           }),
         });
