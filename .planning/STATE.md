@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 4 of 7 (FIFO Engine + Tax Calculation) — In progress
-Plan: 1 of ? in current phase
-Status: In progress — 04-01 complete
-Last activity: 2026-03-22 — Completed 04-01-PLAN.md (engine types + null-price gate)
+Plan: 2 of 8 in current phase
+Status: In progress — 04-02 complete
+Last activity: 2026-03-22 — Completed 04-02-PLAN.md (FIFO lot engine core)
 
-Progress: [████████░░] 43% (22/49 plans complete)
+Progress: [████████░░] 45% (23/49 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 21
+- Total plans completed: 23
 - Average duration: ~7 min
-- Total execution time: ~150 min
+- Total execution time: ~156 min
 
 **By Phase:**
 
@@ -30,7 +30,7 @@ Progress: [████████░░] 43% (22/49 plans complete)
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
-| 04-fifo-engine-tax-calculation | 1/? IN PROGRESS | ~14 min | ~14 min |
+| 04-fifo-engine-tax-calculation | 2/8 IN PROGRESS | ~20 min | ~10 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -67,6 +67,9 @@ Recent decisions affecting current work:
 - 04-01: Decimal import in NodeNext must be named export { Decimal } from 'decimal.js' — default/re-export resolves to namespace only
 - 04-01: checkNullPrices returns empty array on pass, array of NullPriceError on failure — caller decides abort
 - 04-01: SKIPPABLE_CANONICAL_TYPES = transfer_in/out, earn_withdrawal, fee, unknown — intentionally excluded from NULL price check
+- 04-02: Fee conversion uses eurPrice multiplier for both spot_tx and spot_order (feeEur = fee * eurPrice) — consistent approximation
+- 04-02: Excess sell generates both consumption records AND sellsWithoutLots entry — partial match + error flag
+- 04-02: FIFO tiebreak: buys (key=0) before sells (key=1) at same timestamp
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T21:22:28Z
-Stopped at: Completed 04-01-PLAN.md (engine types, HALTEFRIST_DAYS=366, null-price gate)
+Last session: 2026-03-22T21:32:29Z
+Stopped at: Completed 04-02-PLAN.md (FIFO lot engine core, TDD RED+GREEN, 378 tests pass)
 Resume file: None
