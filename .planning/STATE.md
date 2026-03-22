@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 4 of 7 (FIFO Engine + Tax Calculation) — In progress
-Plan: 5 of 8 in current phase
-Status: In progress — 04-05 complete
-Last activity: 2026-03-22 — Completed 04-05-PLAN.md (Earn income engine)
+Plan: 6 of 8 in current phase
+Status: In progress — 04-06 complete
+Last activity: 2026-03-22 — Completed 04-06-PLAN.md (TaxCalculator orchestrator)
 
-Progress: [████████░░] 53% (26/49 plans complete)
+Progress: [████████░░] 55% (27/49 plans complete)
 
 ## Performance Metrics
 
@@ -30,7 +30,7 @@ Progress: [████████░░] 53% (26/49 plans complete)
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
-| 04-fifo-engine-tax-calculation | 5/8 IN PROGRESS | ~38 min | ~8 min |
+| 04-fifo-engine-tax-calculation | 6/8 IN PROGRESS | ~45 min | ~8 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -80,6 +80,11 @@ Recent decisions affecting current work:
 - 04-05: earn_withdrawal skipped with specific reason (distinguishes from generic non-earn skip)
 - 04-05: FIFO lot feeEur = ZERO — earn has no acquisition cost beyond the fair market value
 - 04-05: costPerUnitEur = eurPrice directly — cost basis is purely fair market value at receipt (no fee adjustment)
+- 04-06: Earn lots fed into FIFO via synthetic buy transactions (canonicalType='buy') — earn engine still runs separately for §22 income records
+- 04-06: §23 estimatedTaxEur = 0 — marginal rate unknown; only Abgeltungssteuer (futures, 26.375%) is computable without user tax data
+- 04-06: Earn Freigrenze cliff at 256 EUR applied at orchestrator level per-year aggregate
+- 04-06: Futures net P&L = sum(realizedPnlEur) - sum(feeEur) per year; only positive net is taxable (no Freigrenze)
+- 04-06: DB writes inside single db.transaction() — atomic: either all 5 tables written or none
 
 ### Pending Todos
 
@@ -94,6 +99,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T21:40:22Z
-Stopped at: Completed 04-05-PLAN.md (Earn income engine, TDD RED+GREEN, 430 tests pass)
+Last session: 2026-03-22T21:51:27Z
+Stopped at: Completed 04-06-PLAN.md (TaxCalculator orchestrator, 409 tests pass)
 Resume file: None
