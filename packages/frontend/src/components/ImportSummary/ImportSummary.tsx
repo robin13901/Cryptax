@@ -51,7 +51,7 @@ function FileRow({ file }: { file: PerFileResult }) {
 
       {expanded && hasErrors && (
         <div className="import-summary__errors">
-          {file.errors.map((err) => (
+          {file.errors.map((err: { row: number; field: string; message: string }) => (
             <div key={`${err.row}-${err.field}`} className="import-summary__error-row">
               <span className="import-summary__error-loc">
                 Row {err.row}, {err.field}
@@ -110,7 +110,7 @@ function ImportSummary({ response, onDismiss }: ImportSummaryProps) {
 
       {/* Per-file breakdown */}
       <div className="import-summary__files">
-        {results.map((file) => (
+        {results.map((file: PerFileResult) => (
           <FileRow key={`${file.batchId}-${file.filename}`} file={file} />
         ))}
       </div>

@@ -66,5 +66,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build all packages
-        run: npm run build --workspaces
+      - name: Build shared package first
+        run: npm run build --workspace=packages/shared
+
+      - name: Build remaining packages
+        run: npm run build --workspace=packages/backend --workspace=packages/frontend

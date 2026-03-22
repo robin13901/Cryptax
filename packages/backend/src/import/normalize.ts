@@ -125,6 +125,8 @@ function getRawType(row: Record<string, string>, format: SourceType): string {
     case 'futures_order':
       // futures_order uses Direction column as rawType (see 02-05 decision)
       return lower.direction ?? '';
+    default:
+      return '';
   }
 }
 
@@ -199,6 +201,17 @@ function extractFields(row: Record<string, string>, format: SourceType): Extract
         fee: '0', // futures_order has no fee column
         totalValue: r['trading volume'] ?? '0',
         tradedAt: r.date ?? '',
+      };
+
+    default:
+      return {
+        orderId: '',
+        symbol: '',
+        price: '0',
+        amount: '0',
+        fee: '0',
+        totalValue: '0',
+        tradedAt: '',
       };
   }
 }

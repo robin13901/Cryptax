@@ -11,15 +11,25 @@ on:
 jobs:
   claude-review:
     if: |
-      github.event_name == 'pull_request' ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request)
+      (github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request))
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: write
       issues: write
     steps:
+      - name: Check for API key
+        id: check-key
+        run: |
+          if [ -z "${{ secrets.ANTHROPIC_API_KEY }}" ]; then
+            echo "has_key=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_key=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: anthropics/claude-code-action@v1
+        if: steps.check-key.outputs.has_key == 'true'
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: |
@@ -31,3 +41,7 @@ jobs:
             5. SQLite TEXT columns for all monetary values (matches MoneyString = string convention)
             6. FIFO correctness: Transaction ordering by date must be preserved for tax calculations
             Provide constructive feedback. Be concise. Focus on correctness over style.
+
+      - name: Skip notice
+        if: steps.check-key.outputs.has_key == 'false'
+        run: echo "::notice::Skipping Claude review — ANTHROPIC_API_KEY secret not configured"
