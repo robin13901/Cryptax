@@ -5,30 +5,30 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 2 — Transaction Ingestion (Phase 1 complete)
+**Current focus:** Phase 2 complete — ready for Phase 3
 
 ## Current Position
 
-Phase: 2 of 7 (CSV Import Pipeline) — In progress
-Plan: 7 of 8 in current phase
-Status: In progress — Wave 1+2+3 complete, 02-07 complete
-Last activity: 2026-03-21 — Completed 02-07-PLAN.md (format detection, type map, normalization, 210 tests)
+Phase: 2 of 7 (CSV Import Pipeline) — Complete
+Plan: 8 of 8 in current phase
+Status: Complete — all plans executed, verified (4/5 criteria passed, 1 low-severity gap noted)
+Last activity: 2026-03-22 — Phase 2 verified and closed
 
-Progress: [█████████░] 30% (15/50 plans complete)
+Progress: [████████░░] 32% (16/50 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 15
+- Total plans completed: 16
 - Average duration: ~5 min
-- Total execution time: ~82 min
+- Total execution time: ~90 min
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
-| 02-csv-import-pipeline | 7/8 | ~38 min | ~5 min |
+| 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 
 **Recent Trend:**
 - Last 5 plans: 5 min
@@ -102,6 +102,9 @@ Recent decisions affecting current work:
 - 02-07: price and totalValue default to '0' (not null) — transactions table has NOT NULL on both columns; Phase 3+ will enrich with EUR price
 - 02-07: deriveSide: close_short -> 'buy', close_long -> 'sell' — closing a short = buying back the contract
 
+- 02-08: Backend dev server creates cryptax.db in packages/backend/ (its CWD), separate from repo-root DB — migrations must be applied to both
+- 02-08: POST /api/import/csv wrapped in try-catch with structured JSON error response (prevents silent 500 errors)
+
 ### Pending Todos
 
 None yet.
@@ -112,9 +115,10 @@ None yet.
 - Phase 7 research flag: ccxt Bitget v2 deep history pagination is untested — consider `/gsd:research-phase` before Phase 7 planning
 - German tax law: Haltefrist exact day count (>=365 interpretation used) and 10-year staking Haltefrist (1-year used per mainstream tools) — Steuerberater review recommended before relying on output
 - Migration workflow: After any future `npm run db:generate`, developer MUST manually add STRICT to new CREATE TABLE statements before running `npm run db:migrate`
+- Phase 2 gap (low severity): Rows with unrecognized type strings (canonicalType='unknown') are inserted silently rather than flagged in import summary. All 22 current Bitget types are mapped, so this only affects future Bitget type additions.
 
 ## Session Continuity
 
-Last session: 2026-03-21T21:06:29Z
-Stopped at: 02-07-PLAN.md complete — format detection, canonical type map, normalization, barrel index (210 tests, 12 min)
+Last session: 2026-03-22
+Stopped at: Phase 2 complete — all 8 plans executed, verified, state updated
 Resume file: None

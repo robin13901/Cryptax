@@ -13,7 +13,7 @@ Cryptax is built in 7 phases following a strict data dependency chain: foundatio
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + CI/CD** — Monorepo, SQLite schema, Hono server skeleton, CI pipeline, Decimal.js enforced from day one
-- [ ] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
+- [x] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
 - [ ] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
 - [ ] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
 - [ ] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
@@ -70,14 +70,14 @@ Plans:
 **Plans:** 8 plans in 4 waves
 
 Plans:
-- [ ] 02-01-PLAN.md — CSV parsing infrastructure: schema migration, csv-parse install, shared types (Wave 1)
-- [ ] 02-02-PLAN.md — Spot transactions parser with TDD (Wave 2)
-- [ ] 02-03-PLAN.md — Futures transactions parser with TDD (Wave 2)
-- [ ] 02-04-PLAN.md — Spot order history parser with TDD (Wave 2)
-- [ ] 02-05-PLAN.md — Futures order history parser with TDD (Wave 2)
-- [ ] 02-06-PLAN.md — On-chain earn parser with TDD (Wave 2)
-- [ ] 02-07-PLAN.md — Format detector + canonical type map + normalizer (Wave 3)
-- [ ] 02-08-PLAN.md — Import API + UI: insert layer, orchestrator, routes, drag & drop (Wave 4)
+- [x] 02-01-PLAN.md — CSV parsing infrastructure: schema migration, csv-parse install, shared types (Wave 1)
+- [x] 02-02-PLAN.md — Spot transactions parser with TDD (Wave 2)
+- [x] 02-03-PLAN.md — Futures transactions parser with TDD (Wave 2)
+- [x] 02-04-PLAN.md — Spot order history parser with TDD (Wave 2)
+- [x] 02-05-PLAN.md — Futures order history parser with TDD (Wave 2)
+- [x] 02-06-PLAN.md — On-chain earn parser with TDD (Wave 2)
+- [x] 02-07-PLAN.md — Format detector + canonical type map + normalizer (Wave 3)
+- [x] 02-08-PLAN.md — Import API + UI: insert layer, orchestrator, routes, drag & drop (Wave 4)
 
 ---
 
@@ -228,7 +228,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + CI/CD | 7/7 | ✓ Complete | 2026-03-21 |
-| 2. CSV Import Pipeline | 0/8 | Planned | - |
+| 2. CSV Import Pipeline | 8/8 | ✓ Complete | 2026-03-22 |
 | 3. EUR Price Enrichment | 0/6 | Not started | - |
 | 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
 | 5. Dashboard + Transaction UI | 0/7 | Not started | - |
