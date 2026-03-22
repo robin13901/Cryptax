@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 3 in progress — Plan 1 complete
+**Current focus:** Phase 3 in progress — Plans 01 and 03 complete
 
 ## Current Position
 
 Phase: 3 of 7 (EUR Price Enrichment) — In progress
-Plan: 1 of 8 in current phase
-Status: In progress — plan 03-01 executed, committed
-Last activity: 2026-03-22 — Completed 03-01-PLAN.md
+Plan: 3 of 8 in current phase (plans 01 and 03 complete; plan 02 is price-cache DB layer)
+Status: In progress — plan 03-03 executed, committed
+Last activity: 2026-03-22 — Completed 03-03-PLAN.md
 
-Progress: [████████░░] 34% (17/50 plans complete)
+Progress: [████████░░] 36% (18/50 plans complete)
 
 ## Performance Metrics
 
@@ -29,7 +29,7 @@ Progress: [████████░░] 34% (17/50 plans complete)
 |-------|-------|-------|----------|
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
-| 03-eur-price-enrichment | 1/8 IN PROGRESS | ~11 min | ~11 min |
+| 03-eur-price-enrichment | 2/8 IN PROGRESS | ~8 min avg | ~8 min |
 
 **Recent Trend:**
 - Last 5 plans: 5 min
@@ -111,6 +111,12 @@ Recent decisions affecting current work:
 - 03-01: In-memory test migration lists must include all SQL files — each new migration requires updating insert.test.ts, orchestrator.test.ts, routes/import.test.ts migration arrays
 - 03-01: prices/ module placed in packages/backend/src/prices/ — all Phase 3 pure-function utilities live here
 
+- 03-03: p-throttle v8 ESM static import works correctly — no dynamic import needed in Node ESM context
+- 03-03: Decimal.toString() (not toFixed()) for CoinGecko price strings — no trailing zeros; toFixed() reserved for DB storage
+- 03-03: SYMBOL_OVERRIDES exported as separate constant (not baked into loadCoinGeckoSymbolMap) — enrichment orchestrator applies at lookup time
+- 03-03: loadCoinGeckoSymbolMap throws on network error — startup operation, caller must handle explicitly
+- 03-03: CoinGeckoOutOfRangeError thrown only for error_code 10012 — all other failures return null (never throw)
+
 ### Pending Todos
 
 None yet.
@@ -126,5 +132,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-22
-Stopped at: Completed 03-01-PLAN.md
+Stopped at: Completed 03-03-PLAN.md
 Resume file: None
