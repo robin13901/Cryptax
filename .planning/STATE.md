@@ -10,18 +10,18 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 4 of 7 (FIFO Engine + Tax Calculation) — In progress
-Plan: 2 of 8 in current phase
-Status: In progress — 04-02 complete
-Last activity: 2026-03-22 — Completed 04-02-PLAN.md (FIFO lot engine core)
+Plan: 3 of 8 in current phase
+Status: In progress — 04-03 complete
+Last activity: 2026-03-22 — Completed 04-03-PLAN.md (Futures P&L engine)
 
-Progress: [████████░░] 45% (23/49 plans complete)
+Progress: [████████░░] 47% (24/49 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 23
+- Total plans completed: 24
 - Average duration: ~7 min
-- Total execution time: ~156 min
+- Total execution time: ~163 min
 
 **By Phase:**
 
@@ -30,7 +30,7 @@ Progress: [████████░░] 45% (23/49 plans complete)
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
-| 04-fifo-engine-tax-calculation | 2/8 IN PROGRESS | ~20 min | ~10 min |
+| 04-fifo-engine-tax-calculation | 3/8 IN PROGRESS | ~27 min | ~9 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -70,6 +70,9 @@ Recent decisions affecting current work:
 - 04-02: Fee conversion uses eurPrice multiplier for both spot_tx and spot_order (feeEur = fee * eurPrice) — consistent approximation
 - 04-02: Excess sell generates both consumption records AND sellsWithoutLots entry — partial match + error flag
 - 04-02: FIFO tiebreak: buys (key=0) before sells (key=1) at same timestamp
+- 04-03: Futures opens (open_long/short) skipped — opening a position is not a taxable event under German law
+- 04-03: Fee sign convention: feeEur stored as positive abs() value; source amounts are negative but reporting uses positive fees
+- 04-03: Set-based FUTURES_TAXABLE_TYPES guard — clean O(1) filter over switch/if chains
 
 ### Pending Todos
 
@@ -84,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T21:32:29Z
-Stopped at: Completed 04-02-PLAN.md (FIFO lot engine core, TDD RED+GREEN, 378 tests pass)
+Last session: 2026-03-22T21:33:55Z
+Stopped at: Completed 04-03-PLAN.md (Futures P&L engine, TDD RED+GREEN, 407 tests pass)
 Resume file: None
