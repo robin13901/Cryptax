@@ -198,6 +198,18 @@
 }
 
 /* Source-specific badge colours */
+.price-status__badge--self {
+  background: rgba(200, 200, 200, 0.12);
+  border: 1px solid rgba(200, 200, 200, 0.28);
+  color: rgba(200, 200, 200, 0.9);
+}
+
+.price-status__badge--csv-pair {
+  background: rgba(95, 220, 138, 0.2);
+  border: 1px solid rgba(95, 220, 138, 0.4);
+  color: #5fdc8a;
+}
+
 .price-status__badge--csv-fill {
   background: rgba(95, 220, 138, 0.15);
   border: 1px solid rgba(95, 220, 138, 0.3);

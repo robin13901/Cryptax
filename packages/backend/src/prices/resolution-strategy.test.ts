@@ -14,8 +14,11 @@ const TIMESTAMP_MINUTE = new Date(Math.floor(TARGET_MS / 60_000) * 60_000).toISO
 function makeSpotOrderEur(overrides: Partial<TransactionRow> = {}): TransactionRow {
   return {
     id: 1,
+    orderId: '1000000000000000001',
     sourceType: 'spot_order',
     symbol: 'BTC/EUR',
+    side: 'buy',
+    amount: '0.1',
     price: '65432.10',
     tradedAt: '2024-03-31 12:23:00', // Berlin CEST (+2) → 10:23 UTC
     ...overrides,
@@ -26,8 +29,11 @@ function makeSpotOrderEur(overrides: Partial<TransactionRow> = {}): TransactionR
 function makeSpotTx(overrides: Partial<TransactionRow> = {}): TransactionRow {
   return {
     id: 2,
+    orderId: '1000000000000000002',
     sourceType: 'spot_tx',
     symbol: 'BTC',
+    side: 'buy',
+    amount: '0.1',
     price: '0',
     tradedAt: '2024-03-31 12:23:00',
     ...overrides,
@@ -57,7 +63,140 @@ function makeDeps(overrides: Partial<ResolutionDeps> = {}): ResolutionDeps {
 }
 
 // ---------------------------------------------------------------------------
-// Step 1: CSV fill-price shortcut
+// Step 1: EUR self-price
+// ---------------------------------------------------------------------------
+
+describe('resolvePrice - EUR self-price', () => {
+  it('returns source "self" with eurPrice "1" for EUR transactions', async () => {
+    const deps = makeDeps();
+    const tx = makeSpotTx({ symbol: 'EUR', side: 'buy', amount: '250' });
+
+    const outcome = await resolvePrice(tx, deps);
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.result.source).toBe('self');
+    expect(outcome.result.eurPrice).toBe('1');
+
+    // No API calls or cache lookups
+    expect(deps.bitgetClient.fetchClose).not.toHaveBeenCalled();
+    expect(deps.coingeckoClient.fetchPrice).not.toHaveBeenCalled();
+    expect(deps.cache.lookup).not.toHaveBeenCalled();
+  });
+
+  it('handles lowercase "eur" symbol', async () => {
+    const deps = makeDeps();
+    const tx = makeSpotTx({ symbol: 'eur' });
+
+    const outcome = await resolvePrice(tx, deps);
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.result.source).toBe('self');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Step 2: CSV pair derivation
+// ---------------------------------------------------------------------------
+
+describe('resolvePrice - CSV pair derivation', () => {
+  it('derives COIN/USDT price from paired USDT transaction at same timestamp', async () => {
+    // Mock: the DB query returns a USDT sell at the same timestamp with close orderId
+    const mockTxTable = {
+      orderId: 'orderId',
+      amount: 'amount',
+      tradedAt: 'tradedAt',
+      symbol: 'symbol',
+      side: 'side',
+    };
+    const mockDbSelect = vi.fn().mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockReturnValue({
+          all: vi.fn().mockReturnValue([
+            { orderId: '1000000000000000011', amount: '-50' }, // USDT sell, spent 50 USDT
+          ]),
+        }),
+      }),
+    });
+    const mockDb = { select: mockDbSelect };
+
+    const deps = makeDeps({
+      db: mockDb,
+      transactionsTable: mockTxTable,
+      bitgetClient: {
+        fetchClose: vi.fn().mockImplementation((sym: string) => {
+          if (sym === 'USDTEUR') return Promise.resolve('0.92');
+          return Promise.resolve(null);
+        }),
+      },
+    });
+
+    // MOZ Buy 1234.56 — paired with USDT Sell -50 → MOZ price = 50/1234.56 USDT
+    const tx = makeSpotTx({
+      symbol: 'MOZ',
+      side: 'buy',
+      amount: '1234.56',
+      orderId: '1000000000000000010',
+      tradedAt: '2024-12-10 11:15:01',
+    });
+
+    const outcome = await resolvePrice(tx, deps);
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.result.source).toBe('csv-pair');
+    expect(outcome.result.usdtPrice).toBeDefined();
+    expect(outcome.result.usdtEurRate).toBe('0.92');
+    // 50/1234.56 * 0.92 ≈ 0.03726...
+    expect(Number(outcome.result.eurPrice)).toBeCloseTo((50 / 1234.56) * 0.92, 5);
+  });
+
+  it('skips CSV pair when no matching USDT sibling exists', async () => {
+    const mockTxTable = {
+      orderId: 'oid',
+      amount: 'amt',
+      tradedAt: 'ta',
+      symbol: 'sym',
+      side: 'sd',
+    };
+    const mockDbSelect = vi.fn().mockReturnValue({
+      from: vi.fn().mockReturnValue({
+        where: vi.fn().mockReturnValue({
+          all: vi.fn().mockReturnValue([]), // No siblings
+        }),
+      }),
+    });
+    const mockDb = { select: mockDbSelect };
+
+    const deps = makeDeps({
+      db: mockDb,
+      transactionsTable: mockTxTable,
+      // Bitget returns null for everything so we fall through to failure
+      bitgetClient: { fetchClose: vi.fn().mockResolvedValue(null) },
+    });
+
+    const tx = makeSpotTx({ symbol: 'RARE', side: 'buy', amount: '100' });
+    const outcome = await resolvePrice(tx, deps);
+
+    // Falls through to later steps (no csv-pair)
+    expect(outcome.ok).toBe(false);
+  });
+
+  it('skips CSV pair when transactionsTable is not provided', async () => {
+    const deps = makeDeps(); // No transactionsTable in deps
+    deps.bitgetClient.fetchClose = vi.fn().mockResolvedValue(null);
+
+    const tx = makeSpotTx({ symbol: 'MOZ', side: 'buy', amount: '100' });
+    const outcome = await resolvePrice(tx, deps);
+
+    // Falls through — csv-pair step skipped entirely
+    expect(outcome.ok).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Step 3: CSV fill-price shortcut
 // ---------------------------------------------------------------------------
 
 describe('resolvePrice - CSV fill-price shortcut', () => {

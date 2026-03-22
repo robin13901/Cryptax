@@ -8,6 +8,8 @@ import './PriceStatus.css';
 // ---------------------------------------------------------------------------
 
 const SOURCE_LABELS: Record<string, string> = {
+  self: 'EUR=1',
+  'csv-pair': 'CSV-Paar',
   'csv-fill': 'CSV',
   'bitget-direct': 'Bitget',
   'bitget-usdt': 'Bitget/USDT',

@@ -6,6 +6,8 @@ export type PriceSource =
   | 'bitget-direct'
   | 'bitget-usdt'
   | 'csv-fill'
+  | 'csv-pair'
+  | 'self'
   | 'coingecko'
   | 'manual'
   | null;

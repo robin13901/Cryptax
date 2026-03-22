@@ -157,8 +157,11 @@ export async function runEnrichment(
       const outcome = await resolvePrice(
         {
           id: tx.id,
+          orderId: tx.orderId,
           sourceType: tx.sourceType,
           symbol: tx.symbol,
+          side: tx.side,
+          amount: tx.amount,
           price: tx.price,
           tradedAt: tx.tradedAt,
         },
@@ -168,6 +171,7 @@ export async function runEnrichment(
           symbolMap,
           cache,
           db,
+          transactionsTable: transactions,
         }
       );
 

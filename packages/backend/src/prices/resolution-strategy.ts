@@ -1,5 +1,6 @@
 import type { PriceFailureReason, PriceSource } from '@cryptax/shared';
 import { Decimal } from '@cryptax/shared';
+import { and, eq } from 'drizzle-orm';
 import { CoinGeckoOutOfRangeError } from './coingecko-client.js';
 import type { lookupPriceCache, upsertPriceCache } from './price-cache.js';
 import { parseSymbol, usesCsvFillPrice } from './symbol-parser.js';
@@ -12,8 +13,11 @@ import { berlinToUtcMs } from './timezone.js';
 /** A transaction row as returned from the DB (minimal fields needed for resolution). */
 export interface TransactionRow {
   id: number;
+  orderId: string | null;
   sourceType: string;
   symbol: string;
+  side: string | null;
+  amount: string;
   price: string;
   tradedAt: string;
 }
@@ -22,9 +26,9 @@ export interface TransactionRow {
 export interface ResolutionResult {
   eurPrice: string;
   source: PriceSource;
-  /** USDT intermediate price (only set when source = 'bitget-usdt') */
+  /** USDT intermediate price (only set when source = 'bitget-usdt' or 'csv-pair') */
   usdtPrice?: string;
-  /** USDT/EUR rate used for conversion (only set when source = 'bitget-usdt') */
+  /** USDT/EUR rate used for conversion (only set when source = 'bitget-usdt' or 'csv-pair') */
   usdtEurRate?: string;
 }
 
@@ -58,6 +62,9 @@ export interface ResolutionDeps {
   };
   // biome-ignore lint/suspicious/noExplicitAny: Drizzle DB type is complex; any is intentional here
   db: any;
+  /** Drizzle transactions table reference for sibling queries. */
+  // biome-ignore lint/suspicious/noExplicitAny: Drizzle table type is complex
+  transactionsTable?: any;
 }
 
 // ---------------------------------------------------------------------------
@@ -73,6 +80,71 @@ function toTimestampMinute(utcMs: number): string {
   return new Date(truncated).toISOString();
 }
 
+/**
+ * Derive COIN/USDT price from a paired USDT transaction at the same timestamp.
+ *
+ * Pattern: when you buy MOZ with USDT, there are two rows at the same timestamp:
+ *   - USDT Sell -50    (spent 50 USDT)
+ *   - MOZ  Buy  1234   (received 1234 MOZ)
+ * → MOZ price = 50 / 1234 USDT
+ *
+ * Returns the USDT price as a Decimal string, or null if no matching pair found.
+ */
+function derivePriceFromPair(
+  tx: TransactionRow,
+  // biome-ignore lint/suspicious/noExplicitAny: Drizzle DB/table types are complex
+  db: any,
+  // biome-ignore lint/suspicious/noExplicitAny: Drizzle table type
+  txTable: any
+): string | null {
+  if (!tx.side || !tx.tradedAt || !tx.orderId) return null;
+
+  // Find USDT transactions at the same timestamp with the opposite side
+  const oppositeSide = tx.side === 'buy' ? 'sell' : 'buy';
+
+  const siblings = db
+    .select({
+      orderId: txTable.orderId,
+      amount: txTable.amount,
+    })
+    .from(txTable)
+    .where(
+      and(
+        eq(txTable.tradedAt, tx.tradedAt),
+        eq(txTable.symbol, 'USDT'),
+        eq(txTable.side, oppositeSide)
+      )
+    )
+    .all() as Array<{ orderId: string | null; amount: string }>;
+
+  if (siblings.length === 0) return null;
+
+  // Match by closest order_id to handle multiple pairs at the same timestamp
+  const coinOrderId = BigInt(tx.orderId);
+  let bestMatch: (typeof siblings)[0] | null = null;
+  let bestDistance = BigInt('999999999999999999');
+
+  for (const sib of siblings) {
+    if (!sib.orderId) continue;
+    const sibOrderId = BigInt(sib.orderId);
+    const distance = coinOrderId > sibOrderId ? coinOrderId - sibOrderId : sibOrderId - coinOrderId;
+    if (distance < bestDistance) {
+      bestDistance = distance;
+      bestMatch = sib;
+    }
+  }
+
+  // Safety: reject if order_id distance is unreasonably large (>100)
+  if (!bestMatch || bestDistance > 100n) return null;
+
+  const usdtAmount = new Decimal(bestMatch.amount).abs();
+  const coinAmount = new Decimal(tx.amount).abs();
+
+  if (coinAmount.isZero()) return null;
+
+  return usdtAmount.div(coinAmount).toString();
+}
+
 // ---------------------------------------------------------------------------
 // resolvePrice
 // ---------------------------------------------------------------------------
@@ -80,11 +152,13 @@ function toTimestampMinute(utcMs: number): string {
 /**
  * Resolves the EUR price for a transaction using a multi-source fallback chain:
  *
- *   1. CSV fill-price shortcut (spot_order with EUR pair)
- *   2. Price cache hit
- *   3. Bitget direct EUR (1 min → 5 min)
- *   4. Bitget USDT fallback (COIN/USDT × USDT/EUR, 1 min → 5 min)
- *   5. CoinGecko history API
+ *   1. EUR self-price (EUR transactions always = 1.0 EUR)
+ *   2. CSV pair derivation (derive COIN/USDT from paired tx, then × USDT/EUR)
+ *   3. CSV fill-price shortcut (spot_order with EUR pair)
+ *   4. Price cache hit
+ *   5. Bitget USDT fallback (COIN/USDT × USDT/EUR, 1 min → 5 min)
+ *   6. Bitget direct EUR (1 min → 5 min)
+ *   7. CoinGecko history API
  *
  * Never throws. Returns ResolutionOutcome.
  */
@@ -93,9 +167,59 @@ export async function resolvePrice(
   deps: ResolutionDeps
 ): Promise<ResolutionOutcome> {
   const { bitgetClient, coingeckoClient, symbolMap, cache, db } = deps;
+  const txTable = deps.transactionsTable;
 
   // -------------------------------------------------------------------------
-  // Step 1: CSV fill-price shortcut
+  // Step 1: EUR self-price — EUR is always worth 1.0 EUR
+  // -------------------------------------------------------------------------
+  if (tx.symbol.toUpperCase() === 'EUR') {
+    return { ok: true, result: { eurPrice: '1', source: 'self' } };
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 2: CSV pair derivation — derive price from paired USDT transaction
+  // -------------------------------------------------------------------------
+  if (txTable) {
+    const usdtPrice = derivePriceFromPair(tx, db, txTable);
+    if (usdtPrice !== null) {
+      // We have COIN/USDT price from the CSV data. Now get USDT/EUR from Bitget.
+      const targetMs = berlinToUtcMs(tx.tradedAt);
+
+      const usdtInEur =
+        (await bitgetClient.fetchClose('USDTEUR', targetMs, '1min')) ??
+        (await bitgetClient.fetchClose('USDTEUR', targetMs, '5min'));
+
+      if (usdtInEur !== null) {
+        const eurPrice = new Decimal(usdtPrice).mul(new Decimal(usdtInEur)).toString();
+        const timestampMinute = toTimestampMinute(targetMs);
+
+        // biome-ignore lint/suspicious/noExplicitAny: sourceType from DB
+        const parsedSymbol = parseSymbol(tx.symbol, tx.sourceType as any);
+        await cache.upsert(db, {
+          symbol: parsedSymbol.bitgetSymbol,
+          timestamp: timestampMinute,
+          eurPrice,
+          source: 'csv-pair',
+          usdtPrice,
+          usdtEurRate: usdtInEur,
+          fetchedAt: new Date().toISOString(),
+        });
+
+        return {
+          ok: true,
+          result: {
+            eurPrice,
+            source: 'csv-pair',
+            usdtPrice,
+            usdtEurRate: usdtInEur,
+          },
+        };
+      }
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 3: CSV fill-price shortcut
   // -------------------------------------------------------------------------
   // biome-ignore lint/suspicious/noExplicitAny: sourceType comes from DB as string
   if (usesCsvFillPrice(tx.sourceType as any, tx.symbol, tx.price)) {
@@ -103,7 +227,7 @@ export async function resolvePrice(
   }
 
   // -------------------------------------------------------------------------
-  // Step 2: Parse symbol and compute cache key
+  // Step 4: Parse symbol and compute cache key
   // -------------------------------------------------------------------------
   // biome-ignore lint/suspicious/noExplicitAny: sourceType comes from DB as string
   const parsedSymbol = parseSymbol(tx.symbol, tx.sourceType as any);
@@ -111,7 +235,7 @@ export async function resolvePrice(
   const timestampMinute = toTimestampMinute(targetMs);
 
   // -------------------------------------------------------------------------
-  // Step 3: Cache lookup
+  // Step 5: Cache lookup
   // -------------------------------------------------------------------------
   const cached = await cache.lookup(db, parsedSymbol.bitgetSymbol, timestampMinute);
   if (cached) {
@@ -129,36 +253,7 @@ export async function resolvePrice(
   const baseAsset = parsedSymbol.base;
 
   // -------------------------------------------------------------------------
-  // Step 4: Bitget direct EUR (1 min, then 5 min)
-  // -------------------------------------------------------------------------
-  const eurSymbol = `${baseAsset}EUR`;
-
-  const eurDirect1min = await bitgetClient.fetchClose(eurSymbol, targetMs, '1min');
-  if (eurDirect1min !== null) {
-    await cache.upsert(db, {
-      symbol: parsedSymbol.bitgetSymbol,
-      timestamp: timestampMinute,
-      eurPrice: eurDirect1min,
-      source: 'bitget-direct',
-      fetchedAt: new Date().toISOString(),
-    });
-    return { ok: true, result: { eurPrice: eurDirect1min, source: 'bitget-direct' } };
-  }
-
-  const eurDirect5min = await bitgetClient.fetchClose(eurSymbol, targetMs, '5min');
-  if (eurDirect5min !== null) {
-    await cache.upsert(db, {
-      symbol: parsedSymbol.bitgetSymbol,
-      timestamp: timestampMinute,
-      eurPrice: eurDirect5min,
-      source: 'bitget-direct',
-      fetchedAt: new Date().toISOString(),
-    });
-    return { ok: true, result: { eurPrice: eurDirect5min, source: 'bitget-direct' } };
-  }
-
-  // -------------------------------------------------------------------------
-  // Step 5: Bitget USDT fallback (COIN/USDT × USDT/EUR, same targetMs)
+  // Step 6: Bitget USDT fallback (COIN/USDT × USDT/EUR, same targetMs)
   // -------------------------------------------------------------------------
   const usdtSymbol = `${baseAsset}USDT`;
 
@@ -219,7 +314,42 @@ export async function resolvePrice(
   }
 
   // -------------------------------------------------------------------------
-  // Step 6: CoinGecko fallback
+  // Step 7: Bitget direct EUR (1 min, then 5 min)
+  // -------------------------------------------------------------------------
+  const eurSymbol = `${baseAsset}EUR`;
+
+  const eurDirect1min = await bitgetClient.fetchClose(eurSymbol, targetMs, '1min');
+  if (eurDirect1min !== null) {
+    await cache.upsert(db, {
+      symbol: parsedSymbol.bitgetSymbol,
+      timestamp: timestampMinute,
+      eurPrice: eurDirect1min,
+      source: 'bitget-direct',
+      fetchedAt: new Date().toISOString(),
+    });
+    return {
+      ok: true,
+      result: { eurPrice: eurDirect1min, source: 'bitget-direct' },
+    };
+  }
+
+  const eurDirect5min = await bitgetClient.fetchClose(eurSymbol, targetMs, '5min');
+  if (eurDirect5min !== null) {
+    await cache.upsert(db, {
+      symbol: parsedSymbol.bitgetSymbol,
+      timestamp: timestampMinute,
+      eurPrice: eurDirect5min,
+      source: 'bitget-direct',
+      fetchedAt: new Date().toISOString(),
+    });
+    return {
+      ok: true,
+      result: { eurPrice: eurDirect5min, source: 'bitget-direct' },
+    };
+  }
+
+  // -------------------------------------------------------------------------
+  // Step 8: CoinGecko fallback
   // -------------------------------------------------------------------------
   const coinKey = parsedSymbol.base.toLowerCase();
   const coinId = symbolMap.get(coinKey);
@@ -249,7 +379,7 @@ export async function resolvePrice(
   }
 
   // -------------------------------------------------------------------------
-  // Step 7: All sources failed
+  // Step 9: All sources failed
   // -------------------------------------------------------------------------
   return { ok: false, failure: { reason: 'no-bitget-pair' } };
 }
