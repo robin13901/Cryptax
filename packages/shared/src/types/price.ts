@@ -6,6 +6,7 @@ export interface PriceStatusResponse {
   total: number;
   resolved: number;
   unresolved: number;
+  isEnriching: boolean;
   bySource: Record<string, number>;
   failureBreakdown: Record<string, number>;
   unresolvedTransactions: Array<{

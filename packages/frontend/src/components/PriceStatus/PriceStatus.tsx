@@ -1,5 +1,5 @@
 import type { PriceStatusResponse } from '@cryptax/shared';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import GlassSurface from '../GlassSurface/GlassSurface';
 import './PriceStatus.css';
 
@@ -18,6 +18,7 @@ const SOURCE_LABELS: Record<string, string> = {
 const FAILURE_LABELS: Record<string, string> = {
   'no-bitget-pair': 'Kein Bitget-Paar',
   'no-coingecko-id': 'Kein CoinGecko-ID',
+  'coingecko-miss': 'CoinGecko-Fehler',
   'api-error': 'API-Fehler',
   'out-of-range': 'Außerhalb Bereich',
   unknown: 'Unbekannt',
@@ -27,19 +28,12 @@ const FAILURE_LABELS: Record<string, string> = {
 // PriceStatus component
 // ---------------------------------------------------------------------------
 
-interface PriceStatusProps {
-  /** Called after enrichment completes so parent can refresh other data. */
-  onEnrichmentComplete?: () => void;
-}
-
-type EnrichStatus = 'idle' | 'running' | 'done' | 'error';
-
-function PriceStatus({ onEnrichmentComplete }: PriceStatusProps) {
+function PriceStatus() {
   const [status, setStatus] = useState<PriceStatusResponse | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [enrichStatus, setEnrichStatus] = useState<EnrichStatus>('idle');
-  const [enrichError, setEnrichError] = useState<string | null>(null);
+  const [manualTrigger, setManualTrigger] = useState(false);
   const [unresolvedExpanded, setUnresolvedExpanded] = useState(false);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // -------------------------------------------------------------------------
   // Fetch status
@@ -51,39 +45,73 @@ function PriceStatus({ onEnrichmentComplete }: PriceStatusProps) {
       const data = (await res.json()) as PriceStatusResponse;
       setStatus(data);
       setLoadError(null);
+      return data;
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : 'Fehler beim Laden des Status');
+      return null;
     }
   }, []);
 
+  // -------------------------------------------------------------------------
+  // Initial fetch + start polling if enriching
+  // -------------------------------------------------------------------------
   useEffect(() => {
     void fetchStatus();
   }, [fetchStatus]);
+
+  // Poll while enrichment is running
+  useEffect(() => {
+    const enriching = status?.isEnriching ?? false;
+
+    if (enriching) {
+      // Poll every 2s
+      if (!pollRef.current) {
+        pollRef.current = setInterval(() => {
+          void fetchStatus();
+        }, 2000);
+      }
+    } else {
+      // Stop polling
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+      // Reset manual trigger flag when enrichment finishes
+      if (manualTrigger) {
+        setManualTrigger(false);
+      }
+    }
+
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
+    };
+  }, [status?.isEnriching, fetchStatus, manualTrigger]);
 
   // -------------------------------------------------------------------------
   // Trigger enrichment
   // -------------------------------------------------------------------------
   const handleEnrich = async () => {
-    if (enrichStatus === 'running') return;
+    if (status?.isEnriching) return;
 
-    setEnrichStatus('running');
-    setEnrichError(null);
+    setManualTrigger(true);
 
     try {
       const res = await fetch('/api/prices/enrich', { method: 'POST' });
       if (res.status === 409) {
-        setEnrichError('Anreicherung läuft bereits');
-        setEnrichStatus('error');
+        // Already running — just start polling
+        void fetchStatus();
         return;
       }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      setEnrichStatus('done');
+      // Done — refresh status
       await fetchStatus();
-      onEnrichmentComplete?.();
     } catch (err) {
-      setEnrichError(err instanceof Error ? err.message : 'Fehler bei der Anreicherung');
-      setEnrichStatus('error');
+      setLoadError(err instanceof Error ? err.message : 'Fehler bei der Anreicherung');
+      setManualTrigger(false);
     }
   };
 
@@ -94,7 +122,9 @@ function PriceStatus({ onEnrichmentComplete }: PriceStatusProps) {
   const resolved = status?.resolved ?? 0;
   const unresolved = status?.unresolved ?? 0;
   const progressPct = total > 0 ? Math.round((resolved / total) * 100) : 0;
+  const isEnriching = status?.isEnriching ?? false;
   const hasUnresolved = unresolved > 0;
+  const hasData = total > 0;
 
   // -------------------------------------------------------------------------
   // Render
@@ -104,16 +134,24 @@ function PriceStatus({ onEnrichmentComplete }: PriceStatusProps) {
       <div className="price-status">
         {/* Header */}
         <div className="price-status__header">
-          <h3 className="price-status__title">EUR-Preise</h3>
-          <button
-            type="button"
-            className={`price-status__enrich-btn ${enrichStatus === 'running' ? 'price-status__enrich-btn--running' : ''}`}
-            onClick={handleEnrich}
-            disabled={enrichStatus === 'running'}
-            aria-label="EUR-Preise auflösen"
-          >
-            {enrichStatus === 'running' ? 'Wird ausgeführt…' : 'Preise auflösen'}
-          </button>
+          <h3 className="price-status__title">
+            EUR-Preise
+            {isEnriching && (
+              <span className="price-status__enriching-dot" title="Anreicherung läuft">
+                ●
+              </span>
+            )}
+          </h3>
+          {hasData && !isEnriching && hasUnresolved && (
+            <button
+              type="button"
+              className="price-status__enrich-btn"
+              onClick={handleEnrich}
+              aria-label="EUR-Preise auflösen"
+            >
+              Preise auflösen
+            </button>
+          )}
         </div>
 
         {/* Load error */}
@@ -121,20 +159,23 @@ function PriceStatus({ onEnrichmentComplete }: PriceStatusProps) {
           <div className="price-status__alert price-status__alert--error">{loadError}</div>
         )}
 
-        {/* Enrich error */}
-        {enrichError && (
-          <div className="price-status__alert price-status__alert--error">{enrichError}</div>
+        {/* Enriching banner */}
+        {isEnriching && (
+          <div className="price-status__alert price-status__alert--info">
+            <span className="price-status__spinner" />
+            Preise werden aufgelöst…
+          </div>
         )}
 
-        {/* Enrich success */}
-        {enrichStatus === 'done' && !enrichError && (
+        {/* Enrichment done banner (show briefly after enrichment completes) */}
+        {!isEnriching && hasData && !hasUnresolved && resolved > 0 && (
           <div className="price-status__alert price-status__alert--success">
-            Anreicherung abgeschlossen.
+            Alle Preise aufgelöst.
           </div>
         )}
 
         {/* Unresolved warning banner */}
-        {hasUnresolved && (
+        {!isEnriching && hasUnresolved && (
           <div className="price-status__alert price-status__alert--warning">
             {unresolved} Transaktion{unresolved !== 1 ? 'en' : ''} ohne EUR-Preis
           </div>
@@ -150,7 +191,7 @@ function PriceStatus({ onEnrichmentComplete }: PriceStatusProps) {
           </div>
           <div className="price-status__progress-track">
             <div
-              className="price-status__progress-fill"
+              className={`price-status__progress-fill ${isEnriching ? 'price-status__progress-fill--animated' : ''}`}
               style={{ width: `${progressPct}%` }}
               role="progressbar"
               aria-valuenow={progressPct}

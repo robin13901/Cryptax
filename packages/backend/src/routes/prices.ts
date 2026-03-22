@@ -91,6 +91,7 @@ export function registerPriceRoutes(app: Hono) {
       total,
       resolved,
       unresolved,
+      isEnriching: isRunning,
       bySource,
       failureBreakdown,
       unresolvedTransactions: unresolvedRows.map((r) => ({

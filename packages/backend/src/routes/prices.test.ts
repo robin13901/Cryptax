@@ -136,6 +136,7 @@ describe('GET /api/prices/status', () => {
       total: number;
       resolved: number;
       unresolved: number;
+      isEnriching: boolean;
       bySource: Record<string, number>;
       failureBreakdown: Record<string, number>;
       unresolvedTransactions: unknown[];
@@ -144,6 +145,7 @@ describe('GET /api/prices/status', () => {
     expect(body.total).toBe(0);
     expect(body.resolved).toBe(0);
     expect(body.unresolved).toBe(0);
+    expect(body.isEnriching).toBe(false);
     expect(body.bySource).toEqual({});
     expect(body.failureBreakdown).toEqual({});
     expect(body.unresolvedTransactions).toHaveLength(0);

@@ -154,7 +154,7 @@ function App() {
                     <ImportDropzone onImportComplete={setImportResponse} />
                   )}
                 </div>
-                <div className="transactions-price-area">
+                <div className="transactions-price-area" style={{ marginTop: '1.5rem' }}>
                   <PriceStatus />
                 </div>
               </motion.div>
