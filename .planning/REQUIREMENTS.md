@@ -38,13 +38,13 @@
 
 ### Price Resolution (PRCE)
 
-- [ ] **PRCE-01**: Fetch historical EUR price at trade timestamp via Bitget candle API
-- [ ] **PRCE-02**: Fallback: COIN→USDT × USDT→EUR conversion when direct EUR pair unavailable
-- [ ] **PRCE-03**: CoinGecko fallback for coins not listed on Bitget
-- [ ] **PRCE-04**: Price cache in SQLite — don't re-fetch already resolved prices
-- [ ] **PRCE-05**: Bulk price enrichment with rate limiting (600 req/min Bitget, 30 req/min CoinGecko)
-- [ ] **PRCE-06**: Europe/Berlin timezone handling for all timestamp→UTC conversions
-- [ ] **PRCE-07**: Price resolution status — show which transactions still need prices
+- [x] **PRCE-01**: Fetch historical EUR price at trade timestamp via Bitget candle API
+- [x] **PRCE-02**: Fallback: COIN→USDT × USDT→EUR conversion when direct EUR pair unavailable
+- [x] **PRCE-03**: CoinGecko fallback for coins not listed on Bitget
+- [x] **PRCE-04**: Price cache in SQLite — don't re-fetch already resolved prices
+- [x] **PRCE-05**: Bulk price enrichment with rate limiting (600 req/min Bitget, 30 req/min CoinGecko)
+- [x] **PRCE-06**: Europe/Berlin timezone handling for all timestamp→UTC conversions
+- [x] **PRCE-07**: Price resolution status — show which transactions still need prices
 
 ### Tax Calculation (TAXC)
 
@@ -103,7 +103,7 @@
 - [ ] **TEST-01**: Unit tests for FIFO engine with known tax scenarios (golden master tests)
 - [x] **TEST-02**: Unit tests for CSV parsers — all 5 formats with edge cases (BOM, tabs, delimiters)
 - [ ] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
-- [ ] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
+- [x] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
 - [ ] **TEST-05**: Component tests for React components with Testing Library
 - [ ] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
 - [ ] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
@@ -181,14 +181,14 @@ Testing requirements are distributed to the phase where the code they test lives
 | IMPT-10 | Phase 2 | CSV Import Pipeline | Complete |
 | IMPT-11 | Phase 2 | CSV Import Pipeline | Complete |
 | TEST-02 | Phase 2 | CSV parser tests — written with parsers | Complete |
-| PRCE-01 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-02 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-03 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-04 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-05 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-06 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-07 | Phase 3 | EUR Price Enrichment | Pending |
-| TEST-04 | Phase 3 | Price resolution tests — written with enrichment | Pending |
+| PRCE-01 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-02 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-03 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-04 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-05 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-06 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-07 | Phase 3 | EUR Price Enrichment | Complete |
+| TEST-04 | Phase 3 | Price resolution tests — written with enrichment | Complete |
 | TAXC-01 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
 | TAXC-02 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
 | TAXC-03 | Phase 4 | FIFO Engine + Tax Calculation | Pending |

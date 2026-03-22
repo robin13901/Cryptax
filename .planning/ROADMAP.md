@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + CI/CD** — Monorepo, SQLite schema, Hono server skeleton, CI pipeline, Decimal.js enforced from day one
 - [x] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
-- [ ] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
+- [x] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
 - [ ] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
 - [ ] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
 - [ ] **Phase 6: Steuerreport + PDF Export** — Finanzamt-ready tax report generated and exportable as PDF and CSV
@@ -99,11 +99,11 @@ Plans:
 **Plans:** 5 plans in 4 waves
 
 Plans:
-- [ ] 03-01-PLAN.md — Schema migration + deps + timezone/symbol utils (Wave 1)
-- [ ] 03-02-PLAN.md — Bitget candle client + price cache layer (Wave 2)
-- [ ] 03-03-PLAN.md — CoinGecko fallback client (Wave 2)
-- [ ] 03-04-PLAN.md — Resolution strategy + enrichment engine (Wave 3)
-- [ ] 03-05-PLAN.md — Price enrichment API + UI + integration (Wave 4)
+- [x] 03-01-PLAN.md — Schema migration + deps + timezone/symbol utils (Wave 1)
+- [x] 03-02-PLAN.md — Bitget candle client + price cache layer (Wave 2)
+- [x] 03-03-PLAN.md — CoinGecko fallback client (Wave 2)
+- [x] 03-04-PLAN.md — Resolution strategy + enrichment engine (Wave 3)
+- [x] 03-05-PLAN.md — Price enrichment API + UI + integration (Wave 4)
 
 ---
 
@@ -228,7 +228,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Foundation + CI/CD | 7/7 | Complete | 2026-03-21 |
 | 2. CSV Import Pipeline | 8/8 | Complete | 2026-03-22 |
-| 3. EUR Price Enrichment | 0/5 | Planned | - |
+| 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
 | 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
 | 5. Dashboard + Transaction UI | 0/7 | Not started | - |
 | 6. Steuerreport + PDF Export | 0/7 | Not started | - |
