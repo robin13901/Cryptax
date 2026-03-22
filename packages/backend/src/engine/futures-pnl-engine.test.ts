@@ -6,8 +6,8 @@
  * realized P&L records taxable under §20 EStG (Abgeltungssteuer).
  */
 import { describe, expect, it } from 'vitest';
-import type { EngineTransaction } from './types.js';
 import { runFuturesPnlEngine } from './futures-pnl-engine.js';
+import type { EngineTransaction } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Fixtures

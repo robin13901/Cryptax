@@ -3,7 +3,8 @@ import { TAX_CONSTANTS } from './index.js';
 
 describe('TAX_CONSTANTS', () => {
   it('has correct Haltefrist days', () => {
-    expect(TAX_CONSTANTS.HALTEFRIST_DAYS).toBe(365);
+    // Conservative interpretation: 366 days (Jan 1 buy → tax-free from Jan 2 next year)
+    expect(TAX_CONSTANTS.HALTEFRIST_DAYS).toBe(366);
   });
 
   it('has correct spot Freigrenze', () => {
