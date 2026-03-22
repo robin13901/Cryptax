@@ -42,3 +42,8 @@ export type {
   TransactionListItem,
   TransactionSide,
 } from './types/transaction.js';
+export type {
+  EnrichmentResponse,
+  ManualPriceEntry,
+  PriceStatusResponse,
+} from './types/price.js';

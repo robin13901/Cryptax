@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
 import { registerHealthRoutes } from './routes/health.js';
 import { registerImportRoutes } from './routes/import.js';
+import { registerPriceRoutes } from './routes/prices.js';
 
 const app = new Hono();
 
@@ -12,6 +13,7 @@ app.use('/api/*', cors());
 
 registerHealthRoutes(app);
 registerImportRoutes(app);
+registerPriceRoutes(app);
 
 serve({ fetch: app.fetch, port: 3001 }, () => {
   console.log('Backend server running on http://localhost:3001');

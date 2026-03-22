@@ -4,6 +4,7 @@ import type { Hono } from 'hono';
 import { db } from '../db/client.js';
 import { importBatches, transactions } from '../db/schema.js';
 import { importCSVFile } from '../import/orchestrator.js';
+import { triggerEnrichmentBackground } from './prices.js';
 
 // ---------------------------------------------------------------------------
 // registerImportRoutes
@@ -59,6 +60,9 @@ export function registerImportRoutes(app: Hono) {
           ),
         },
       };
+
+      // Fire-and-forget: trigger price enrichment after successful import
+      triggerEnrichmentBackground();
 
       return c.json(response, 200);
     } catch (err) {
