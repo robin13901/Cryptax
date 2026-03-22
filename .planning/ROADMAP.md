@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Foundation + CI/CD** — Monorepo, SQLite schema, Hono server skeleton, CI pipeline, Decimal.js enforced from day one
 - [x] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
 - [x] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
-- [ ] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
+- [x] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
 - [ ] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
 - [ ] **Phase 6: Steuerreport + PDF Export** — Finanzamt-ready tax report generated and exportable as PDF and CSV
 - [ ] **Phase 7: Exchange API + Security** — Bitget API sync via ccxt, password protection, encrypted credential storage
@@ -125,14 +125,14 @@ Plans:
 **Plans:** 8 plans in 5 waves
 
 Plans:
-- [ ] 04-01-PLAN.md — Engine types + null-price gate + HALTEFRIST_DAYS fix (Wave 1)
-- [ ] 04-02-PLAN.md — FIFO lot engine core: lot creation, consumption, partial splits (Wave 2, TDD)
-- [ ] 04-03-PLAN.md — Futures P&L engine: realized P&L, fees, isolation from FIFO (Wave 2, TDD)
-- [ ] 04-04-PLAN.md — Spot tax calculator: Haltefrist, Freigrenze cliff, fee deduction (Wave 3, TDD)
-- [ ] 04-05-PLAN.md — Earn income engine: income at Zufluss + FIFO lot creation (Wave 3, TDD)
-- [ ] 04-06-PLAN.md — Tax calculator orchestrator: wires all engines, DB writes, summaries (Wave 4)
-- [ ] 04-07-PLAN.md — Engine API route: POST /api/engine/run + shared response types (Wave 5)
-- [ ] 04-08-PLAN.md — Golden master tests + fast-check property-based FIFO invariant tests (Wave 5)
+- [x] 04-01-PLAN.md — Engine types + null-price gate + HALTEFRIST_DAYS fix (Wave 1)
+- [x] 04-02-PLAN.md — FIFO lot engine core: lot creation, consumption, partial splits (Wave 2, TDD)
+- [x] 04-03-PLAN.md — Futures P&L engine: realized P&L, fees, isolation from FIFO (Wave 2, TDD)
+- [x] 04-04-PLAN.md — Spot tax calculator: Haltefrist, Freigrenze cliff, fee deduction (Wave 3, TDD)
+- [x] 04-05-PLAN.md — Earn income engine: income at Zufluss + FIFO lot creation (Wave 3, TDD)
+- [x] 04-06-PLAN.md — Tax calculator orchestrator: wires all engines, DB writes, summaries (Wave 4)
+- [x] 04-07-PLAN.md — Engine API route: POST /api/engine/run + shared response types (Wave 5)
+- [x] 04-08-PLAN.md — Golden master tests + fast-check property-based FIFO invariant tests (Wave 5)
 
 ---
 
@@ -229,7 +229,7 @@ Plans:
 | 1. Foundation + CI/CD | 7/7 | Complete | 2026-03-21 |
 | 2. CSV Import Pipeline | 8/8 | Complete | 2026-03-22 |
 | 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
-| 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
+| 4. FIFO Engine + Tax Calculation | 8/8 | Complete | 2026-03-22 |
 | 5. Dashboard + Transaction UI | 0/7 | Not started | - |
 | 6. Steuerreport + PDF Export | 0/7 | Not started | - |
 | 7. Exchange API + Security | 0/7 | Not started | - |

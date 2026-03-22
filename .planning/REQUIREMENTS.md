@@ -48,17 +48,17 @@
 
 ### Tax Calculation (TAXC)
 
-- [ ] **TAXC-01**: FIFO lot tracking per coin — create lots on buy, consume on sell, track remaining quantity
-- [ ] **TAXC-02**: Partial lot splitting — when sell crosses lot boundaries, split and consume proportionally
-- [ ] **TAXC-03**: Haltefrist calculation per lot — determine if held ≥365 days at time of sale
-- [ ] **TAXC-04**: Spot tax: gains tax-free if Haltefrist met, Einkommensteuer if not, Freigrenze 1.000€ cliff (not deduction)
-- [ ] **TAXC-05**: Futures/derivatives tax: Abgeltungssteuer 26,375% (inkl. Soli) on all realized P&L, no Haltefrist
-- [ ] **TAXC-06**: Staking/Earn income: Einkommensteuer at EUR value at Zufluss timestamp
-- [ ] **TAXC-07**: Fee deduction — trading fees reduce taxable gain (Werbungskosten)
-- [ ] **TAXC-08**: Separate tax buckets — Spot (§23 EStG), Futures (§20 EStG), Earn (§22 Nr. 3 EStG) never mixed
-- [ ] **TAXC-09**: Per-year tax summary — aggregate taxable amounts by tax year
-- [ ] **TAXC-10**: Stateless re-runnable engine — truncate FIFO results and recompute from transactions on every run
-- [ ] **TAXC-11**: Block calculation if any transaction has NULL price — correctness gate
+- [x] **TAXC-01**: FIFO lot tracking per coin — create lots on buy, consume on sell, track remaining quantity
+- [x] **TAXC-02**: Partial lot splitting — when sell crosses lot boundaries, split and consume proportionally
+- [x] **TAXC-03**: Haltefrist calculation per lot — determine if held ≥365 days at time of sale
+- [x] **TAXC-04**: Spot tax: gains tax-free if Haltefrist met, Einkommensteuer if not, Freigrenze 1.000€ cliff (not deduction)
+- [x] **TAXC-05**: Futures/derivatives tax: Abgeltungssteuer 26,375% (inkl. Soli) on all realized P&L, no Haltefrist
+- [x] **TAXC-06**: Staking/Earn income: Einkommensteuer at EUR value at Zufluss timestamp
+- [x] **TAXC-07**: Fee deduction — trading fees reduce taxable gain (Werbungskosten)
+- [x] **TAXC-08**: Separate tax buckets — Spot (§23 EStG), Futures (§20 EStG), Earn (§22 Nr. 3 EStG) never mixed
+- [x] **TAXC-09**: Per-year tax summary — aggregate taxable amounts by tax year
+- [x] **TAXC-10**: Stateless re-runnable engine — truncate FIFO results and recompute from transactions on every run
+- [x] **TAXC-11**: Block calculation if any transaction has NULL price — correctness gate
 
 ### Dashboard (DASH)
 
@@ -100,9 +100,9 @@
 
 ### Testing & Quality (TEST)
 
-- [ ] **TEST-01**: Unit tests for FIFO engine with known tax scenarios (golden master tests)
+- [x] **TEST-01**: Unit tests for FIFO engine with known tax scenarios (golden master tests)
 - [x] **TEST-02**: Unit tests for CSV parsers — all 5 formats with edge cases (BOM, tabs, delimiters)
-- [ ] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
+- [x] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
 - [x] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
 - [ ] **TEST-05**: Component tests for React components with Testing Library
 - [ ] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)

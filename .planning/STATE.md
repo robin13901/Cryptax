@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 4 in progress — FIFO Engine + Tax Calculation
+**Current focus:** Phase 4 complete — ready for Phase 5
 
 ## Current Position
 
-Phase: 4 of 7 (FIFO Engine + Tax Calculation) — Phase complete (8/8 plans done)
+Phase: 4 of 7 (FIFO Engine + Tax Calculation) — Complete
 Plan: 8 of 8 in current phase
-Status: Phase complete — 04-08 complete
-Last activity: 2026-03-22 — Completed 04-08-PLAN.md (Golden master + property-based tests)
+Status: Complete — all plans executed, verified (5/5 criteria passed)
+Last activity: 2026-03-22 — Phase 4 verified and closed
 
-Progress: [████████░░] 59% (29/49 plans complete)
+Progress: [██████░░░░] 59% (29/49 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 24
-- Average duration: ~7 min
-- Total execution time: ~163 min
+- Total plans completed: 29
+- Average duration: ~8 min
+- Total execution time: ~224 min
 
 **By Phase:**
 
@@ -45,24 +45,6 @@ Progress: [████████░░] 59% (29/49 plans complete)
 Decisions are logged in PROJECT.md Key Decisions table.
 Recent decisions affecting current work:
 
-- 03-01: date-fns-tz fromZonedTime spring-forward behaviour: treats non-existent 02:30 Berlin as 00:30 UTC
-- 03-01: In-memory test migration lists must include all SQL files
-- 03-01: prices/ module placed in packages/backend/src/prices/
-- 03-02: Fetch DI pattern: functions accept optional fetchFn parameter
-- 03-02: upsertPriceCache uses onConflictDoNothing on unique key (symbol, timestamp, source)
-- 03-03: p-throttle v8 ESM static import works correctly
-- 03-03: SYMBOL_OVERRIDES exported as separate constant — applied at lookup time
-- 03-03: CoinGeckoOutOfRangeError thrown only for error_code 10012
-- 03-04: Resolution chain: EUR self → futures USDT → CSV pair → CSV fill (EUR) → CSV fill (USDT) → cache → Bitget USDT → Bitget direct → CoinGecko
-- 03-04: USDT path prioritized over direct EUR (user trades primarily in USDT)
-- 03-04: CSV pair derivation matches USDT sibling at same timestamp by order_id proximity (distance < 100)
-- 03-04: USDT-margined futures_tx: amount is in USDT, resolve with USDT/EUR rate directly
-- 03-04: CSV USDT fill: spot_order /USDT and futures_order USDT suffix use Average Price × USDT/EUR
-- 03-04: Bitget throttle 20 req/s, CoinGecko 1 req/2s (free tier limit)
-- 03-05: PriceStatus polls /api/prices/status every 2s while isEnriching=true
-- 03-05: POST /api/prices/enrich is fire-and-forget from frontend
-- 03-05: Auto-migration via drizzle-orm migrate() in client.ts on startup
-- 03-05: Concurrent enrichment guard: module-level isRunning flag, returns 409
 - 04-01: HALTEFRIST_DAYS=366 — conservative: Jan 1 buy is tax-free Jan 2 next year (366 days elapsed)
 - 04-01: Decimal import in NodeNext must be named export { Decimal } from 'decimal.js' — default/re-export resolves to namespace only
 - 04-01: checkNullPrices returns empty array on pass, array of NullPriceError on failure — caller decides abort
@@ -85,11 +67,8 @@ Recent decisions affecting current work:
 - 04-06: Earn Freigrenze cliff at 256 EUR applied at orchestrator level per-year aggregate
 - 04-06: Futures net P&L = sum(realizedPnlEur) - sum(feeEur) per year; only positive net is taxable (no Freigrenze)
 - 04-06: DB writes inside single db.transaction() — atomic: either all 5 tables written or none
-
-- 04-08: Golden master tests reuse in-memory SQLite + full migrations pattern — no mocking, same as tax-calculator.test.ts
+- 04-08: Golden master tests reuse in-memory SQLite + full migrations pattern — no mocking
 - 04-08: Property tests target runFifoEngine directly (pure function, no DB) — faster, 100 runs each
-- 04-08: Amount arbitraries use integer × 0.1 steps to avoid JS floating-point string serialisation issues
-- 04-08: buildTransactions helper: buys at days [0..N], sells at days [N+1..N+M] — monotonic timestamps without special-casing
 
 ### Pending Todos
 
@@ -97,13 +76,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- Phase 4 research flag: Complex FIFO edge cases and §22 vs §23 earn income classification — consider `/gsd:research-phase` before Phase 4 planning (04-01 foundation complete, proceed with planning)
 - Phase 7 research flag: ccxt Bitget v2 deep history pagination is untested
 - German tax law: Haltefrist exact day count — RESOLVED: using 366 days (conservative interpretation per 04-01)
 - Migration workflow: After `npm run db:generate`, manually add STRICT to new CREATE TABLE statements
 
 ## Session Continuity
 
-Last session: 2026-03-22T23:01:00Z
-Stopped at: Completed 04-08-PLAN.md (Golden master + property-based tests, 467 tests pass, Phase 4 complete)
+Last session: 2026-03-22
+Stopped at: Phase 4 complete — all 8 plans executed, verified, state updated
 Resume file: None
