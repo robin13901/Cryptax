@@ -6,8 +6,8 @@
  */
 import { differenceInCalendarDays } from 'date-fns';
 import { describe, expect, it } from 'vitest';
-import type { EngineTransaction } from './types.js';
 import { runFifoEngine } from './fifo-engine.js';
+import type { EngineTransaction } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -133,7 +133,7 @@ describe('runFifoEngine', () => {
     const consumption = result.consumptions[0];
     // Consumed from first lot at 40000 cost
     expect(consumption.costBasisEur.toFixed()).toBe('20000'); // 0.5 * 40000
-    expect(consumption.proceedsEur.toFixed()).toBe('27500');  // 0.5 * 55000
+    expect(consumption.proceedsEur.toFixed()).toBe('27500'); // 0.5 * 55000
     expect(consumption.lotIndex).toBe(0); // First lot
   });
 
@@ -340,9 +340,10 @@ describe('runFifoEngine', () => {
   });
 
   it('computes correct held days and Haltefrist (365 days = not exempt)', () => {
-    const buyDate = '2024-01-01T00:00:00.000Z';
-    // 2025-01-01 is 365 days after 2024-01-01 — NOT exempt
-    const sellDate = '2025-01-01T00:00:00.000Z';
+    const buyDate = '2023-01-01T00:00:00.000Z';
+    // 2024-01-01 is exactly 365 days after 2023-01-01 (2023 is not a leap year) — NOT exempt
+    // With HALTEFRIST_DAYS=366, 365 < 366, so haltefristMet = false
+    const sellDate = '2024-01-01T00:00:00.000Z';
 
     const buy = makeTx({
       canonicalType: 'buy',
@@ -401,9 +402,17 @@ describe('runFifoEngine', () => {
     // Second consumption: 0.7 BTC → fee allocated = 0.7/1.0 * 10 = 7
     expect(result.consumptions[1].feeEur.toFixed()).toBe('7');
     // Total allocated fees = 10
-    const totalFee = result.consumptions
-      .reduce((sum, c) => sum.plus(c.feeEur), result.consumptions[0].feeEur.minus(result.consumptions[0].feeEur))
-      .plus(result.consumptions.reduce((sum, c) => sum.plus(c.feeEur), result.consumptions[0].feeEur.times(0)));
+    const _totalFee = result.consumptions
+      .reduce(
+        (sum, c) => sum.plus(c.feeEur),
+        result.consumptions[0].feeEur.minus(result.consumptions[0].feeEur)
+      )
+      .plus(
+        result.consumptions.reduce(
+          (sum, c) => sum.plus(c.feeEur),
+          result.consumptions[0].feeEur.times(0)
+        )
+      );
     // Simpler check: sum them
     const fee0 = parseFloat(result.consumptions[0].feeEur.toFixed());
     const fee1 = parseFloat(result.consumptions[1].feeEur.toFixed());
