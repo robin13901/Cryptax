@@ -9,12 +9,12 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 
 ## Current Position
 
-Phase: 4 of 7 (FIFO Engine + Tax Calculation) — In progress
-Plan: 7 of 8 in current phase
-Status: In progress — 04-07 complete
-Last activity: 2026-03-22 — Completed 04-07-PLAN.md (Engine API route)
+Phase: 4 of 7 (FIFO Engine + Tax Calculation) — Phase complete (8/8 plans done)
+Plan: 8 of 8 in current phase
+Status: Phase complete — 04-08 complete
+Last activity: 2026-03-22 — Completed 04-08-PLAN.md (Golden master + property-based tests)
 
-Progress: [████████░░] 57% (28/49 plans complete)
+Progress: [████████░░] 59% (29/49 plans complete)
 
 ## Performance Metrics
 
@@ -30,7 +30,7 @@ Progress: [████████░░] 57% (28/49 plans complete)
 | 01-foundation-ci-cd | 7/7 COMPLETE | ~44 min | ~6 min |
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
-| 04-fifo-engine-tax-calculation | 7/8 IN PROGRESS | ~51 min | ~7 min |
+| 04-fifo-engine-tax-calculation | 8/8 COMPLETE | ~61 min | ~8 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -86,9 +86,10 @@ Recent decisions affecting current work:
 - 04-06: Futures net P&L = sum(realizedPnlEur) - sum(feeEur) per year; only positive net is taxable (no Freigrenze)
 - 04-06: DB writes inside single db.transaction() — atomic: either all 5 tables written or none
 
-- 04-07: Route calls checkNullPrices directly (before runTaxCalculation) to get structured NullPriceError data for 422 response — engine's own null check is duplicate safety net
-- 04-07: Promise.resolve() wraps sync runTaxCalculation in async route handler — zero production overhead, enables hanging Promise mock for 409 concurrent test
-- 04-07: EngineRunResponse.nullPriceErrors is optional — only present on 422, absent on 200 success
+- 04-08: Golden master tests reuse in-memory SQLite + full migrations pattern — no mocking, same as tax-calculator.test.ts
+- 04-08: Property tests target runFifoEngine directly (pure function, no DB) — faster, 100 runs each
+- 04-08: Amount arbitraries use integer × 0.1 steps to avoid JS floating-point string serialisation issues
+- 04-08: buildTransactions helper: buys at days [0..N], sells at days [N+1..N+M] — monotonic timestamps without special-casing
 
 ### Pending Todos
 
@@ -103,6 +104,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22T22:00:21Z
-Stopped at: Completed 04-07-PLAN.md (Engine API route, 467 tests pass)
+Last session: 2026-03-22T23:01:00Z
+Stopped at: Completed 04-08-PLAN.md (Golden master + property-based tests, 467 tests pass, Phase 4 complete)
 Resume file: None
