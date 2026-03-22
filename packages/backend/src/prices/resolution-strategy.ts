@@ -177,6 +177,34 @@ export async function resolvePrice(
   }
 
   // -------------------------------------------------------------------------
+  // Step 1b: USDT-margined futures — amount is in USDT, need USDT/EUR rate
+  // For futures_tx, the symbol is the contract name (e.g. "POPCATUSDT") but
+  // the Coin column (and thus the amount) is in USDT. The EUR price per unit
+  // is simply the USDT/EUR exchange rate.
+  // -------------------------------------------------------------------------
+  if (tx.sourceType === 'futures_tx') {
+    const targetMs = berlinToUtcMs(tx.tradedAt);
+    const usdtInEur =
+      (await bitgetClient.fetchClose('USDTEUR', targetMs, '1min')) ??
+      (await bitgetClient.fetchClose('USDTEUR', targetMs, '5min'));
+
+    if (usdtInEur !== null) {
+      const timestampMinute = toTimestampMinute(targetMs);
+      await cache.upsert(db, {
+        symbol: 'USDTEUR',
+        timestamp: timestampMinute,
+        eurPrice: usdtInEur,
+        source: 'bitget-direct',
+        fetchedAt: new Date().toISOString(),
+      });
+      return {
+        ok: true,
+        result: { eurPrice: usdtInEur, source: 'bitget-direct' },
+      };
+    }
+  }
+
+  // -------------------------------------------------------------------------
   // Step 2: CSV pair derivation — derive price from paired USDT transaction
   // -------------------------------------------------------------------------
   if (txTable) {

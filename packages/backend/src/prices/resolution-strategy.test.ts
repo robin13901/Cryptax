@@ -97,6 +97,48 @@ describe('resolvePrice - EUR self-price', () => {
 });
 
 // ---------------------------------------------------------------------------
+// Step 1b: USDT-margined futures
+// ---------------------------------------------------------------------------
+
+describe('resolvePrice - USDT-margined futures', () => {
+  it('resolves futures_tx with USDT/EUR rate (amount is in USDT)', async () => {
+    const deps = makeDeps({
+      bitgetClient: {
+        fetchClose: vi.fn().mockImplementation((sym: string) => {
+          if (sym === 'USDTEUR') return Promise.resolve('0.92');
+          return Promise.resolve(null);
+        }),
+      },
+    });
+    const tx = makeSpotTx({
+      sourceType: 'futures_tx',
+      symbol: 'POPCATUSDT',
+      side: 'sell',
+      amount: '-0.018',
+    });
+
+    const outcome = await resolvePrice(tx, deps);
+
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.result.eurPrice).toBe('0.92');
+    expect(outcome.result.source).toBe('bitget-direct');
+  });
+
+  it('does NOT apply futures shortcut for spot_tx', async () => {
+    const deps = makeDeps({
+      bitgetClient: { fetchClose: vi.fn().mockResolvedValue(null) },
+    });
+    const tx = makeSpotTx({ symbol: 'POPCATUSDT', sourceType: 'spot_tx' });
+
+    const outcome = await resolvePrice(tx, deps);
+
+    // Falls through to failure (no futures shortcut for spot_tx)
+    expect(outcome.ok).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Step 2: CSV pair derivation
 // ---------------------------------------------------------------------------
 
