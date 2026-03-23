@@ -57,10 +57,13 @@
   justify-content: center;
   gap: 0.2rem;
   padding: 0.2rem;
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(10, 14, 24, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   width: fit-content;
   margin: 0 auto;
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
 }
 
 .nav-pill {
@@ -92,46 +95,7 @@
   background: rgba(0, 112, 242, 0.5);
 }
 
-/* KPI cards grid */
-.kpi-grid {
-  display: flex;
-  gap: 0.75rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-}
-
-.kpi-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 0.8rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.15rem;
-  min-width: 130px;
-}
-
-.kpi-value {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.2;
-}
-
-.kpi-label {
-  font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.kpi-sub {
-  font-size: 0.62rem;
-  color: rgba(255, 255, 255, 0.25);
-}
+/* KPI styles moved to KpiCards.css */
 
 /* Charts grid */
 .charts-grid {
@@ -239,9 +203,11 @@
 
 /* Import & Preise collapsible toggle */
 .import-toggle {
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(10, 14, 24, 0.75);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   margin-bottom: 1.25rem;
   overflow: hidden;
 }
@@ -266,7 +232,7 @@
 }
 
 .import-toggle__summary::before {
-  content: '▶';
+  content: "▶";
   font-size: 0.6rem;
   transition: transform 0.2s ease;
   display: inline-block;
@@ -283,4 +249,83 @@ details[open] .import-toggle__summary::before {
 .import-toggle__body {
   padding: 0 1rem 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Auth loading state */
+.auth-loading {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.auth-loading__spinner {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(0, 112, 242, 0.85);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Settings placeholder */
+.settings-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+  text-align: center;
+}
+
+.settings-placeholder__title {
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.settings-placeholder__hint {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.875rem;
+  margin: 0;
+  max-width: 360px;
+}
+
+/* Logout button */
+.logout-button {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  border-radius: 8px;
+  color: #fca5a5;
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 0.55rem 1.5rem;
+  margin-top: 0.75rem;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.logout-button:hover {
+  background: rgba(239, 68, 68, 0.35);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.logout-button:active {
+  transform: translateY(0);
 }

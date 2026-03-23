@@ -1,6 +1,8 @@
 import type { ImportResponse } from '@cryptax/shared';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import LoginCard from './components/Auth/LoginCard';
+import SetupCard from './components/Auth/SetupCard';
 import Dashboard from './components/Dashboard/Dashboard';
 import FloatingLines from './components/FloatingLines/FloatingLines';
 import ImportDropzone from './components/ImportDropzone/ImportDropzone';
@@ -10,42 +12,107 @@ import ReportTab from './components/Report/ReportTab';
 import TransactionList from './components/Transactions/TransactionList';
 import './App.css';
 
-type TabId = 'dashboard' | 'transactions' | 'report';
+type AuthState = 'loading' | 'setup' | 'login' | 'authenticated';
+type TabId = 'dashboard' | 'transactions' | 'report' | 'settings';
 
 function App() {
+  const [authState, setAuthState] = useState<AuthState>('loading');
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [importResponse, setImportResponse] = useState<ImportResponse | null>(null);
+
+  // Determine auth state on mount
+  useEffect(() => {
+    fetch('/api/auth/status')
+      .then((res) => res.json<{ hasPassword: boolean; authenticated: boolean }>())
+      .then(({ hasPassword, authenticated }) => {
+        if (!hasPassword) {
+          setAuthState('setup');
+        } else if (authenticated) {
+          setAuthState('authenticated');
+        } else {
+          setAuthState('login');
+        }
+      })
+      .catch(() => {
+        // Graceful degradation on fetch error
+        setAuthState('login');
+      });
+  }, []);
+
+  const handleLogout = () => {
+    fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
+      setAuthState('login');
+    });
+  };
 
   const tabs: { id: TabId; label: string }[] = [
     { id: 'dashboard', label: 'Dashboard' },
     { id: 'transactions', label: 'Transaktionen' },
     { id: 'report', label: 'Steuerreport' },
+    { id: 'settings', label: 'Einstellungen' },
   ];
 
+  // ── Floating lines (shared background layer) ──────────────────────────────
+  const floatingLinesBg = (
+    <div className="floating-lines-bg">
+      <FloatingLines
+        linesGradient={['#0070F2', '#354A5F', '#0070F2', '#5fdc8a']}
+        enabledWaves={['top', 'middle', 'bottom']}
+        lineCount={[6, 8, 6]}
+        lineDistance={[5, 4, 5]}
+        animationSpeed={1.3}
+        interactive
+        bendRadius={3}
+        bendStrength={-1.0}
+        mouseDamping={0.08}
+        parallax={false}
+        mixBlendMode="screen"
+      />
+    </div>
+  );
+
+  // ── Loading state ─────────────────────────────────────────────────────────
+  if (authState === 'loading') {
+    return (
+      <div className="app">
+        {floatingLinesBg}
+        <div className="auth-loading">
+          <span className="auth-loading__spinner" aria-label="Laden..." />
+        </div>
+      </div>
+    );
+  }
+
+  // ── Setup state ───────────────────────────────────────────────────────────
+  if (authState === 'setup') {
+    return (
+      <div className="app">
+        {floatingLinesBg}
+        <SetupCard onSuccess={() => setAuthState('login')} />
+      </div>
+    );
+  }
+
+  // ── Login state ───────────────────────────────────────────────────────────
+  if (authState === 'login') {
+    return (
+      <div className="app">
+        {floatingLinesBg}
+        <LoginCard onSuccess={() => setAuthState('authenticated')} />
+      </div>
+    );
+  }
+
+  // ── Authenticated app ─────────────────────────────────────────────────────
   return (
     <div className="app">
-      {/* FloatingLines background layer */}
-      <div className="floating-lines-bg">
-        <FloatingLines
-          linesGradient={['#0070F2', '#354A5F', '#0070F2', '#5fdc8a']}
-          enabledWaves={['top', 'middle', 'bottom']}
-          lineCount={[6, 8, 6]}
-          lineDistance={[5, 4, 5]}
-          animationSpeed={1.3}
-          interactive
-          bendRadius={3}
-          bendStrength={-1.0}
-          mouseDamping={0.08}
-          parallax={false}
-          mixBlendMode="screen"
-        />
-      </div>
+      {floatingLinesBg}
 
       {/* Content layer */}
       <div className="content">
         <header className="header">
           <h1>Cryptax</h1>
-          <p className="subtitle">Krypto-Steuerreport & Portfolio Dashboard</p>
+          <p className="subtitle">Krypto-Steuerreport &amp; Portfolio Dashboard</p>
         </header>
 
         {/* Tab Navigation */}
@@ -121,6 +188,30 @@ function App() {
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
                 <ReportTab />
+              </motion.div>
+            )}
+
+            {activeTab === 'settings' && (
+              <motion.div
+                key="settings"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+              >
+                <div className="settings-placeholder">
+                  <h2 className="settings-placeholder__title">Einstellungen</h2>
+                  <p className="settings-placeholder__hint">
+                    Exchange-Verbindungen und weitere Einstellungen folgen.
+                  </p>
+                  <button
+                    type="button"
+                    className="logout-button"
+                    onClick={handleLogout}
+                  >
+                    Abmelden
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
