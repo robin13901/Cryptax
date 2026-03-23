@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 IN PROGRESS — Plans 01, 02, 03, 04, and 05 complete; all 4 report API endpoints live
+**Current focus:** Phase 6 IN PROGRESS — Plans 01-06 complete; Report UI fully functional with preview and download buttons
 
 ## Current Position
 
 Phase: 6 of 7 (Steuerreport + PDF Export) — In progress
-Plan: 5 of ? complete in sequence (06-01, 06-02, 06-03, 06-04, 06-05 done)
-Status: In progress — 06-05 executed (Report API routes with 4 endpoints)
-Last activity: 2026-03-23 — Completed 06-05-PLAN.md
+Plan: 6 of ? complete in sequence (06-01, 06-02, 06-03, 06-04, 06-05, 06-06 done)
+Status: In progress — 06-06 executed (Report frontend: ReportTab + ReportPreview, 10 tests)
+Last activity: 2026-03-23 — Completed 06-06-PLAN.md
 
-Progress: [████████░░] 84% (41/49 plans complete)
+Progress: [████████░░] 86% (42/49 plans complete)
 
 ## Performance Metrics
 
@@ -130,6 +130,12 @@ Recent decisions affecting current work:
 - 06-05-c: vi.hoisted mockDbRef pattern for TDZ — report-generator.ts exports singleton at module load; vi.hoisted ensures ref object exists before mock factory runs
 - 06-05-d: BOM assertion uses raw bytes (0xEF,0xBB,0xBF) — TextDecoder.decode() strips BOM by default
 
+- 06-06-a: YearSelector reused from Dashboard — same component, shared CSS class, no duplication
+- 06-06-b: downloading state tracks 'pdf'|'csv'|null — disables both buttons while one downloads
+- 06-06-c: yearsLoading gate in preview useEffect — prevents preview fetch before year list resolved
+- 06-06-d: FreigrenzeStatus labels use 'eingehalten'/'ueberschritten' — avoids umlaut encoding issues in tests
+- 06-06-e: TradeRow as inline component in ReportPreview — 9-column table row, collocated with table for readability
+
 ### Pending Todos
 
 None yet.
@@ -143,5 +149,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 06-05-PLAN.md (Report API routes — 4 endpoints, 26 tests, 712 total)
+Stopped at: Completed 06-06-PLAN.md (Report frontend UI — ReportTab + ReportPreview, 10 tests, 89 total frontend tests)
 Resume file: None
