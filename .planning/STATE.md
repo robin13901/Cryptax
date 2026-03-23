@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-03, 07-04 complete
+**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-02, 07-03, 07-04 complete
 
 ## Current Position
 
 Phase: 7 of 7 (Exchange API + Security) — In progress
-Plan: 4 of N complete in phase (07-01, 07-03, 07-04 done)
-Status: In progress — auth frontend gate complete, 819 tests
-Last activity: 2026-03-23 — Completed 07-04-PLAN.md (Frontend auth gate: LoginCard, SetupCard, App.tsx state machine)
+Plan: 5 of N complete in phase (07-01, 07-02, 07-03, 07-04 done)
+Status: In progress — credential cipher + exchange CRUD complete, 819 tests
+Last activity: 2026-03-23 — Completed 07-02-PLAN.md (AES-256-GCM credential encryption + exchange CRUD routes)
 
 Progress: [████████░░] 90% (46/50 plans complete)
 
@@ -147,6 +147,12 @@ Recent decisions affecting current work:
 - 07-01-d: credential_master_key generated and stored at setup time (app_settings) for 07-02 credential encryption
 - 07-01-e: Existing route tests unaffected — all create isolated Hono instances, do not import index.ts
 
+- 07-02-a: 12-byte IV (96-bit) for AES-256-GCM — NIST SP 800-38D recommendation; 16-byte salt separate for PBKDF2
+- 07-02-b: Fresh random IV + salt per encrypt call — same plaintext produces distinct ciphertexts; no correlation across connections
+- 07-02-c: POST /api/exchanges accepts only 'bitget' — other exchanges return 400 until explicitly supported
+- 07-02-d: POST /api/exchanges/:id/test stubs ccxt-not-yet-installed — live API call wired in 07-05
+- 07-02-e: satisfies operator on Drizzle .returning() — compile-time shape verification without cast/any
+
 - 07-03-a: Static analysis uses regex on fs.readFileSync output rather than AST — sufficient for targeted patterns, zero extra dependencies
 - 07-03-b: Console spies use mockImplementation(() => {}) — suppresses test noise while capturing calls for assertion
 - 07-03-c: routes/auth.ts included in static analysis alongside auth/*.ts — route handler is where password data flows from request body
@@ -171,5 +177,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 07-04-PLAN.md (Frontend auth gate — LoginCard, SetupCard, App.tsx state machine, 819 tests)
+Stopped at: Completed 07-02-PLAN.md (Credential cipher + exchange CRUD — AES-256-GCM, 819 tests)
 Resume file: None
