@@ -83,6 +83,10 @@ Recent decisions affecting current work:
 - 05-02: haltefristMet converted via Boolean() — SQLite stores as 0/1 integer in raw queries
 - 05-02: TransactionListItem extended with orderId, sourceType, eurPrice for list display badges
 
+- 05-04: Dashboard auto-selects most recent year only when selectedYear equals current calendar year — avoids infinite loop on manual selection
+- 05-04: FreigrenzeBar thresholds pct < 70 green, 70-89 amber (#f59e0b), >= 90 red — standard warning UX
+- 05-04: recharts Tooltip formatter type: use `(value) => [typeof value === 'number' ? formatEur(value) : ...]` — ValueType is `number | undefined`
+
 - 05-06: CategoryBadge uses CSS class-based color mapping — enables theming and specificity control
 - 05-06: IntersectionObserver on sentinel div for infinite scroll — zero scroll-event listener overhead
 - 05-06: AbortController per fetch — prevents stale result race conditions on filter change
