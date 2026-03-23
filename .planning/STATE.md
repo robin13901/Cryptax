@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 COMPLETE (4/5 verified, 1 gap: E2E test with real CSV fixtures) — ready for gap closure or Phase 7
+**Current focus:** Phase 7 (Exchange API + Security) — Plan 07-01 complete (auth foundation)
 
 ## Current Position
 
-Phase: 6 of 7 (Steuerreport + PDF Export) — Gaps found (4/5 verified)
-Plan: 7 of 7 complete in sequence (06-01 through 06-07 done)
-Status: 4/5 criteria passed; gap: E2E test needs real CSV fixtures
-Last activity: 2026-03-23 — Phase 6 verified with 1 gap
+Phase: 7 of 7 (Exchange API + Security) — In progress
+Plan: 1 of N complete in phase (07-01 done)
+Status: In progress — auth backend complete, 765 tests
+Last activity: 2026-03-23 — Completed 07-01-PLAN.md (Auth foundation: scrypt, JWT, session middleware)
 
-Progress: [████████░░] 88% (43/49 plans complete)
+Progress: [████████░░] 88% (44/50 plans complete)
 
 ## Performance Metrics
 
@@ -141,6 +141,12 @@ Recent decisions affecting current work:
 - 06-07-c: E2E tests target aria-label selectors for PDF/CSV buttons in ReportTab
 - 06-07-d: E2E tests use select.year-selector for YearSelector component locator
 
+- 07-01-a: JWT algorithm is HS256 — Hono jwt middleware requires explicit alg parameter (not optional)
+- 07-01-b: JWT_SECRET is process.env.JWT_SECRET ?? randomBytes(32).toString('hex') — ephemeral if not set, persists for server lifetime
+- 07-01-c: Session cookie has no maxAge (session-only per CONTEXT.md decision)
+- 07-01-d: credential_master_key generated and stored at setup time (app_settings) for 07-02 credential encryption
+- 07-01-e: Existing route tests unaffected — all create isolated Hono instances, do not import index.ts
+
 ### Pending Todos
 
 None yet.
@@ -154,5 +160,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 06-07-PLAN.md (Integration + E2E tests — 742 tests, phase 06 complete)
+Stopped at: Completed 07-01-PLAN.md (Auth foundation — scrypt+JWT middleware, 765 tests)
 Resume file: None
