@@ -6,6 +6,7 @@ import { registerEngineRoutes } from './routes/engine.js';
 import { registerHealthRoutes } from './routes/health.js';
 import { registerImportRoutes } from './routes/import.js';
 import { registerPriceRoutes } from './routes/prices.js';
+import { registerReportRoutes } from './routes/report.js';
 import { registerSummaryRoutes } from './routes/summary.js';
 import { registerTransactionRoutes } from './routes/transactions.js';
 
@@ -20,6 +21,7 @@ registerPriceRoutes(app);
 registerEngineRoutes(app);
 registerSummaryRoutes(app);
 registerTransactionRoutes(app);
+registerReportRoutes(app);
 
 serve({ fetch: app.fetch, port: 3001 }, () => {
   console.log('Backend server running on http://localhost:3001');
