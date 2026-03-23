@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 5 in progress — format utilities and test setup complete
+**Current focus:** Phase 5 in progress — Summary API, format utilities, and test setup complete
 
 ## Current Position
 
 Phase: 5 of 7 (Dashboard + Transaction UI) — In progress
-Plan: 3 of 7 in current phase
-Status: In progress — 05-03 complete (format utilities + test setup mocks)
-Last activity: 2026-03-23 — Completed 05-03-PLAN.md
+Plan: 1 of 7 just completed (05-01)
+Status: In progress — 05-01 complete (Summary API), 05-03 complete (format utilities)
+Last activity: 2026-03-23 — Completed 05-01-PLAN.md (Summary API: GET /api/summary/:year)
 
 Progress: [██████░░░░] 61% (30/49 plans complete)
 
@@ -70,6 +70,9 @@ Recent decisions affecting current work:
 - 04-06: DB writes inside single db.transaction() — atomic: either all 5 tables written or none
 - 04-08: Golden master tests reuse in-memory SQLite + full migrations pattern — no mocking
 - 04-08: Property tests target runFifoEngine directly (pure function, no DB) — faster, 100 runs each
+- 05-01: engineHasRun guard uses SELECT 1 FROM tax_summaries LIMIT 1 — cheapest probe, distinguishes no-engine-run from zero-gains
+- 05-01: Portfolio allocation is year-agnostic — shows current open holdings across all tax years
+- 05-01: KPI sum uses parseFloat — engine stores precise Decimal strings; float sum adequate for dashboard display
 - 05-03: jsdom renders de-DE currency as '€' symbol not 'EUR' text — test assertions use /EUR|€/ regex for portability
 - 05-03: gainLossColor returns CSS variable strings (var(--crypto-green/red)) not hex — theming via CSS custom properties
 - 05-03: formatEur showSign defaults false; callers pass true for P&L display contexts
@@ -88,5 +91,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 05-03-PLAN.md (format utilities + test setup mocks)
+Stopped at: Completed 05-01-PLAN.md (Summary API: GET /api/summary/:year, 23 tests)
 Resume file: None
