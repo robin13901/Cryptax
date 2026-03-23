@@ -1,4 +1,11 @@
 import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+// Auto-cleanup after each test — ensures DOM is reset between tests
+afterEach(() => {
+  cleanup();
+});
 
 // ResizeObserver mock — required by Recharts responsive containers
 global.ResizeObserver = class ResizeObserver {
