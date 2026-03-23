@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 5 COMPLETE and VERIFIED — ready for Phase 6
+**Current focus:** Phase 6 IN PROGRESS — Plan 01 complete, data foundation ready
 
 ## Current Position
 
-Phase: 5 of 7 (Dashboard + Transaction UI) — Complete
-Plan: 7 of 7 complete (05-07)
-Status: Complete — all plans executed, verified (5/5 criteria passed after gap fix)
-Last activity: 2026-03-23 — Phase 5 verified and closed
+Phase: 6 of 7 (Steuerreport + PDF Export) — In progress
+Plan: 1 of ? complete (06-01)
+Status: In progress — 06-01 executed (ReportData types + ReportGenerator)
+Last activity: 2026-03-23 — Completed 06-01-PLAN.md
 
-Progress: [███████░░░] 73% (36/49 plans complete)
+Progress: [███████░░░] 75% (37/49 plans complete)
 
 ## Performance Metrics
 
@@ -102,6 +102,12 @@ Recent decisions affecting current work:
 - 05-07: vi.spyOn(global, 'fetch') preferred over vi.stubGlobal — vi.restoreAllMocks() cleans up spyOn but not stubGlobal
 - 05-07: Global cleanup() in setup.ts afterEach — project-wide DOM isolation without per-file boilerplate
 
+- 06-01-a: EarnSummary.totalIncomeEur sourced from SUM(earn_income) not tax_summaries — explicit data lineage
+- 06-01-b: freigrenzeStatus computed at generate() time — display concern; DB has taxableAmountEur
+- 06-01-c: totalFeesEur in FuturesSummary from futures_positions.fee_eur SUM — tax_summaries has no fee breakdown
+- 06-01-d: EarnCoinBreakdown as named interface for typed destructuring in PDF/CSV consumers
+- 06-01-e: TradeAppendix sorted by tradedAt ASC then symbol ASC for natural Steuerberater review order
+
 ### Pending Todos
 
 None yet.
@@ -115,5 +121,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 05-07-PLAN.md (TransactionDetail slide-in panel + 59 component tests; phase 5 complete)
+Stopped at: Completed 06-01-PLAN.md (ReportData types + ReportGenerator; 22 new tests, 613 total)
 Resume file: None
