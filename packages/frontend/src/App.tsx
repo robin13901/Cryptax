@@ -6,6 +6,7 @@ import FloatingLines from './components/FloatingLines/FloatingLines';
 import ImportDropzone from './components/ImportDropzone/ImportDropzone';
 import ImportSummary from './components/ImportSummary/ImportSummary';
 import PriceStatus from './components/PriceStatus/PriceStatus';
+import ReportTab from './components/Report/ReportTab';
 import TransactionList from './components/Transactions/TransactionList';
 import './App.css';
 
@@ -119,13 +120,7 @@ function App() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
-                <div className="empty-state">
-                  <div className="empty-state-icon">&#128203;</div>
-                  <p>Steuerreport</p>
-                  <p style={{ fontSize: '0.78rem' }}>
-                    Report-Generierung und Export kommen hier hin
-                  </p>
-                </div>
+                <ReportTab />
               </motion.div>
             )}
           </AnimatePresence>
