@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 4 complete — ready for Phase 5
+**Current focus:** Phase 5 in progress — format utilities and test setup complete
 
 ## Current Position
 
-Phase: 4 of 7 (FIFO Engine + Tax Calculation) — Complete
-Plan: 8 of 8 in current phase
-Status: Complete — all plans executed, verified (5/5 criteria passed)
-Last activity: 2026-03-22 — Phase 4 verified and closed
+Phase: 5 of 7 (Dashboard + Transaction UI) — In progress
+Plan: 3 of 7 in current phase
+Status: In progress — 05-03 complete (format utilities + test setup mocks)
+Last activity: 2026-03-23 — Completed 05-03-PLAN.md
 
-Progress: [██████░░░░] 59% (29/49 plans complete)
+Progress: [██████░░░░] 61% (30/49 plans complete)
 
 ## Performance Metrics
 
@@ -31,6 +31,7 @@ Progress: [██████░░░░] 59% (29/49 plans complete)
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
 | 04-fifo-engine-tax-calculation | 8/8 COMPLETE | ~61 min | ~8 min |
+| 05-dashboard-transaction-ui | 3/7 in progress | ~5 min | ~5 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -69,6 +70,10 @@ Recent decisions affecting current work:
 - 04-06: DB writes inside single db.transaction() — atomic: either all 5 tables written or none
 - 04-08: Golden master tests reuse in-memory SQLite + full migrations pattern — no mocking
 - 04-08: Property tests target runFifoEngine directly (pure function, no DB) — faster, 100 runs each
+- 05-03: jsdom renders de-DE currency as '€' symbol not 'EUR' text — test assertions use /EUR|€/ regex for portability
+- 05-03: gainLossColor returns CSS variable strings (var(--crypto-green/red)) not hex — theming via CSS custom properties
+- 05-03: formatEur showSign defaults false; callers pass true for P&L display contexts
+- 05-03: ResizeObserver/IntersectionObserver mocks added to shared setup.ts (not per-file) — project-wide availability
 
 ### Pending Todos
 
@@ -82,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-22
-Stopped at: Phase 4 complete — all 8 plans executed, verified, state updated
+Last session: 2026-03-23
+Stopped at: Completed 05-03-PLAN.md (format utilities + test setup mocks)
 Resume file: None
