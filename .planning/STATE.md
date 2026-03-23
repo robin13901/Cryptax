@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-02, 07-03, 07-04, 07-05, 07-06 complete
+**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01 through 07-07 auto tasks complete, checkpoint pending
 
 ## Current Position
 
-Phase: 7 of 7 (Exchange API + Security) — In progress
-Plan: 7 of 7 complete in phase (07-01 through 07-06 done; 07-07 remaining)
-Status: In progress — Settings UI + exchange management complete, 900 tests
-Last activity: 2026-03-23 — Completed 07-06-PLAN.md (Exchange management UI: SettingsTab + CredentialForm + ExchangeCard + PasswordChange)
+Phase: 7 of 7 (Exchange API + Security) — Checkpoint: awaiting human verify
+Plan: 7 of 7 in phase (07-01 through 07-07 auto tasks done; checkpoint pending)
+Status: Checkpoint — sync flow implemented, awaiting end-to-end human verification
+Last activity: 2026-03-23 — Completed 07-07-PLAN.md auto tasks (Sync API + UI, 919 tests)
 
-Progress: [█████████░] 94% (48/51 plans complete)
+Progress: [█████████░] 96% (50/51 plans complete — awaiting checkpoint)
 
 ## Performance Metrics
 
@@ -175,6 +175,11 @@ Recent decisions affecting current work:
 - 07-06-c: Delete confirmation is inline (replace button with alertdialog) — no modal, no extra component
 - 07-06-d: SettingsTab toggle button flips text; CredentialForm also has Abbrechen — both close form; test uses getAllByRole + last match
 - 07-06-e: PasswordChange posts to /api/auth/change-password — route placeholder for future plan
+- 07-07-a: sanitizeErrorMessage uses /[A-Za-z0-9]{21,}/g — strips credential-like tokens from error responses (21+ char alphanumeric-only)
+- 07-07-b: sync-all uses sequential for-loop not Promise.all — avoids rate-limit burst on Bitget API
+- 07-07-c: Failed sync-all entry sets exchange=unknown + warnings[] — identifies which connection failed
+- 07-07-d: Auto-sync on app mount is fire-and-forget — silent background refresh, no UI feedback
+- 07-07-e: sonner Toaster at bottom-right richColors — avoids covering tab navigation
 
 ### Pending Todos
 
