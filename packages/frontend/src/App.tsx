@@ -1,11 +1,12 @@
 import type { ImportResponse } from '@cryptax/shared';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
+import Dashboard from './components/Dashboard/Dashboard';
 import FloatingLines from './components/FloatingLines/FloatingLines';
-import GlassSurface from './components/GlassSurface/GlassSurface';
 import ImportDropzone from './components/ImportDropzone/ImportDropzone';
 import ImportSummary from './components/ImportSummary/ImportSummary';
 import PriceStatus from './components/PriceStatus/PriceStatus';
+import TransactionList from './components/Transactions/TransactionList';
 import './App.css';
 
 type TabId = 'dashboard' | 'transactions' | 'report';
@@ -144,19 +145,28 @@ function App() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
-                <div className="transactions-import-area">
-                  {importResponse ? (
-                    <ImportSummary
-                      response={importResponse}
-                      onDismiss={() => setImportResponse(null)}
-                    />
-                  ) : (
-                    <ImportDropzone onImportComplete={setImportResponse} />
-                  )}
-                </div>
-                <div className="transactions-price-area" style={{ marginTop: '1.5rem' }}>
-                  <PriceStatus />
-                </div>
+                {/* Collapsible import section */}
+                <details className="import-toggle">
+                  <summary className="import-toggle__summary">Import &amp; Preise</summary>
+                  <div className="import-toggle__body">
+                    <div className="transactions-import-area">
+                      {importResponse ? (
+                        <ImportSummary
+                          response={importResponse}
+                          onDismiss={() => setImportResponse(null)}
+                        />
+                      ) : (
+                        <ImportDropzone onImportComplete={setImportResponse} />
+                      )}
+                    </div>
+                    <div className="transactions-price-area" style={{ marginTop: '1.5rem' }}>
+                      <PriceStatus />
+                    </div>
+                  </div>
+                </details>
+
+                {/* Transaction list */}
+                <TransactionList />
               </motion.div>
             )}
 

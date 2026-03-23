@@ -236,3 +236,51 @@
   margin: 0 auto;
   width: 100%;
 }
+
+/* Import & Preise collapsible toggle */
+.import-toggle {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.import-toggle__summary {
+  cursor: pointer;
+  padding: 0.65rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  letter-spacing: 0.02em;
+  user-select: none;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: color 0.15s ease;
+}
+
+.import-toggle__summary::-webkit-details-marker {
+  display: none;
+}
+
+.import-toggle__summary::before {
+  content: '▶';
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+details[open] .import-toggle__summary::before {
+  transform: rotate(90deg);
+}
+
+.import-toggle__summary:hover {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.import-toggle__body {
+  padding: 0 1rem 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
