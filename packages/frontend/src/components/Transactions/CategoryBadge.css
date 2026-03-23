@@ -1,0 +1,47 @@
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.18em 0.6em;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* Spot — blue */
+.badge--spot {
+  background: rgba(0, 112, 242, 0.18);
+  color: #0070f2;
+}
+
+/* Futures — purple */
+.badge--futures {
+  background: rgba(167, 139, 250, 0.18);
+  color: #a78bfa;
+}
+
+/* Earn — green */
+.badge--earn {
+  background: rgba(95, 220, 138, 0.18);
+  color: #5fdc8a;
+}
+
+/* Fee — orange */
+.badge--fee {
+  background: rgba(233, 115, 12, 0.18);
+  color: #e9730c;
+}
+
+/* Transfer — gray */
+.badge--transfer {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Sonstige — muted */
+.badge--sonstige {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.45);
+}

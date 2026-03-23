@@ -1,0 +1,96 @@
+.tx-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.tx-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tx-filter-group--search {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.tx-filter-group--dates {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tx-filter-input,
+.tx-filter-select {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.82rem;
+  padding: 0.35rem 0.6rem;
+  outline: none;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  font-family: inherit;
+}
+
+.tx-filter-input:focus,
+.tx-filter-select:focus {
+  border-color: rgba(0, 112, 242, 0.6);
+  background: rgba(0, 112, 242, 0.08);
+}
+
+.tx-filter-input--search {
+  width: 100%;
+}
+
+.tx-filter-input--date {
+  min-width: 130px;
+  color-scheme: dark;
+}
+
+.tx-filter-select {
+  min-width: 130px;
+  cursor: pointer;
+  /* style native select arrow */
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M0 0l5 6 5-6H0z' fill='rgba(255,255,255,0.4)'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.55rem center;
+  padding-right: 1.8rem;
+}
+
+.tx-filter-select option,
+.tx-filter-select optgroup {
+  background: #1a2332;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.tx-filter-sep {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+}
+
+.tx-filter-reset {
+  background: rgba(233, 115, 12, 0.15);
+  border: 1px solid rgba(233, 115, 12, 0.35);
+  border-radius: 6px;
+  color: #e9730c;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.tx-filter-reset:hover {
+  background: rgba(233, 115, 12, 0.25);
+}
