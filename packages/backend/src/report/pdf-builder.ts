@@ -8,6 +8,7 @@
  *   Page 2+ — Anlage SO (§23 EStG spot trades)
  *             Anlage KAP (§20 EStG futures P&L)
  *             Staking/Earn (§22 Nr. 3 EStG)
+ *             Handelsanhang (trade appendix — all lot consumptions, paginated)
  *
  * Every page has a footer: "Seite X von Y  |  Erstellt: dd.MM.yyyy"
  * injected post-hoc via PDFKit bufferPages.
@@ -19,7 +20,7 @@
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import type { ReportData } from '@cryptax/shared';
+import type { ReportData, TradeAppendixRow } from '@cryptax/shared';
 
 // ---------------------------------------------------------------------------
 // PDFKit — CJS module, must use createRequire in ESM context
@@ -513,6 +514,299 @@ function buildStakingSection(doc: PDFKit.PDFDocument, data: ReportData, startY: 
 }
 
 // ---------------------------------------------------------------------------
+// Trade Appendix — Handelsanhang (all lot consumptions, paginated)
+// ---------------------------------------------------------------------------
+
+// Table column definitions for the trade appendix
+const TRADE_COLUMNS = [
+  'Symbol',
+  'Kaufdatum',
+  'Verkaufdatum',
+  'Menge',
+  'Einstandswert',
+  'Erl\u00f6s',
+  'G/V EUR',
+  'Tage',
+  'Haltefrist',
+] as const;
+
+// Column widths must sum to CONTENT_WIDTH (495pt)
+// 50 + 62 + 62 + 50 + 66 + 66 + 60 + 30 + 49 = 495
+const TRADE_COL_WIDTHS = [50, 62, 62, 50, 66, 66, 60, 30, 49];
+
+// Row height in points (7pt font + padding)
+const TRADE_ROW_H = 14;
+
+// Header row height
+const TRADE_HEADER_H = 16;
+
+// Bottom threshold: rows below this y trigger a new page
+const TRADE_PAGE_BOTTOM = 770;
+
+// Table header background color
+const TABLE_HEADER_BG = CRYPTO_NAVY;
+
+// Alternating row colors
+const ROW_BG_EVEN = '#FFFFFF';
+const ROW_BG_ODD = '#F5F5F5';
+
+// Gain/loss colors (more legible on small text than the branding green/red)
+const GAIN_COLOR = '#1a7a40';
+const LOSS_COLOR = '#c0392b';
+
+// Tax-free row left-border accent color
+const TAX_FREE_ACCENT = '#1a7a40';
+
+/**
+ * Convert an ISO date string (date-only or full datetime) to dd.MM.yyyy format.
+ * e.g. "2024-03-15" → "15.03.2024"
+ *      "2024-03-15T14:30:00Z" → "15.03.2024"
+ */
+export function formatDateDe(isoDate: string): string {
+  // Parse YYYY-MM-DD prefix to avoid timezone issues
+  const datePart = isoDate.slice(0, 10); // "YYYY-MM-DD"
+  const [year, month, day] = datePart.split('-');
+  return `${day}.${month}.${year}`;
+}
+
+/**
+ * Draw the trade appendix table header row at position y.
+ * Returns y position just below the header row.
+ */
+function drawTradeTableHeader(doc: PDFKit.PDFDocument, y: number): number {
+  // Background bar
+  doc
+    .rect(MARGIN, y, CONTENT_WIDTH, TRADE_HEADER_H)
+    .fill(TABLE_HEADER_BG);
+
+  let x = MARGIN;
+  TRADE_COLUMNS.forEach((col, i) => {
+    const w = TRADE_COL_WIDTHS[i];
+    const isNumeric = i >= 3; // Menge and onwards are right-aligned
+    doc
+      .font('Bold')
+      .fontSize(7)
+      .fillColor(COLOR_WHITE)
+      .text(col, x + 2, y + 4, {
+        width: w - 4,
+        align: isNumeric ? 'right' : 'left',
+        lineBreak: false,
+      });
+    x += w;
+  });
+
+  return y + TRADE_HEADER_H;
+}
+
+/**
+ * Draw a single trade appendix data row at position y.
+ * Returns y position just below the row.
+ */
+function drawTradeRow(
+  doc: PDFKit.PDFDocument,
+  row: TradeAppendixRow,
+  y: number,
+  rowIndex: number,
+): number {
+  // Alternating row background
+  const bgColor = rowIndex % 2 === 0 ? ROW_BG_EVEN : ROW_BG_ODD;
+  doc.rect(MARGIN, y, CONTENT_WIDTH, TRADE_ROW_H).fill(bgColor);
+
+  // Tax-free rows: left accent border (3pt green strip)
+  if (row.haltefristMet) {
+    doc.rect(MARGIN, y, 3, TRADE_ROW_H).fill(TAX_FREE_ACCENT);
+  }
+
+  const gainLoss = parseFloat(row.gainLossEur);
+  const glColor = gainLoss >= 0 ? GAIN_COLOR : LOSS_COLOR;
+
+  // Format values
+  const cells = [
+    row.symbol,
+    formatDateDe(row.buyDate),
+    formatDateDe(row.sellDate),
+    parseFloat(row.amountConsumed).toFixed(4),
+    formatEurPdf(row.costBasisEur),
+    formatEurPdf(row.proceedsEur),
+    formatEurPdf(row.gainLossEur),
+    String(row.heldDays),
+    row.haltefristMet ? 'Ja' : 'Nein',
+  ];
+
+  const cellColors = [
+    COLOR_TEXT, COLOR_TEXT, COLOR_TEXT, COLOR_TEXT,
+    COLOR_TEXT, COLOR_TEXT,
+    glColor,  // G/V column
+    COLOR_TEXT,
+    row.haltefristMet ? GAIN_COLOR : COLOR_TEXT, // Haltefrist column
+  ];
+
+  let x = MARGIN;
+  cells.forEach((cell, i) => {
+    const w = TRADE_COL_WIDTHS[i];
+    const isNumeric = i >= 3;
+
+    // Tax-free rows: use italic-style by using Regular (no italic variant in DejaVu bundled)
+    // Visual distinction is provided by the green left-border accent
+    doc
+      .font(i === 0 ? 'Bold' : 'Regular') // bold symbol column
+      .fontSize(7)
+      .fillColor(cellColors[i])
+      .text(cell, x + (row.haltefristMet && i === 0 ? 5 : 2), y + 3, {
+        width: w - (row.haltefristMet && i === 0 ? 7 : 4),
+        align: isNumeric ? 'right' : 'left',
+        lineBreak: false,
+        ellipsis: true,
+      });
+    x += w;
+  });
+
+  return y + TRADE_ROW_H;
+}
+
+/**
+ * Build the trade appendix section.
+ * Adds new pages and repeats the header as needed (pagination).
+ *
+ * @param doc   PDFKit document
+ * @param rows  All TradeAppendixRow entries for the year
+ */
+function buildTradeAppendix(doc: PDFKit.PDFDocument, rows: TradeAppendixRow[]): void {
+  // Always start appendix on a new page
+  doc.addPage();
+  let y = MARGIN;
+
+  // Section header bar
+  doc
+    .rect(MARGIN, y, CONTENT_WIDTH, 22)
+    .fill(CRYPTO_BLUE);
+
+  doc
+    .font('Bold')
+    .fontSize(SIZE_H2)
+    .fillColor(COLOR_WHITE)
+    .text('Handelsanhang \u2014 Alle Transaktionen', MARGIN + 8, y + 5, {
+      width: CONTENT_WIDTH - 16,
+      lineBreak: false,
+    });
+
+  y += 22 + 4;
+
+  // Subtitle
+  doc
+    .font('Regular')
+    .fontSize(7)
+    .fillColor(COLOR_MUTED)
+    .text(
+      'Alle Ver\u00e4u\u00dferungsgesch\u00e4fte inkl. steuerfreie Transaktionen (Haltefrist > 365 Tage) \u2014 ' +
+      'Steuerfreie Zeilen: gr\u00fcner Akzentstreifen links',
+      MARGIN,
+      y,
+      { width: CONTENT_WIDTH },
+    );
+
+  y += 16;
+
+  if (rows.length === 0) {
+    doc
+      .font('Regular')
+      .fontSize(SIZE_SMALL)
+      .fillColor(COLOR_MUTED)
+      .text('Keine Transaktionen vorhanden.', MARGIN, y, { width: CONTENT_WIDTH });
+    return;
+  }
+
+  // Draw initial table header
+  y = drawTradeTableHeader(doc, y);
+
+  // Render rows with pagination
+  rows.forEach((row, i) => {
+    // Check if we need a new page before drawing the next row
+    if (y + TRADE_ROW_H > TRADE_PAGE_BOTTOM) {
+      doc.addPage();
+      y = MARGIN;
+      y = drawTradeTableHeader(doc, y);
+    }
+    y = drawTradeRow(doc, row, y, i);
+  });
+
+  // Summary row
+  const totalGains = rows.reduce((sum, r) => {
+    const v = parseFloat(r.gainLossEur);
+    return v > 0 ? sum + v : sum;
+  }, 0);
+  const totalLosses = rows.reduce((sum, r) => {
+    const v = parseFloat(r.gainLossEur);
+    return v < 0 ? sum + v : sum;
+  }, 0);
+  const netTotal = totalGains + totalLosses;
+
+  // Ensure summary row fits on current page
+  if (y + TRADE_ROW_H + 8 > TRADE_PAGE_BOTTOM) {
+    doc.addPage();
+    y = MARGIN;
+  }
+
+  y += 6;
+
+  // Summary separator line
+  doc
+    .moveTo(MARGIN, y)
+    .lineTo(MARGIN + CONTENT_WIDTH, y)
+    .strokeColor(CRYPTO_NAVY)
+    .lineWidth(0.75)
+    .stroke();
+
+  y += 4;
+
+  const netColor = netTotal >= 0 ? GAIN_COLOR : LOSS_COLOR;
+
+  doc
+    .font('Bold')
+    .fontSize(7.5)
+    .fillColor(CRYPTO_NAVY)
+    .text(
+      `Gesamt: ${rows.length} Transaktionen`,
+      MARGIN,
+      y,
+      { width: 160, lineBreak: false },
+    );
+
+  doc
+    .font('Regular')
+    .fontSize(7.5)
+    .fillColor(GAIN_COLOR)
+    .text(
+      `Gewinn: ${formatEurPdf(String(totalGains.toFixed(2)))}`,
+      MARGIN + 165,
+      y,
+      { width: 120, lineBreak: false },
+    );
+
+  doc
+    .font('Regular')
+    .fontSize(7.5)
+    .fillColor(LOSS_COLOR)
+    .text(
+      `Verlust: ${formatEurPdf(String(totalLosses.toFixed(2)))}`,
+      MARGIN + 290,
+      y,
+      { width: 120, lineBreak: false },
+    );
+
+  doc
+    .font('Bold')
+    .fontSize(7.5)
+    .fillColor(netColor)
+    .text(
+      `Netto: ${formatEurPdf(String(netTotal.toFixed(2)))}`,
+      MARGIN + 415,
+      y,
+      { width: 80, lineBreak: false },
+    );
+}
+
+// ---------------------------------------------------------------------------
 // Main buildPdf function
 // ---------------------------------------------------------------------------
 
@@ -593,6 +887,11 @@ export function buildPdf(data: ReportData, options: BuildPdfOptions = {}): Promi
     }
 
     y = buildStakingSection(doc, data, y);
+
+    // -----------------------------------------------------------------------
+    // Trade Appendix — Handelsanhang (all lot consumptions, paginated)
+    // -----------------------------------------------------------------------
+    buildTradeAppendix(doc, data.tradeAppendix);
 
     // -----------------------------------------------------------------------
     // Post-hoc page number injection
