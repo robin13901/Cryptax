@@ -179,16 +179,16 @@ Plans:
 4. Downloading the CSV export produces a machine-readable file with all taxable transactions, suitable for import by a Steuerberater.
 5. The full import -> price enrichment -> tax calculation -> report generation flow completes without errors in a Playwright E2E test using the actual 2024 and 2025 Bitget CSV test fixtures.
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 6 waves
 
 Plans:
-- [ ] 06-01: Report generator service — ReportGenerator class; aggregate tax_summaries + lot_consumptions + futures_positions + earn_income into report data model (REPT-01, REPT-02, REPT-03, REPT-04)
-- [ ] 06-02: PDF generation — PDFKit 0.18.0; embed TTF font with Latin Extended for German characters; Anlage SO + KAP + Staking income sections (REPT-05)
-- [ ] 06-03: PDF trade appendix — per-trade table with PDFKit's native table API; test pagination at 50/100/200 rows; fallback to coordinate layout if table API has edge case (REPT-04 continued)
-- [ ] 06-04: CSV export — machine-readable CSV of all taxable transactions; column mapping for Steuerberater compatibility (REPT-06)
-- [ ] 06-05: Report API + year selection — GET /api/report/:year/preview (JSON), GET /api/report/:year/pdf, GET /api/report/:year/csv; year selection UI (REPT-07, REPT-08)
-- [ ] 06-06: Report preview UI — browser preview in Steuerreport tab; section navigation; download buttons
-- [ ] 06-07: Integration + E2E tests — integration tests for full API flow (import -> calculate -> report) (TEST-06); Playwright E2E test for complete user journey: drag CSV -> enrich prices -> run engine -> view dashboard -> export PDF (TEST-07)
+- [ ] 06-01-PLAN.md — Report types + ReportGenerator service: ReportData interfaces in shared, ReportGenerator class aggregating all tax data (Wave 1)
+- [ ] 06-02-PLAN.md — PDF generation: PDFKit 0.18.0 + DejaVu Sans TTF fonts + cover page + Anlage SO/KAP/Earn summary sections (Wave 2)
+- [ ] 06-03-PLAN.md — PDF trade appendix: per-trade table with coordinate-based layout, pagination at 50/100/200+ rows (Wave 3)
+- [ ] 06-04-PLAN.md — CSV export: semicolon-delimited, UTF-8 BOM, German headers, superset columns for Steuerberater (Wave 2)
+- [ ] 06-05-PLAN.md — Report API routes: GET /api/report/years, /:year/preview, /:year/pdf, /:year/csv (Wave 4)
+- [ ] 06-06-PLAN.md — Report preview UI: ReportTab + ReportPreview components, year selector, download buttons (Wave 5)
+- [ ] 06-07-PLAN.md — Integration + E2E tests: backend integration test, Playwright E2E setup + report flow test (Wave 6)
 
 ---
 
@@ -231,7 +231,7 @@ Plans:
 | 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
 | 4. FIFO Engine + Tax Calculation | 8/8 | Complete | 2026-03-22 |
 | 5. Dashboard + Transaction UI | 7/7 | Complete | 2026-03-23 |
-| 6. Steuerreport + PDF Export | 0/7 | Not started | - |
+| 6. Steuerreport + PDF Export | 0/7 | Planned | - |
 | 7. Exchange API + Security | 0/7 | Not started | - |
 
 **Total plans:** 49 across 7 phases
