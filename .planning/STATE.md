@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 5 of 7 (Dashboard + Transaction UI) — In progress
-Plan: 2 of 7 just completed (05-02)
-Status: In progress — 05-01 (Summary API), 05-02 (Transactions API), 05-03 (format utilities) complete
-Last activity: 2026-03-23 — Completed 05-02-PLAN.md (Transactions API: GET /api/transactions + GET /api/transactions/:id)
+Plan: 6 of 7 just completed (05-06)
+Status: In progress — 05-01 (Summary API), 05-02 (Transactions API), 05-03 (format utils), 05-04 (Dashboard UI), 05-05 (Dashboard Charts), 05-06 (Transaction List) complete
+Last activity: 2026-03-23 — Completed 05-06-PLAN.md (Transaction list: CategoryBadge, TransactionRow, TransactionFilters, TransactionList with infinite scroll, App.tsx wire-up)
 
-Progress: [██████░░░░] 62% (31/49 plans complete)
+Progress: [██████░░░░] 65% (32/49 plans complete)
 
 ## Performance Metrics
 
@@ -31,7 +31,7 @@ Progress: [██████░░░░] 62% (31/49 plans complete)
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
 | 04-fifo-engine-tax-calculation | 8/8 COMPLETE | ~61 min | ~8 min |
-| 05-dashboard-transaction-ui | 3/7 in progress | ~41 min | ~14 min |
+| 05-dashboard-transaction-ui | 6/7 in progress | ~59 min | ~10 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -83,6 +83,12 @@ Recent decisions affecting current work:
 - 05-02: haltefristMet converted via Boolean() — SQLite stores as 0/1 integer in raw queries
 - 05-02: TransactionListItem extended with orderId, sourceType, eurPrice for list display badges
 
+- 05-06: CategoryBadge uses CSS class-based color mapping — enables theming and specificity control
+- 05-06: IntersectionObserver on sentinel div for infinite scroll — zero scroll-event listener overhead
+- 05-06: AbortController per fetch — prevents stale result race conditions on filter change
+- 05-06: availableYears extracted from first page response — avoids separate /api/years endpoint
+- 05-06: Import section wrapped in <details> toggle — preserves import functionality without dominating the tab
+
 ### Pending Todos
 
 None yet.
@@ -96,5 +102,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 05-02-PLAN.md (Transactions API: GET /api/transactions + GET /api/transactions/:id, 22 tests)
+Stopped at: Completed 05-06-PLAN.md (Transaction list UI: CategoryBadge, TransactionRow, TransactionFilters, TransactionList with infinite scroll)
 Resume file: None
