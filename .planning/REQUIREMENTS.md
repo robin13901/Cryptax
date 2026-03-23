@@ -62,23 +62,23 @@
 
 ### Dashboard (DASH)
 
-- [ ] **DASH-01**: KPI cards with real data: Gesamtgewinn/-verlust, Anzahl Trades, steuerpflichtiger Betrag, geschätzte Steuer
-- [ ] **DASH-02**: P&L over time chart (line chart, cumulative gains/losses per month)
-- [ ] **DASH-03**: Portfolio distribution chart (pie/donut chart, allocation by coin)
-- [ ] **DASH-04**: Gain/loss per coin chart (bar chart, top gainers and losers)
-- [ ] **DASH-05**: Monthly performance chart (bar chart, monthly realized gains)
-- [ ] **DASH-06**: Spot vs Futures comparison chart (grouped bar or stacked)
-- [ ] **DASH-07**: Year selector — switch between tax years, all charts update
-- [ ] **DASH-08**: Year-over-year comparison view
+- [x] **DASH-01**: KPI cards with real data: Gesamtgewinn/-verlust, Anzahl Trades, steuerpflichtiger Betrag, geschätzte Steuer
+- [x] **DASH-02**: P&L over time chart (line chart, cumulative gains/losses per month)
+- [x] **DASH-03**: Portfolio distribution chart (pie/donut chart, allocation by coin)
+- [x] **DASH-04**: Gain/loss per coin chart (bar chart, top gainers and losers)
+- [x] **DASH-05**: Monthly performance chart (bar chart, monthly realized gains)
+- [x] **DASH-06**: Spot vs Futures comparison chart (grouped bar or stacked)
+- [x] **DASH-07**: Year selector — switch between tax years, all charts update
+- [x] **DASH-08**: Year-over-year comparison view
 
 ### Transactions (TRAN)
 
-- [ ] **TRAN-01**: Transaction list showing all imported transactions with key fields
-- [ ] **TRAN-02**: Filter by type (Spot, Futures, Earn, Gebühren), by coin, by date range
-- [ ] **TRAN-03**: Search transactions by coin name, order ID, or amount
-- [ ] **TRAN-04**: Sort by date, amount, coin, type
-- [ ] **TRAN-05**: Category badges (Spot, Futures, Earn, Fee) with color coding
-- [ ] **TRAN-06**: Transaction detail view — show full row data, associated FIFO lots, tax impact
+- [x] **TRAN-01**: Transaction list showing all imported transactions with key fields
+- [x] **TRAN-02**: Filter by type (Spot, Futures, Earn, Gebühren), by coin, by date range
+- [x] **TRAN-03**: Search transactions by coin name, order ID, or amount
+- [x] **TRAN-04**: Sort by date, amount, coin, type
+- [x] **TRAN-05**: Category badges (Spot, Futures, Earn, Fee) with color coding
+- [x] **TRAN-06**: Transaction detail view — show full row data, associated FIFO lots, tax impact
 
 ### Steuerreport (REPT)
 
@@ -104,7 +104,7 @@
 - [x] **TEST-02**: Unit tests for CSV parsers — all 5 formats with edge cases (BOM, tabs, delimiters)
 - [x] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
 - [x] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
-- [ ] **TEST-05**: Component tests for React components with Testing Library
+- [x] **TEST-05**: Component tests for React components with Testing Library
 - [ ] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
 - [ ] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
 - [x] **TEST-08**: 90%+ code coverage enforced via Vitest + Codecov

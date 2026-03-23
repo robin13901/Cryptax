@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 5 COMPLETE — all 7 plans executed. Phase 6 (Steuerreport Export) is next.
+**Current focus:** Phase 5 COMPLETE and VERIFIED — ready for Phase 6
 
 ## Current Position
 
-Phase: 5 of 7 (Dashboard + Transaction UI) — COMPLETE
+Phase: 5 of 7 (Dashboard + Transaction UI) — Complete
 Plan: 7 of 7 complete (05-07)
-Status: Phase complete — all 7 plans done (05-01 through 05-07)
-Last activity: 2026-03-23 — Completed 05-07-PLAN.md (TransactionDetail panel, component tests for Dashboard/TransactionList/TransactionDetail/CategoryBadge)
+Status: Complete — all plans executed, verified (5/5 criteria passed after gap fix)
+Last activity: 2026-03-23 — Phase 5 verified and closed
 
-Progress: [███████░░░] 67% (33/49 plans complete)
+Progress: [███████░░░] 73% (36/49 plans complete)
 
 ## Performance Metrics
 

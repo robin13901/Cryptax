@@ -16,7 +16,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
 - [x] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
 - [x] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
-- [ ] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
+- [x] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
 - [ ] **Phase 6: Steuerreport + PDF Export** — Finanzamt-ready tax report generated and exportable as PDF and CSV
 - [ ] **Phase 7: Exchange API + Security** — Bitget API sync via ccxt, password protection, encrypted credential storage
 
@@ -154,13 +154,13 @@ Plans:
 **Plans:** 7 plans in 3 waves
 
 Plans:
-- [ ] 05-01-PLAN.md — Summary API: GET /api/summary/:year with KPI data, chart datasets, Freigrenze status (Wave 1)
-- [ ] 05-02-PLAN.md — Transaction API: GET /api/transactions (paginated, filterable, sortable) + GET /api/transactions/:id (detail with FIFO lots) (Wave 1)
-- [ ] 05-03-PLAN.md — Format utilities (formatEur, formatNumber) + test setup mocks (ResizeObserver, IntersectionObserver) (Wave 1)
-- [ ] 05-04-PLAN.md — Dashboard KPI cards + year selector + Freigrenze progress bar (Wave 2)
-- [ ] 05-05-PLAN.md — All 6 Recharts visualizations: P&L line, donut, per-coin bar, monthly bar, spot vs futures, year-over-year (Wave 2)
-- [ ] 05-06-PLAN.md — Transaction list UI: infinite scroll, sortable columns, category badges, filters, search (Wave 2)
-- [ ] 05-07-PLAN.md — Transaction detail slide-in panel + React component tests for all new components (Wave 3)
+- [x] 05-01-PLAN.md — Summary API: GET /api/summary/:year with KPI data, chart datasets, Freigrenze status (Wave 1)
+- [x] 05-02-PLAN.md — Transaction API: GET /api/transactions (paginated, filterable, sortable) + GET /api/transactions/:id (detail with FIFO lots) (Wave 1)
+- [x] 05-03-PLAN.md — Format utilities (formatEur, formatNumber) + test setup mocks (ResizeObserver, IntersectionObserver) (Wave 1)
+- [x] 05-04-PLAN.md — Dashboard KPI cards + year selector + Freigrenze progress bar (Wave 2)
+- [x] 05-05-PLAN.md — All 6 Recharts visualizations: P&L line, donut, per-coin bar, monthly bar, spot vs futures, year-over-year (Wave 2)
+- [x] 05-06-PLAN.md — Transaction list UI: infinite scroll, sortable columns, category badges, filters, search (Wave 2)
+- [x] 05-07-PLAN.md — Transaction detail slide-in panel + React component tests for all new components (Wave 3)
 
 ---
 
@@ -230,7 +230,7 @@ Plans:
 | 2. CSV Import Pipeline | 8/8 | Complete | 2026-03-22 |
 | 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
 | 4. FIFO Engine + Tax Calculation | 8/8 | Complete | 2026-03-22 |
-| 5. Dashboard + Transaction UI | 0/7 | Planned | - |
+| 5. Dashboard + Transaction UI | 7/7 | Complete | 2026-03-23 |
 | 6. Steuerreport + PDF Export | 0/7 | Not started | - |
 | 7. Exchange API + Security | 0/7 | Not started | - |
 
