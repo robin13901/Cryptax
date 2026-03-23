@@ -5,6 +5,7 @@ import { jwt } from 'hono/jwt';
 import { logger } from 'hono/logger';
 import { JWT_SECRET, registerAuthRoutes } from './routes/auth.js';
 import { registerEngineRoutes, triggerEngineBackground } from './routes/engine.js';
+import { registerExchangeRoutes } from './routes/exchanges.js';
 import { registerHealthRoutes } from './routes/health.js';
 import { registerImportRoutes } from './routes/import.js';
 import { registerPriceRoutes } from './routes/prices.js';
@@ -38,6 +39,7 @@ registerEngineRoutes(app);
 registerSummaryRoutes(app);
 registerTransactionRoutes(app);
 registerReportRoutes(app);
+registerExchangeRoutes(app);
 
 serve({ fetch: app.fetch, port: 3001 }, () => {
   console.log('Backend server running on http://localhost:3001');
