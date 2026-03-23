@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01 and 07-03 complete
+**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-03, 07-04 complete
 
 ## Current Position
 
 Phase: 7 of 7 (Exchange API + Security) — In progress
-Plan: 3 of N complete in phase (07-01, 07-03 done)
-Status: In progress — auth + security audit complete, 779 tests
-Last activity: 2026-03-23 — Completed 07-03-PLAN.md (Security audit: SECU-04 credential leakage guards)
+Plan: 4 of N complete in phase (07-01, 07-03, 07-04 done)
+Status: In progress — auth frontend gate complete, 819 tests
+Last activity: 2026-03-23 — Completed 07-04-PLAN.md (Frontend auth gate: LoginCard, SetupCard, App.tsx state machine)
 
-Progress: [████████░░] 88% (45/50 plans complete)
+Progress: [████████░░] 90% (46/50 plans complete)
 
 ## Performance Metrics
 
@@ -152,6 +152,12 @@ Recent decisions affecting current work:
 - 07-03-c: routes/auth.ts included in static analysis alongside auth/*.ts — route handler is where password data flows from request body
 - 07-03-d: /api/auth/status key-count assertion (toHaveLength(2)) creates contract preventing future field addition from leaking internal state
 
+- 07-04-a: Auth state machine degrades to login on fetch error — network failure shows login, not permanent block
+- 07-04-b: FloatingLines background in all auth states (loading/setup/login) — consistent visual identity from first interaction
+- 07-04-c: Settings tab is placeholder — exchange management UI (07-06) will populate it
+- 07-04-d: Logout button in Settings tab, not nav bar — avoids destructive action in always-visible navigation
+- 07-04-e: SetupCard validation is client-side (>= 8 chars, match) — immediate feedback; backend enforces independently
+
 ### Pending Todos
 
 None yet.
@@ -165,5 +171,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 07-03-PLAN.md (Security audit — SECU-04 credential leakage guards, .gitignore hardening)
+Stopped at: Completed 07-04-PLAN.md (Frontend auth gate — LoginCard, SetupCard, App.tsx state machine, 819 tests)
 Resume file: None
