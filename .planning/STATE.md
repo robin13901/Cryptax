@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 5 in progress — Summary API, format utilities, Transactions API complete
+**Current focus:** Phase 5 COMPLETE — all 7 plans executed. Phase 6 (Steuerreport Export) is next.
 
 ## Current Position
 
-Phase: 5 of 7 (Dashboard + Transaction UI) — In progress
-Plan: 6 of 7 just completed (05-06)
-Status: In progress — 05-01 (Summary API), 05-02 (Transactions API), 05-03 (format utils), 05-04 (Dashboard UI), 05-05 (Dashboard Charts), 05-06 (Transaction List) complete
-Last activity: 2026-03-23 — Completed 05-06-PLAN.md (Transaction list: CategoryBadge, TransactionRow, TransactionFilters, TransactionList with infinite scroll, App.tsx wire-up)
+Phase: 5 of 7 (Dashboard + Transaction UI) — COMPLETE
+Plan: 7 of 7 complete (05-07)
+Status: Phase complete — all 7 plans done (05-01 through 05-07)
+Last activity: 2026-03-23 — Completed 05-07-PLAN.md (TransactionDetail panel, component tests for Dashboard/TransactionList/TransactionDetail/CategoryBadge)
 
-Progress: [██████░░░░] 65% (32/49 plans complete)
+Progress: [███████░░░] 67% (33/49 plans complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 29
+- Total plans completed: 33
 - Average duration: ~8 min
-- Total execution time: ~224 min
+- Total execution time: ~240 min
 
 **By Phase:**
 
@@ -31,10 +31,10 @@ Progress: [██████░░░░] 65% (32/49 plans complete)
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
 | 04-fifo-engine-tax-calculation | 8/8 COMPLETE | ~61 min | ~8 min |
-| 05-dashboard-transaction-ui | 6/7 in progress | ~59 min | ~10 min |
+| 05-dashboard-transaction-ui | 7/7 COMPLETE | ~75 min | ~11 min |
 
 **Recent Trend:**
-- Last 5 plans: 8 min
+- Last 5 plans: 10 min
 - Trend: consistent
 
 *Updated after each plan completion*
@@ -98,6 +98,10 @@ Recent decisions affecting current work:
 - 05-06: availableYears extracted from first page response — avoids separate /api/years endpoint
 - 05-06: Import section wrapped in <details> toggle — preserves import functionality without dominating the tab
 
+- 05-07: TransactionDetail returns null when transactionId=null — AnimatePresence exit animation handled by parent (TransactionList)
+- 05-07: vi.spyOn(global, 'fetch') preferred over vi.stubGlobal — vi.restoreAllMocks() cleans up spyOn but not stubGlobal
+- 05-07: Global cleanup() in setup.ts afterEach — project-wide DOM isolation without per-file boilerplate
+
 ### Pending Todos
 
 None yet.
@@ -111,5 +115,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 05-05-PLAN.md (Dashboard charts: 6 Recharts visualizations, ChartCard wrapper, chart grid integration)
+Stopped at: Completed 05-07-PLAN.md (TransactionDetail slide-in panel + 59 component tests; phase 5 complete)
 Resume file: None
