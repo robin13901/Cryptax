@@ -36,15 +36,19 @@ export type {
   TaxBucket,
   TaxSummary,
 } from './types/tax.js';
+export type { YearSummaryResponse } from './types/summary.js';
 export type {
   CanonicalType,
   ImportError,
   ImportSummary,
+  LotConsumptionDetail,
   MoneyString,
   PriceFailureReason,
   PriceSource,
   SourceType,
   Transaction,
+  TransactionDetailResponse,
   TransactionListItem,
+  TransactionPageResponse,
   TransactionSide,
 } from './types/transaction.js';
