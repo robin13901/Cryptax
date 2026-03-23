@@ -82,6 +82,9 @@ const TransactionDetail = ({
   const earn = detail?.earnIncome ?? null;
   const taxImpact = detail?.taxImpact;
 
+  // Not open — render nothing (AnimatePresence in TransactionList handles exit animation)
+  if (transactionId === null) return null;
+
   const summaryLine = tx
     ? `${tx.symbol} · ${tx.canonicalType} · ${formatDate(tx.tradedAt)}`
     : 'Lade…';
