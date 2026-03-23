@@ -49,9 +49,10 @@ const TransactionList = () => {
       p.set('sortDir', sortDir);
       if (filters.search) p.set('search', filters.search);
       if (filters.year) p.set('year', filters.year);
-      if (filters.type) p.set('canonicalType', filters.type);
-      if (filters.dateFrom) p.set('dateFrom', filters.dateFrom);
-      if (filters.dateTo) p.set('dateTo', filters.dateTo);
+      if (filters.type) p.set('type', filters.type);
+      if (filters.coin) p.set('coin', filters.coin);
+      if (filters.dateFrom) p.set('from', filters.dateFrom);
+      if (filters.dateTo) p.set('to', filters.dateTo);
       return p;
     },
     [filters, sortBy, sortDir],

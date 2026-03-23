@@ -149,6 +149,18 @@ const TransactionFilters = ({
         </select>
       </div>
 
+      {/* Coin */}
+      <div className="tx-filter-group">
+        <input
+          type="text"
+          className="tx-filter-input"
+          placeholder="Coin (z.B. BTC)"
+          value={filters.coin}
+          onChange={(e) => handleField('coin', e.target.value.toUpperCase())}
+          aria-label="Coin filtern"
+        />
+      </div>
+
       {/* Date range */}
       <div className="tx-filter-group tx-filter-group--dates">
         <input
