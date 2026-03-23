@@ -1,0 +1,76 @@
+:root {
+  --freigrenze-green: var(--crypto-green, #5fdc8a);
+  --freigrenze-amber: #f59e0b;
+  --freigrenze-red: var(--crypto-red, #e50000);
+}
+
+.freigrenze-container {
+  padding: 1rem 1.25rem;
+  width: 100%;
+}
+
+.freigrenze-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 0.9rem;
+}
+
+.freigrenze-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.freigrenze-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.freigrenze-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.freigrenze-bar-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.freigrenze-bar-sublabel {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.freigrenze-bar-amounts {
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.freigrenze-bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.freigrenze-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease, background-color 0.3s ease;
+}
+
+.freigrenze-bar-warning {
+  font-size: 0.7rem;
+  color: var(--freigrenze-red);
+  margin-top: 0.1rem;
+}
