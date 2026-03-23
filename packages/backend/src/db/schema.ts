@@ -188,3 +188,12 @@ export const exchangeConnections = sqliteTable('exchange_connections', {
   lastSyncAt: text('last_sync_at'),
   createdAt: text('created_at').notNull(),
 });
+
+// ---------------------------------------------------------------------------
+// app_settings
+// ---------------------------------------------------------------------------
+export const appSettings = sqliteTable('app_settings', {
+  key: text('key').primaryKey(),
+  value: text('value').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
