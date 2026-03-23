@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 COMPLETE — All 7 plans done; Phase 7 (Live Data / ccxt Bitget) is next
+**Current focus:** Phase 6 COMPLETE (4/5 verified, 1 gap: E2E test with real CSV fixtures) — ready for gap closure or Phase 7
 
 ## Current Position
 
-Phase: 6 of 7 (Steuerreport + PDF Export) — COMPLETE
+Phase: 6 of 7 (Steuerreport + PDF Export) — Gaps found (4/5 verified)
 Plan: 7 of 7 complete in sequence (06-01 through 06-07 done)
-Status: Phase 6 complete — Integration + E2E tests added (742 tests total)
-Last activity: 2026-03-23 — Completed 06-07-PLAN.md
+Status: 4/5 criteria passed; gap: E2E test needs real CSV fixtures
+Last activity: 2026-03-23 — Phase 6 verified with 1 gap
 
-Progress: [█████████░] 89% (44/49 plans complete)
+Progress: [████████░░] 88% (43/49 plans complete)
 
 ## Performance Metrics
 

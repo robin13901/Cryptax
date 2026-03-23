@@ -182,13 +182,13 @@ Plans:
 **Plans:** 7 plans in 6 waves
 
 Plans:
-- [ ] 06-01-PLAN.md — Report types + ReportGenerator service: ReportData interfaces in shared, ReportGenerator class aggregating all tax data (Wave 1)
-- [ ] 06-02-PLAN.md — PDF generation: PDFKit 0.18.0 + DejaVu Sans TTF fonts + cover page + Anlage SO/KAP/Earn summary sections (Wave 2)
-- [ ] 06-03-PLAN.md — PDF trade appendix: per-trade table with coordinate-based layout, pagination at 50/100/200+ rows (Wave 3)
-- [ ] 06-04-PLAN.md — CSV export: semicolon-delimited, UTF-8 BOM, German headers, superset columns for Steuerberater (Wave 2)
-- [ ] 06-05-PLAN.md — Report API routes: GET /api/report/years, /:year/preview, /:year/pdf, /:year/csv (Wave 4)
-- [ ] 06-06-PLAN.md — Report preview UI: ReportTab + ReportPreview components, year selector, download buttons (Wave 5)
-- [ ] 06-07-PLAN.md — Integration + E2E tests: backend integration test, Playwright E2E setup + report flow test (Wave 6)
+- [x] 06-01-PLAN.md — Report types + ReportGenerator service (Wave 1)
+- [x] 06-02-PLAN.md — PDF generation: PDFKit + DejaVu Sans TTF + cover page + summary sections (Wave 2)
+- [x] 06-03-PLAN.md — PDF trade appendix: paginated table with coordinate-based layout (Wave 3)
+- [x] 06-04-PLAN.md — CSV export: semicolon-delimited, UTF-8 BOM, German headers (Wave 2)
+- [x] 06-05-PLAN.md — Report API routes: years, preview, pdf, csv (Wave 4)
+- [x] 06-06-PLAN.md — Report preview UI: ReportTab + ReportPreview components (Wave 5)
+- [x] 06-07-PLAN.md — Integration + E2E tests: backend pipeline + Playwright setup (Wave 6)
 
 ---
 
@@ -231,7 +231,7 @@ Plans:
 | 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
 | 4. FIFO Engine + Tax Calculation | 8/8 | Complete | 2026-03-22 |
 | 5. Dashboard + Transaction UI | 7/7 | Complete | 2026-03-23 |
-| 6. Steuerreport + PDF Export | 0/7 | Planned | - |
+| 6. Steuerreport + PDF Export | 7/7 | Gaps found (4/5) | 2026-03-23 |
 | 7. Exchange API + Security | 0/7 | Not started | - |
 
 **Total plans:** 49 across 7 phases

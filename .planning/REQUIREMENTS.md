@@ -82,14 +82,14 @@
 
 ### Steuerreport (REPT)
 
-- [ ] **REPT-01**: Anlage SO summary — total taxable spot gains, Freigrenze status, number of transactions
-- [ ] **REPT-02**: Anlage KAP summary — total futures/derivatives gains, Abgeltungssteuer amount
-- [ ] **REPT-03**: Staking income summary — total Zufluss value per year
-- [ ] **REPT-04**: Full trade appendix — every taxable transaction with buy date, sell date, gain/loss, Haltefrist
-- [ ] **REPT-05**: PDF export — Finanzamt-ready document with German text, proper formatting, embedded fonts
-- [ ] **REPT-06**: CSV export — machine-readable format for Steuerberater
-- [ ] **REPT-07**: Report preview in browser before export
-- [ ] **REPT-08**: Per-year report selection — generate report for any imported tax year
+- [x] **REPT-01**: Anlage SO summary — total taxable spot gains, Freigrenze status, number of transactions
+- [x] **REPT-02**: Anlage KAP summary — total futures/derivatives gains, Abgeltungssteuer amount
+- [x] **REPT-03**: Staking income summary — total Zufluss value per year
+- [x] **REPT-04**: Full trade appendix — every taxable transaction with buy date, sell date, gain/loss, Haltefrist
+- [x] **REPT-05**: PDF export — Finanzamt-ready document with German text, proper formatting, embedded fonts
+- [x] **REPT-06**: CSV export — machine-readable format for Steuerberater
+- [x] **REPT-07**: Report preview in browser before export
+- [x] **REPT-08**: Per-year report selection — generate report for any imported tax year
 
 ### Security (SECU)
 
@@ -105,8 +105,8 @@
 - [x] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
 - [x] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
 - [x] **TEST-05**: Component tests for React components with Testing Library
-- [ ] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
-- [ ] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
+- [x] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
+- [x] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
 - [x] **TEST-08**: 90%+ code coverage enforced via Vitest + Codecov
 
 ### CI/CD & DevOps (CICD)
