@@ -11,6 +11,7 @@ import { registerImportRoutes } from './routes/import.js';
 import { registerPriceRoutes } from './routes/prices.js';
 import { registerReportRoutes } from './routes/report.js';
 import { registerSummaryRoutes } from './routes/summary.js';
+import { registerSyncRoutes } from './routes/sync.js';
 import { registerTransactionRoutes } from './routes/transactions.js';
 
 const app = new Hono();
@@ -40,6 +41,7 @@ registerSummaryRoutes(app);
 registerTransactionRoutes(app);
 registerReportRoutes(app);
 registerExchangeRoutes(app);
+registerSyncRoutes(app);
 
 serve({ fetch: app.fetch, port: 3001 }, () => {
   console.log('Backend server running on http://localhost:3001');
