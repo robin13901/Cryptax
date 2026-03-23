@@ -46,6 +46,12 @@ export type {
 } from './types/report.js';
 export type { YearSummaryResponse } from './types/summary.js';
 export type {
+  ConnectionTestResult,
+  ExchangeConnection,
+  ExchangeCredentials,
+  SyncResult,
+} from './types/exchange.js';
+export type {
   CanonicalType,
   ImportError,
   ImportSummary,
