@@ -1,0 +1,232 @@
+/* ============================================================
+   ReportPreview — HTML preview for all report sections
+   ============================================================ */
+
+.report-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+
+/* ----------------------------------------------------------------
+   Report header
+   ---------------------------------------------------------------- */
+
+.report-preview__header {
+  padding: 0.5rem 0;
+}
+
+.report-preview__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--crypto-blue);
+  margin-bottom: 0.25rem;
+}
+
+.report-preview__meta {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ----------------------------------------------------------------
+   Section wrapper (inside GlassSurface)
+   ---------------------------------------------------------------- */
+
+.report-section {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.report-section__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--crypto-blue);
+  border-bottom: 1px solid rgba(0, 112, 242, 0.25);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.report-section__meta {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.report-section__footnote {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-style: italic;
+  margin-top: -0.5rem;
+}
+
+/* ----------------------------------------------------------------
+   Key-value grid
+   ---------------------------------------------------------------- */
+
+.report-kv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 2rem;
+}
+
+@media (max-width: 520px) {
+  .report-kv-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.report-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.report-kv__label {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-kv__value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ----------------------------------------------------------------
+   Freigrenze status row
+   ---------------------------------------------------------------- */
+
+.report-freigrenze-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.88rem;
+}
+
+.report-freigrenze-row__label {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.freigrenze-status {
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+}
+
+.freigrenze-status--ok {
+  color: var(--crypto-green);
+  background: rgba(95, 220, 138, 0.12);
+  border: 1px solid rgba(95, 220, 138, 0.3);
+}
+
+.freigrenze-status--over {
+  color: var(--crypto-red);
+  background: rgba(229, 0, 0, 0.1);
+  border: 1px solid rgba(229, 0, 0, 0.3);
+}
+
+/* ----------------------------------------------------------------
+   Earn coin breakdown table
+   ---------------------------------------------------------------- */
+
+.report-earn-breakdown {
+  margin-top: 0.25rem;
+}
+
+.report-earn-breakdown__title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.report-earn-table {
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  width: 100%;
+  max-width: 380px;
+}
+
+.report-earn-table th,
+.report-earn-table td {
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.report-earn-table th {
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  text-align: left;
+}
+
+/* ----------------------------------------------------------------
+   Trade appendix table
+   ---------------------------------------------------------------- */
+
+.report-trade-table-wrapper {
+  overflow-x: auto;
+  border-radius: 6px;
+}
+
+.report-trade-table {
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  width: 100%;
+  min-width: 780px;
+  table-layout: auto;
+}
+
+.report-trade-table thead tr {
+  position: sticky;
+  top: 0;
+  background: rgba(26, 35, 50, 0.95);
+  z-index: 1;
+}
+
+.report-trade-table th {
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.5);
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  white-space: nowrap;
+}
+
+.report-trade-table td {
+  padding: 0.35rem 0.6rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Alternating rows */
+.trade-row--even td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+/* Tax-free rows — green left border accent */
+.trade-row--taxfree td:first-child {
+  border-left: 3px solid var(--crypto-green);
+}
+
+/* Alignment helpers */
+.trade-cell--right {
+  text-align: right !important;
+}
+
+.trade-cell--center {
+  text-align: center !important;
+}
+
+/* Haltefrist "Ja" label */
+.trade-cell--taxfree-label {
+  color: var(--crypto-green) !important;
+  font-weight: 600;
+}

@@ -1,0 +1,138 @@
+/* ============================================================
+   ReportTab — top-level Steuerreport tab container
+   ============================================================ */
+
+.report-tab {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ----------------------------------------------------------------
+   Header row: title + year selector
+   ---------------------------------------------------------------- */
+
+.report-tab__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.report-tab__title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------
+   Download buttons row
+   ---------------------------------------------------------------- */
+
+.report-tab__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.report-btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.report-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.report-btn:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.report-btn:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.report-btn--primary {
+  background: var(--crypto-blue);
+  color: #fff;
+}
+
+.report-btn--primary:not(:disabled):hover {
+  background: #0060d0;
+}
+
+.report-btn--secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.report-btn--secondary:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+@media (max-width: 400px) {
+  .report-tab__actions {
+    flex-direction: column;
+  }
+
+  .report-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Loading state
+   ---------------------------------------------------------------- */
+
+.report-tab__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.88rem;
+}
+
+/* ----------------------------------------------------------------
+   Empty state (inside GlassSurface)
+   ---------------------------------------------------------------- */
+
+.report-tab__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.report-tab__empty-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.report-tab__empty-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.report-tab__empty-hint {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  max-width: 380px;
+}
