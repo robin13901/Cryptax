@@ -38,7 +38,7 @@ import {
 // load time, which would capture the wrong (null) db reference otherwise.
 // ---------------------------------------------------------------------------
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: test helper — DB ref holds any drizzle instance
 const { mockDbRef } = vi.hoisted(() => ({ mockDbRef: { current: null as any } }));
 
 vi.mock('../db/client.js', () => ({
@@ -369,7 +369,7 @@ describe('Integration: GET /api/report/2024/preview returns complete ReportData'
 
     const res = await app.request('/api/report/2024/preview');
     expect(res.status).toBe(200);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const body = (await res.json()) as any;
     expect(body.taxYear).toBe(2024);
     expect(body.generatedAt).toBeTruthy();
@@ -379,7 +379,7 @@ describe('Integration: GET /api/report/2024/preview returns complete ReportData'
     const seed = seedFullPipeline(2024);
 
     const res = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const body = (await res.json()) as any;
     expect(body.spotSummary.netEur).toBe(seed.spotNetEur);
   });
@@ -388,7 +388,7 @@ describe('Integration: GET /api/report/2024/preview returns complete ReportData'
     seedFullPipeline(2024);
 
     const res = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const body = (await res.json()) as any;
     expect(parseFloat(body.futuresSummary.estimatedTaxEur)).toBeGreaterThan(0);
   });
@@ -397,7 +397,7 @@ describe('Integration: GET /api/report/2024/preview returns complete ReportData'
     seedFullPipeline(2024);
 
     const res = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const body = (await res.json()) as any;
     expect(parseFloat(body.earnSummary.totalIncomeEur)).toBeGreaterThan(0);
   });
@@ -406,7 +406,7 @@ describe('Integration: GET /api/report/2024/preview returns complete ReportData'
     const seed = seedFullPipeline(2024);
 
     const res = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const body = (await res.json()) as any;
     expect(body.tradeAppendix.length).toBe(seed.tradeCount);
   });
@@ -415,7 +415,7 @@ describe('Integration: GET /api/report/2024/preview returns complete ReportData'
     seedFullPipeline(2024);
 
     const res = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const body = (await res.json()) as any;
     const row = body.tradeAppendix[0];
 
@@ -535,7 +535,7 @@ describe('Integration: Cross-format consistency', () => {
 
     // Fetch preview to get the reference netEur
     const previewRes = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const previewBody = (await previewRes.json()) as any;
     const netEur = previewBody.spotSummary.netEur;
     expect(netEur).toBe(seed.spotNetEur);
@@ -552,7 +552,7 @@ describe('Integration: Cross-format consistency', () => {
     const seed = seedFullPipeline(2024);
 
     const previewRes = await app.request('/api/report/2024/preview');
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // biome-ignore lint/suspicious/noExplicitAny: JSON response shape not typed
     const previewBody = (await previewRes.json()) as any;
     const estimatedTaxEur = previewBody.futuresSummary.estimatedTaxEur;
     expect(estimatedTaxEur).toBe(seed.futuresEstimatedTaxEur);
