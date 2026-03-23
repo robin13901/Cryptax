@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 IN PROGRESS — Plan 01 complete, data foundation ready
+**Current focus:** Phase 6 IN PROGRESS — Plans 01 and 04 complete, CSV export module ready
 
 ## Current Position
 
 Phase: 6 of 7 (Steuerreport + PDF Export) — In progress
-Plan: 1 of ? complete (06-01)
-Status: In progress — 06-01 executed (ReportData types + ReportGenerator)
-Last activity: 2026-03-23 — Completed 06-01-PLAN.md
+Plan: 4 of ? complete (06-04)
+Status: In progress — 06-04 executed (CSV export builder)
+Last activity: 2026-03-23 — Completed 06-04-PLAN.md
 
-Progress: [███████░░░] 75% (37/49 plans complete)
+Progress: [███████░░░] 76% (38/49 plans complete)
 
 ## Performance Metrics
 
@@ -108,6 +108,12 @@ Recent decisions affecting current work:
 - 06-01-d: EarnCoinBreakdown as named interface for typed destructuring in PDF/CSV consumers
 - 06-01-e: TradeAppendix sorted by tradedAt ASC then symbol ASC for natural Steuerberater review order
 
+- 06-04-a: Dot decimal separator in CSV (not German comma) — CSV is machine-readable import format; Steuerberater software expects standard notation
+- 06-04-b: No CSV library — flat structure, manual string building, zero runtime dependencies
+- 06-04-c: Summary section after blank separator row — reliable section delimiter for Excel and downstream scripts
+- 06-04-d: Steuerfrei column explicit (mirrors Haltefrist erfuellt) — removes ambiguity: legal basis vs tax consequence
+- 06-04-e: escapeCsvField exported — independently testable and reusable
+
 ### Pending Todos
 
 None yet.
@@ -121,5 +127,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 06-01-PLAN.md (ReportData types + ReportGenerator; 22 new tests, 613 total)
+Stopped at: Completed 06-04-PLAN.md (CSV export builder; 35 new tests, 540 total)
 Resume file: None
