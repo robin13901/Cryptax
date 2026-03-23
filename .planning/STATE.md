@@ -87,6 +87,11 @@ Recent decisions affecting current work:
 - 05-04: FreigrenzeBar thresholds pct < 70 green, 70-89 amber (#f59e0b), >= 90 red — standard warning UX
 - 05-04: recharts Tooltip formatter type: use `(value) => [typeof value === 'number' ? formatEur(value) : ...]` — ValueType is `number | undefined`
 
+- 05-05: MonthlyBarChart losses sign: API returns losses as negative MoneyStrings; Math.abs() applied for stacked bar height
+- 05-05: PnlLineChart cumulative: gains + losses (losses already negative) accumulated per month as running sum
+- 05-05: SpotFuturesChart bucket lookup: buckets.find(b => b.bucket === 'private_sale') — defensive against API ordering changes
+- 05-05: Chart grid wide class: className="chart-card--wide" forwarded through ChartCard to GlassSurface; CSS grid-column: 1/-1
+
 - 05-06: CategoryBadge uses CSS class-based color mapping — enables theming and specificity control
 - 05-06: IntersectionObserver on sentinel div for infinite scroll — zero scroll-event listener overhead
 - 05-06: AbortController per fetch — prevents stale result race conditions on filter change
@@ -106,5 +111,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 05-06-PLAN.md (Transaction list UI: CategoryBadge, TransactionRow, TransactionFilters, TransactionList with infinite scroll)
+Stopped at: Completed 05-05-PLAN.md (Dashboard charts: 6 Recharts visualizations, ChartCard wrapper, chart grid integration)
 Resume file: None
