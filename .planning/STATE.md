@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-02, 07-03, 07-04 complete
+**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-02, 07-03, 07-04, 07-05 complete
 
 ## Current Position
 
 Phase: 7 of 7 (Exchange API + Security) — In progress
-Plan: 5 of N complete in phase (07-01, 07-02, 07-03, 07-04 done)
-Status: In progress — credential cipher + exchange CRUD complete, 819 tests
-Last activity: 2026-03-23 — Completed 07-02-PLAN.md (AES-256-GCM credential encryption + exchange CRUD routes)
+Plan: 6 of N complete in phase (07-01, 07-02, 07-03, 07-04, 07-05 done)
+Status: In progress — ccxt BitgetAdapter + sync engine complete, 900 tests
+Last activity: 2026-03-23 — Completed 07-05-PLAN.md (ccxt Bitget adapter + normalizer + sync engine)
 
-Progress: [████████░░] 90% (46/50 plans complete)
+Progress: [████████░░] 92% (47/51 plans complete)
 
 ## Performance Metrics
 
@@ -164,6 +164,12 @@ Recent decisions affecting current work:
 - 07-04-d: Logout button in Settings tab, not nav bar — avoids destructive action in always-visible navigation
 - 07-04-e: SetupCard validation is client-side (>= 8 chars, match) — immediate feedback; backend enforces independently
 
+- 07-05-a: orderId=trade.id (ccxt fill ID) not trade.order (order ID) — each fill is unique; multiple fills share the same order ID
+- 07-05-b: Checksum uses trade.id+exchange+sourceType — deterministic dedup key without depending on mutable trade content
+- 07-05-c: Promise.allSettled for spot+futures — partial failure imports succeeded side, adds warning for failed side
+- 07-05-d: lastSyncAt watermark updated only when at least one side succeeds — prevents watermark advance on total failure
+- 07-05-e: import_batches record per sync side (spot/futures) — traceability for API-sourced trades alongside CSV batches
+
 ### Pending Todos
 
 None yet.
@@ -177,5 +183,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 07-02-PLAN.md (Credential cipher + exchange CRUD — AES-256-GCM, 819 tests)
+Stopped at: Completed 07-05-PLAN.md (ccxt BitgetAdapter + normalizeApiTrade + syncExchange — 900 tests)
 Resume file: None
