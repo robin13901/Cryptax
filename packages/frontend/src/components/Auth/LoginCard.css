@@ -1,0 +1,113 @@
+.login-card-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-card__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  padding: 2.5rem 2rem;
+  width: 100%;
+}
+
+.login-card__header {
+  text-align: center;
+}
+
+.login-card__title {
+  color: #ffffff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.03em;
+}
+
+.login-card__subtitle {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.85rem;
+  font-weight: 400;
+  margin: 0;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.login-card__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.login-card__field {
+  width: 100%;
+}
+
+.login-card__input {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  padding: 0.7rem 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.login-card__input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.login-card__input:focus {
+  border-color: rgba(0, 112, 242, 0.7);
+  background: rgba(0, 112, 242, 0.06);
+}
+
+.login-card__error {
+  color: #ff6b6b;
+  font-size: 0.82rem;
+  margin: 0;
+  text-align: center;
+}
+
+.login-card__btn {
+  background: rgba(0, 112, 242, 0.45);
+  border: 1px solid rgba(0, 112, 242, 0.6);
+  border-radius: 10px;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.7rem 1.5rem;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease,
+    opacity 0.2s ease;
+  width: 100%;
+  margin-top: 0.25rem;
+}
+
+.login-card__btn:hover:not(:disabled) {
+  background: rgba(0, 112, 242, 0.65);
+  transform: translateY(-1px);
+}
+
+.login-card__btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-card__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
