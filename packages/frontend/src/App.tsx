@@ -74,66 +74,7 @@ function App() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
-                <div className="kpi-grid">
-                  <GlassSurface
-                    width="auto"
-                    height="auto"
-                    borderRadius={10}
-                    backgroundOpacity={0.12}
-                  >
-                    <div className="kpi-card">
-                      <span className="kpi-value" style={{ color: 'var(--crypto-green)' }}>
-                        --
-                      </span>
-                      <span className="kpi-label">Gesamtgewinn</span>
-                      <span className="kpi-sub">2025</span>
-                    </div>
-                  </GlassSurface>
-                  <GlassSurface
-                    width="auto"
-                    height="auto"
-                    borderRadius={10}
-                    backgroundOpacity={0.12}
-                  >
-                    <div className="kpi-card">
-                      <span className="kpi-value">--</span>
-                      <span className="kpi-label">Trades</span>
-                      <span className="kpi-sub">Gesamt</span>
-                    </div>
-                  </GlassSurface>
-                  <GlassSurface
-                    width="auto"
-                    height="auto"
-                    borderRadius={10}
-                    backgroundOpacity={0.12}
-                  >
-                    <div className="kpi-card">
-                      <span className="kpi-value">--</span>
-                      <span className="kpi-label">Steuerpflichtig</span>
-                      <span className="kpi-sub">Spot + Futures</span>
-                    </div>
-                  </GlassSurface>
-                  <GlassSurface
-                    width="auto"
-                    height="auto"
-                    borderRadius={10}
-                    backgroundOpacity={0.12}
-                  >
-                    <div className="kpi-card">
-                      <span className="kpi-value">--</span>
-                      <span className="kpi-label">Steuer (est.)</span>
-                      <span className="kpi-sub">Abgeltungssteuer</span>
-                    </div>
-                  </GlassSurface>
-                </div>
-
-                <div className="empty-state">
-                  <div className="empty-state-icon">&#128200;</div>
-                  <p>Noch keine Daten importiert</p>
-                  <p style={{ fontSize: '0.78rem' }}>
-                    Importiere deine Bitget CSV-Exporte unter &quot;Transaktionen&quot;
-                  </p>
-                </div>
+                <Dashboard />
               </motion.div>
             )}
 
