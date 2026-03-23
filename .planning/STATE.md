@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 IN PROGRESS — Plans 01-06 complete; Report UI fully functional with preview and download buttons
+**Current focus:** Phase 6 COMPLETE — All 7 plans done; Phase 7 (Live Data / ccxt Bitget) is next
 
 ## Current Position
 
-Phase: 6 of 7 (Steuerreport + PDF Export) — In progress
-Plan: 6 of ? complete in sequence (06-01, 06-02, 06-03, 06-04, 06-05, 06-06 done)
-Status: In progress — 06-06 executed (Report frontend: ReportTab + ReportPreview, 10 tests)
-Last activity: 2026-03-23 — Completed 06-06-PLAN.md
+Phase: 6 of 7 (Steuerreport + PDF Export) — COMPLETE
+Plan: 7 of 7 complete in sequence (06-01 through 06-07 done)
+Status: Phase 6 complete — Integration + E2E tests added (742 tests total)
+Last activity: 2026-03-23 — Completed 06-07-PLAN.md
 
-Progress: [████████░░] 86% (42/49 plans complete)
+Progress: [█████████░] 89% (44/49 plans complete)
 
 ## Performance Metrics
 
@@ -136,6 +136,11 @@ Recent decisions affecting current work:
 - 06-06-d: FreigrenzeStatus labels use 'eingehalten'/'ueberschritten' — avoids umlaut encoding issues in tests
 - 06-06-e: TradeRow as inline component in ReportPreview — 9-column table row, collocated with table for readability
 
+- 06-07-a: Cross-format consistency test uses preview-vs-CSV (not preview-vs-PDF) — PDFKit CID-encodes body text in compressed streams; CSV is uncompressed plain text
+- 06-07-b: biome-ignore preferred over eslint-disable for noExplicitAny in newer test files
+- 06-07-c: E2E tests target aria-label selectors for PDF/CSV buttons in ReportTab
+- 06-07-d: E2E tests use select.year-selector for YearSelector component locator
+
 ### Pending Todos
 
 None yet.
@@ -149,5 +154,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 06-06-PLAN.md (Report frontend UI — ReportTab + ReportPreview, 10 tests, 89 total frontend tests)
+Stopped at: Completed 06-07-PLAN.md (Integration + E2E tests — 742 tests, phase 06 complete)
 Resume file: None
