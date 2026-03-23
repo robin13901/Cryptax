@@ -1,5 +1,7 @@
 import type { TransactionListItem, TransactionPageResponse } from '@cryptax/shared';
+import { AnimatePresence } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import TransactionDetail from './TransactionDetail';
 import TransactionFilters, { DEFAULT_FILTERS, type FilterState } from './TransactionFilters';
 import TransactionRow from './TransactionRow';
 import './TransactionList.css';
@@ -141,6 +143,20 @@ const TransactionList = () => {
     setFilters(newFilters);
   };
 
+  const handleNavigate = (direction: 'prev' | 'next') => {
+    if (selectedId === null) return;
+    const idx = items.findIndex((i) => i.id === selectedId);
+    if (idx === -1) return;
+    const nextIdx = direction === 'prev' ? idx - 1 : idx + 1;
+    if (nextIdx >= 0 && nextIdx < items.length) {
+      setSelectedId(items[nextIdx]!.id);
+    }
+  };
+
+  const selectedIdx = selectedId !== null ? items.findIndex((i) => i.id === selectedId) : -1;
+  const hasPrev = selectedIdx > 0;
+  const hasNext = selectedIdx >= 0 && selectedIdx < items.length - 1;
+
   const getSortIndicator = (col: SortColumn | null) => {
     if (col === null || col !== sortBy) return null;
     return <span className="tx-sort-indicator">{sortDir === 'asc' ? '▲' : '▼'}</span>;
@@ -242,6 +258,19 @@ const TransactionList = () => {
           Alle {total.toLocaleString('de-DE')} Transaktionen geladen
         </div>
       )}
+
+      {/* Transaction detail slide-in panel */}
+      <AnimatePresence>
+        {selectedId !== null && (
+          <TransactionDetail
+            transactionId={selectedId}
+            onClose={() => setSelectedId(null)}
+            onNavigate={handleNavigate}
+            hasPrev={hasPrev}
+            hasNext={hasNext}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
