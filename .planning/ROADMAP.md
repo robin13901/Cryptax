@@ -207,16 +207,16 @@ Plans:
 4. Incremental sync correctly skips trades already imported — running sync twice with no new trades on Bitget results in zero new rows.
 5. No credentials appear in application logs, console output, error messages, or git-tracked files at any point during setup or sync.
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 4 waves
 
 Plans:
-- [ ] 07-01: Authentication system — single-user password hash (bcrypt); login screen component; session token (JWT or signed cookie); protected route middleware on all API endpoints (SECU-01)
-- [ ] 07-02: Credential encryption — AES-256-GCM encryption using node:crypto; PBKDF2 key derivation from user password; credential store in SQLite (TEXT blob); decrypt only in memory (SECU-02, SECU-03)
-- [ ] 07-03: Security hardening — audit all log statements for credential leakage; `.gitignore` for any credential-adjacent files; no-credentials rule in CLAUDE.md (SECU-04)
-- [ ] 07-04: ccxt Bitget spot adapter — ccxt 4.5.44 BitgetAdapter implementing ExchangeAdapter interface; pull spot trade history; normalize via existing import pipeline (EXCH-01)
-- [ ] 07-05: ccxt Bitget futures adapter — pull futures trade history; normalize via existing import pipeline; handle deep history pagination (EXCH-02)
-- [ ] 07-06: Exchange management UI — add/edit/delete exchange connections; credential entry form; connection status indicator (EXCH-03)
-- [ ] 07-07: Sync engine — POST /api/exchanges/:id/sync; manual sync trigger; incremental sync (last_sync_at watermark); sync progress UI (EXCH-04, EXCH-05)
+- [ ] 07-01-PLAN.md — Schema migration + auth backend: app_settings table, scrypt password hashing, JWT middleware, auth routes (Wave 1)
+- [ ] 07-02-PLAN.md — Credential encryption + exchange CRUD: AES-256-GCM cipher, exchange connection routes (Wave 2)
+- [ ] 07-03-PLAN.md — Security hardening: log audit tests, .gitignore, credential leakage prevention (Wave 2)
+- [ ] 07-04-PLAN.md — Frontend auth gate: LoginCard, SetupCard, auth state machine, Einstellungen tab (Wave 2)
+- [ ] 07-05-PLAN.md — ccxt Bitget adapter + sync engine: spot/futures fetch, pagination, normalize, batchInsert (Wave 3)
+- [ ] 07-06-PLAN.md — Exchange management UI: SettingsTab, ExchangeCard, CredentialForm, password change (Wave 3)
+- [ ] 07-07-PLAN.md — Sync routes + sync UI: sync endpoint, progress indicator, toast notifications, auto-sync (Wave 4)
 
 ---
 
