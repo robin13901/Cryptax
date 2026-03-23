@@ -1,4 +1,4 @@
-import type { ExchangeConnection } from '@cryptax/shared';
+import type { ExchangeConnection, SyncResult } from '@cryptax/shared';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -15,6 +15,20 @@ function makeConnection(overrides: Partial<ExchangeConnection> = {}): ExchangeCo
     label: 'Mein Konto',
     lastSyncAt: null,
     createdAt: '2026-01-01T00:00:00Z',
+    ...overrides,
+  };
+}
+
+function makeSyncResult(overrides: Partial<SyncResult> = {}): SyncResult {
+  return {
+    connectionId: 1,
+    exchange: 'bitget',
+    spotTrades: { imported: 5, duplicates: 2, errors: 0 },
+    futuresTrades: { imported: 3, duplicates: 1, errors: 0 },
+    totalImported: 8,
+    totalDuplicates: 3,
+    syncedAt: '2026-03-23T10:00:00Z',
+    warnings: [],
     ...overrides,
   };
 }
@@ -301,6 +315,83 @@ describe('SettingsTab', () => {
 
     await waitFor(() => {
       expect(screen.queryByText('Zu loeschender Account')).not.toBeInTheDocument();
+    });
+  });
+
+  it('clicking sync button calls POST /api/exchanges/:id/sync and shows progress', async () => {
+    const conn = makeConnection({ id: 5, label: 'Sync Account' });
+    const syncResult = makeSyncResult({ connectionId: 5, totalImported: 12, totalDuplicates: 1 });
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(new Response(JSON.stringify([conn]), { status: 200 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(syncResult), { status: 200 }));
+
+    const user = userEvent.setup();
+    renderSettingsTab();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /sync account synchronisieren/i })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: /sync account synchronisieren/i }));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith('/api/exchanges/5/sync', { method: 'POST' });
+    });
+
+    // After sync completes, progress indicator should show success
+    await waitFor(() => {
+      expect(screen.getByLabelText('Synchronisierung abgeschlossen')).toBeInTheDocument();
+    });
+  });
+
+  it('shows sync error when sync POST fails', async () => {
+    const conn = makeConnection({ id: 6, label: 'Error Account' });
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(new Response(JSON.stringify([conn]), { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ error: 'Verbindungsfehler' }), { status: 500 })
+      );
+
+    const user = userEvent.setup();
+    renderSettingsTab();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /error account synchronisieren/i })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: /error account synchronisieren/i }));
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Synchronisierungsfehler')).toBeInTheDocument();
+    });
+  });
+
+  it('clicking "Alle synchronisieren" calls POST /api/exchanges/sync-all', async () => {
+    const conn = makeConnection({ id: 7, label: 'All Sync Account' });
+    const syncResult = makeSyncResult({ connectionId: 7 });
+
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(new Response(JSON.stringify([conn]), { status: 200 }))
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({ results: [syncResult], totalImported: 8, totalDuplicates: 3 }),
+          { status: 200 }
+        )
+      );
+
+    const user = userEvent.setup();
+    renderSettingsTab();
+
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /alle synchronisieren/i })).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: /alle synchronisieren/i }));
+
+    await waitFor(() => {
+      expect(fetch).toHaveBeenCalledWith('/api/exchanges/sync-all', { method: 'POST' });
     });
   });
 });

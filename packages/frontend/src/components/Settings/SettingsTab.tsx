@@ -1,5 +1,6 @@
-import type { ExchangeConnection } from '@cryptax/shared';
+import type { ExchangeConnection, SyncResult } from '@cryptax/shared';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import GlassSurface from '../GlassSurface/GlassSurface';
 import CredentialForm from './CredentialForm';
 import ExchangeCard from './ExchangeCard';
@@ -10,10 +11,19 @@ interface SettingsTabProps {
   onLogout: () => void;
 }
 
+interface SyncState {
+  syncing: boolean;
+  result: SyncResult | null;
+  error: string | null;
+}
+
 const SettingsTab = ({ onLogout }: SettingsTabProps) => {
   const [connections, setConnections] = useState<ExchangeConnection[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  // Map from connection id to sync state
+  const [syncStates, setSyncStates] = useState<Record<number, SyncState>>({});
+  const [syncingAll, setSyncingAll] = useState(false);
 
   useEffect(() => {
     fetch('/api/exchanges')
@@ -38,15 +48,119 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
     fetch(`/api/exchanges/${id}`, { method: 'DELETE' })
       .then(() => {
         setConnections((prev) => prev.filter((c) => c.id !== id));
+        setSyncStates((prev) => {
+          const next = { ...prev };
+          delete next[id];
+          return next;
+        });
       })
       .catch(() => {
         // Leave list unchanged on error
       });
   };
 
-  const handleSyncAll = () => {
-    // Placeholder — wired in 07-07
+  const handleSync = (id: number) => {
+    setSyncStates((prev) => ({
+      ...prev,
+      [id]: { syncing: true, result: null, error: null },
+    }));
+
+    fetch(`/api/exchanges/${id}/sync`, { method: 'POST' })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json<{ error?: string }>();
+          throw new Error(body.error ?? 'Sync fehlgeschlagen');
+        }
+        return res.json<SyncResult>();
+      })
+      .then((result) => {
+        setSyncStates((prev) => ({
+          ...prev,
+          [id]: { syncing: false, result, error: null },
+        }));
+        // Update lastSyncAt on the connection
+        setConnections((prev) =>
+          prev.map((c) => (c.id === id ? { ...c, lastSyncAt: result.syncedAt } : c))
+        );
+        toast.success(
+          `Synchronisiert: ${result.totalImported} importiert, ${result.totalDuplicates} Duplikate`
+        );
+      })
+      .catch((err: Error) => {
+        setSyncStates((prev) => ({
+          ...prev,
+          [id]: { syncing: false, result: null, error: err.message },
+        }));
+        toast.error(`Synchronisierung fehlgeschlagen: ${err.message}`);
+      });
   };
+
+  const handleSyncAll = () => {
+    if (syncingAll) return;
+    setSyncingAll(true);
+
+    // Mark all as syncing
+    setSyncStates((prev) => {
+      const next = { ...prev };
+      for (const conn of connections) {
+        next[conn.id] = { syncing: true, result: null, error: null };
+      }
+      return next;
+    });
+
+    fetch('/api/exchanges/sync-all', { method: 'POST' })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.json<{ error?: string }>();
+          throw new Error(body.error ?? 'Sync-All fehlgeschlagen');
+        }
+        return res.json<{ results: SyncResult[]; totalImported: number; totalDuplicates: number }>();
+      })
+      .then(({ results, totalImported, totalDuplicates }) => {
+        // Update each connection's sync state individually
+        setSyncStates((prev) => {
+          const next = { ...prev };
+          for (const result of results) {
+            const hasError = result.warnings.length > 0;
+            next[result.connectionId] = {
+              syncing: false,
+              result: hasError ? null : result,
+              error: hasError ? result.warnings[0] : null,
+            };
+          }
+          return next;
+        });
+        // Update lastSyncAt for all successfully synced connections
+        setConnections((prev) =>
+          prev.map((c) => {
+            const result = results.find((r) => r.connectionId === c.id);
+            if (result && result.warnings.length === 0) {
+              return { ...c, lastSyncAt: result.syncedAt };
+            }
+            return c;
+          })
+        );
+        toast.success(
+          `Alle synchronisiert: ${totalImported} importiert, ${totalDuplicates} Duplikate`
+        );
+      })
+      .catch((err: Error) => {
+        // Clear syncing state for all on error
+        setSyncStates((prev) => {
+          const next = { ...prev };
+          for (const conn of connections) {
+            next[conn.id] = { syncing: false, result: null, error: err.message };
+          }
+          return next;
+        });
+        toast.error(`Alle synchronisieren fehlgeschlagen: ${err.message}`);
+      })
+      .finally(() => {
+        setSyncingAll(false);
+      });
+  };
+
+  const isAnySyncing = Object.values(syncStates).some((s) => s.syncing);
 
   return (
     <div className="settings-tab">
@@ -60,8 +174,9 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
                 type="button"
                 className="settings-tab__btn settings-tab__btn--sync-all"
                 onClick={handleSyncAll}
+                disabled={isAnySyncing || syncingAll}
               >
-                Alle synchronisieren
+                {syncingAll ? 'Synchronisiere...' : 'Alle synchronisieren'}
               </button>
             )}
             <button
@@ -103,9 +218,20 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
           </div>
         ) : (
           <div className="settings-tab__connection-list">
-            {connections.map((conn) => (
-              <ExchangeCard key={conn.id} connection={conn} onDelete={handleDelete} />
-            ))}
+            {connections.map((conn) => {
+              const syncState = syncStates[conn.id];
+              return (
+                <ExchangeCard
+                  key={conn.id}
+                  connection={conn}
+                  onDelete={handleDelete}
+                  onSync={handleSync}
+                  syncing={syncState?.syncing ?? false}
+                  syncResult={syncState?.result ?? null}
+                  syncError={syncState?.error ?? null}
+                />
+              );
+            })}
           </div>
         )}
       </section>

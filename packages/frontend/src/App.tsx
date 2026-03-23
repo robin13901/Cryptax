@@ -1,6 +1,7 @@
 import type { ImportResponse } from '@cryptax/shared';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
+import { Toaster } from 'sonner';
 import LoginCard from './components/Auth/LoginCard';
 import SetupCard from './components/Auth/SetupCard';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -39,6 +40,15 @@ function App() {
         setAuthState('login');
       });
   }, []);
+
+  // Auto-sync all exchange connections on authenticated mount
+  useEffect(() => {
+    if (authState !== 'authenticated') return;
+
+    fetch('/api/exchanges/sync-all', { method: 'POST' }).catch(() => {
+      // Best-effort: ignore auto-sync failures silently
+    });
+  }, [authState]);
 
   const handleLogout = () => {
     fetch('/api/auth/logout', { method: 'POST' }).finally(() => {
@@ -108,6 +118,9 @@ function App() {
   return (
     <div className="app">
       {floatingLinesBg}
+
+      {/* Toast notifications */}
+      <Toaster position="bottom-right" richColors />
 
       {/* Content layer */}
       <div className="content">

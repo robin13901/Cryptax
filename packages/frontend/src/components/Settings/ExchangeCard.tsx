@@ -1,12 +1,16 @@
-import type { ExchangeConnection } from '@cryptax/shared';
+import type { ExchangeConnection, SyncResult } from '@cryptax/shared';
 import { useState } from 'react';
 import GlassSurface from '../GlassSurface/GlassSurface';
+import SyncProgress from './SyncProgress';
 import './ExchangeCard.css';
 
 interface ExchangeCardProps {
   connection: ExchangeConnection;
   onDelete: (id: number) => void;
   onSync?: (id: number) => void;
+  syncing?: boolean;
+  syncResult?: SyncResult | null;
+  syncError?: string | null;
 }
 
 const EXCHANGE_DISPLAY_NAMES: Record<string, string> = {
@@ -25,7 +29,14 @@ function formatLastSync(lastSyncAt: string | null): string {
   })}`;
 }
 
-const ExchangeCard = ({ connection, onDelete, onSync }: ExchangeCardProps) => {
+const ExchangeCard = ({
+  connection,
+  onDelete,
+  onSync,
+  syncing = false,
+  syncResult,
+  syncError,
+}: ExchangeCardProps) => {
   const [confirming, setConfirming] = useState(false);
 
   const exchangeName = EXCHANGE_DISPLAY_NAMES[connection.exchange] ?? connection.exchange;
@@ -58,6 +69,13 @@ const ExchangeCard = ({ connection, onDelete, onSync }: ExchangeCardProps) => {
             <span className="exchange-card__label">{connection.label}</span>
           </div>
           <p className="exchange-card__sync-time">{formatLastSync(connection.lastSyncAt)}</p>
+
+          {/* Live sync progress indicator */}
+          {(syncing || syncResult != null || syncError != null) && (
+            <div className="exchange-card__sync-progress">
+              <SyncProgress syncing={syncing} result={syncResult} error={syncError} />
+            </div>
+          )}
         </div>
 
         <div className="exchange-card__actions">
@@ -66,10 +84,11 @@ const ExchangeCard = ({ connection, onDelete, onSync }: ExchangeCardProps) => {
               type="button"
               className="exchange-card__btn exchange-card__btn--sync"
               onClick={() => onSync(connection.id)}
+              disabled={syncing}
               title="Synchronisieren"
               aria-label={`${connection.label} synchronisieren`}
             >
-              Synchronisieren
+              {syncing ? 'Laeuft...' : 'Synchronisieren'}
             </button>
           )}
 
@@ -78,6 +97,7 @@ const ExchangeCard = ({ connection, onDelete, onSync }: ExchangeCardProps) => {
               type="button"
               className="exchange-card__btn exchange-card__btn--delete"
               onClick={handleDeleteClick}
+              disabled={syncing}
               aria-label={`${connection.label} entfernen`}
             >
               Entfernen
