@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-02, 07-03, 07-04, 07-05 complete
+**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01, 07-02, 07-03, 07-04, 07-05, 07-06 complete
 
 ## Current Position
 
 Phase: 7 of 7 (Exchange API + Security) — In progress
-Plan: 6 of N complete in phase (07-01, 07-02, 07-03, 07-04, 07-05 done)
-Status: In progress — ccxt BitgetAdapter + sync engine complete, 900 tests
-Last activity: 2026-03-23 — Completed 07-05-PLAN.md (ccxt Bitget adapter + normalizer + sync engine)
+Plan: 7 of 7 complete in phase (07-01 through 07-06 done; 07-07 remaining)
+Status: In progress — Settings UI + exchange management complete, 900 tests
+Last activity: 2026-03-23 — Completed 07-06-PLAN.md (Exchange management UI: SettingsTab + CredentialForm + ExchangeCard + PasswordChange)
 
-Progress: [████████░░] 92% (47/51 plans complete)
+Progress: [█████████░] 94% (48/51 plans complete)
 
 ## Performance Metrics
 
@@ -170,6 +170,12 @@ Recent decisions affecting current work:
 - 07-05-d: lastSyncAt watermark updated only when at least one side succeeds — prevents watermark advance on total failure
 - 07-05-e: import_batches record per sync side (spot/futures) — traceability for API-sourced trades alongside CSV batches
 
+- 07-06-a: Eye toggle uses RevealState record per field — independent per-field visibility without shared state
+- 07-06-b: Auto-test on save is best-effort — onSave() fires immediately after POST 201; test result shown as status banner
+- 07-06-c: Delete confirmation is inline (replace button with alertdialog) — no modal, no extra component
+- 07-06-d: SettingsTab toggle button flips text; CredentialForm also has Abbrechen — both close form; test uses getAllByRole + last match
+- 07-06-e: PasswordChange posts to /api/auth/change-password — route placeholder for future plan
+
 ### Pending Todos
 
 None yet.
@@ -183,5 +189,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 07-05-PLAN.md (ccxt BitgetAdapter + normalizeApiTrade + syncExchange — 900 tests)
+Stopped at: Completed 07-06-PLAN.md (Settings Exchange Management UI — SettingsTab + CredentialForm + ExchangeCard + PasswordChange, 900 tests)
 Resume file: None
