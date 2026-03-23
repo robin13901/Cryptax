@@ -151,16 +151,16 @@ Plans:
 4. Clicking a transaction opens a detail view showing full row data, associated FIFO lots consumed, and the tax impact of that specific trade.
 5. The Freigrenze progress indicator correctly shows proximity to the 1.000 EUR cliff with color-coded warning states (green/amber/red).
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 3 waves
 
 Plans:
-- [ ] 05-01: Summary API — GET /api/summary/:year returning KPI data (total gain, trade count, taxable amount, estimated tax, Freigrenze status per bucket)
-- [ ] 05-02: Dashboard KPI cards + year selector — wire DASH-01, DASH-07 to API; year selector updates all components; Freigrenze progress indicator
-- [ ] 05-03: P&L + monthly performance charts — DASH-02 (line chart P&L over time), DASH-05 (bar chart monthly realized gains); wire to real API data
-- [ ] 05-04: Portfolio + per-coin charts — DASH-03 (donut chart portfolio distribution), DASH-04 (bar chart per-coin gain/loss)
-- [ ] 05-05: Spot vs futures + year-over-year charts — DASH-06 (grouped bar spot vs futures), DASH-08 (year-over-year comparison)
-- [ ] 05-06: Transaction list API + UI — GET /api/transactions (paginated, filterable by type/coin/date, searchable, sortable); TRAN-01 through TRAN-05; category badges
-- [ ] 05-07: Transaction detail view + component tests — TRAN-06 detail view with FIFO lot association and tax impact; React component tests with Testing Library for all new components (TEST-05)
+- [ ] 05-01-PLAN.md — Summary API: GET /api/summary/:year with KPI data, chart datasets, Freigrenze status (Wave 1)
+- [ ] 05-02-PLAN.md — Transaction API: GET /api/transactions (paginated, filterable, sortable) + GET /api/transactions/:id (detail with FIFO lots) (Wave 1)
+- [ ] 05-03-PLAN.md — Format utilities (formatEur, formatNumber) + test setup mocks (ResizeObserver, IntersectionObserver) (Wave 1)
+- [ ] 05-04-PLAN.md — Dashboard KPI cards + year selector + Freigrenze progress bar (Wave 2)
+- [ ] 05-05-PLAN.md — All 6 Recharts visualizations: P&L line, donut, per-coin bar, monthly bar, spot vs futures, year-over-year (Wave 2)
+- [ ] 05-06-PLAN.md — Transaction list UI: infinite scroll, sortable columns, category badges, filters, search (Wave 2)
+- [ ] 05-07-PLAN.md — Transaction detail slide-in panel + React component tests for all new components (Wave 3)
 
 ---
 
@@ -230,7 +230,7 @@ Plans:
 | 2. CSV Import Pipeline | 8/8 | Complete | 2026-03-22 |
 | 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
 | 4. FIFO Engine + Tax Calculation | 8/8 | Complete | 2026-03-22 |
-| 5. Dashboard + Transaction UI | 0/7 | Not started | - |
+| 5. Dashboard + Transaction UI | 0/7 | Planned | - |
 | 6. Steuerreport + PDF Export | 0/7 | Not started | - |
 | 7. Exchange API + Security | 0/7 | Not started | - |
 
