@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 5 in progress — Summary API, format utilities, and test setup complete
+**Current focus:** Phase 5 in progress — Summary API, format utilities, Transactions API complete
 
 ## Current Position
 
 Phase: 5 of 7 (Dashboard + Transaction UI) — In progress
-Plan: 1 of 7 just completed (05-01)
-Status: In progress — 05-01 complete (Summary API), 05-03 complete (format utilities)
-Last activity: 2026-03-23 — Completed 05-01-PLAN.md (Summary API: GET /api/summary/:year)
+Plan: 2 of 7 just completed (05-02)
+Status: In progress — 05-01 (Summary API), 05-02 (Transactions API), 05-03 (format utilities) complete
+Last activity: 2026-03-23 — Completed 05-02-PLAN.md (Transactions API: GET /api/transactions + GET /api/transactions/:id)
 
-Progress: [██████░░░░] 61% (30/49 plans complete)
+Progress: [██████░░░░] 62% (31/49 plans complete)
 
 ## Performance Metrics
 
@@ -31,7 +31,7 @@ Progress: [██████░░░░] 61% (30/49 plans complete)
 | 02-csv-import-pipeline | 8/8 COMPLETE | ~46 min | ~6 min |
 | 03-eur-price-enrichment | 5/5 COMPLETE | ~50 min | ~10 min |
 | 04-fifo-engine-tax-calculation | 8/8 COMPLETE | ~61 min | ~8 min |
-| 05-dashboard-transaction-ui | 3/7 in progress | ~5 min | ~5 min |
+| 05-dashboard-transaction-ui | 3/7 in progress | ~41 min | ~14 min |
 
 **Recent Trend:**
 - Last 5 plans: 8 min
@@ -78,6 +78,11 @@ Recent decisions affecting current work:
 - 05-03: formatEur showSign defaults false; callers pass true for P&L display contexts
 - 05-03: ResizeObserver/IntersectionObserver mocks added to shared setup.ts (not per-file) — project-wide availability
 
+- 05-02: Numeric sort uses CAST(col AS REAL) — amount/eurPrice stored as TEXT, lexicographic sort would break ordering
+- 05-02: taxImpact computed per-request from lotConsumptions/futuresPositions/earnIncome — no pre-computed column needed
+- 05-02: haltefristMet converted via Boolean() — SQLite stores as 0/1 integer in raw queries
+- 05-02: TransactionListItem extended with orderId, sourceType, eurPrice for list display badges
+
 ### Pending Todos
 
 None yet.
@@ -91,5 +96,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 05-01-PLAN.md (Summary API: GET /api/summary/:year, 23 tests)
+Stopped at: Completed 05-02-PLAN.md (Transactions API: GET /api/transactions + GET /api/transactions/:id, 22 tests)
 Resume file: None
