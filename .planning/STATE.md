@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 IN PROGRESS — Plans 01, 02, 03, and 04 complete; full PDF (incl. trade appendix) + CSV export ready
+**Current focus:** Phase 6 IN PROGRESS — Plans 01, 02, 03, 04, and 05 complete; all 4 report API endpoints live
 
 ## Current Position
 
 Phase: 6 of 7 (Steuerreport + PDF Export) — In progress
-Plan: 3 of ? complete in sequence (06-01, 06-02, 06-03; 06-04 done out-of-order)
-Status: In progress — 06-03 executed (PDF trade appendix table with pagination)
-Last activity: 2026-03-23 — Completed 06-03-PLAN.md
+Plan: 5 of ? complete in sequence (06-01, 06-02, 06-03, 06-04, 06-05 done)
+Status: In progress — 06-05 executed (Report API routes with 4 endpoints)
+Last activity: 2026-03-23 — Completed 06-05-PLAN.md
 
-Progress: [████████░░] 81% (40/49 plans complete)
+Progress: [████████░░] 84% (41/49 plans complete)
 
 ## Performance Metrics
 
@@ -125,6 +125,11 @@ Recent decisions affecting current work:
 - 06-04-d: Steuerfrei column explicit (mirrors Haltefrist erfuellt) — removes ambiguity: legal basis vs tax consequence
 - 06-04-e: escapeCsvField exported — independently testable and reusable
 
+- 06-05-a: getReportData helper extracts shared param parsing + ReportGenerator instantiation — avoids duplicating 400/404 logic across 3 year-based routes
+- 06-05-b: Buffer converted to ArrayBuffer via .buffer.slice() for Hono c.body() — Hono's Data type is string|ArrayBuffer|ReadableStream|Uint8Array<ArrayBuffer>, not Buffer<ArrayBufferLike>
+- 06-05-c: vi.hoisted mockDbRef pattern for TDZ — report-generator.ts exports singleton at module load; vi.hoisted ensures ref object exists before mock factory runs
+- 06-05-d: BOM assertion uses raw bytes (0xEF,0xBB,0xBF) — TextDecoder.decode() strips BOM by default
+
 ### Pending Todos
 
 None yet.
@@ -138,5 +143,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 06-03-PLAN.md (PDF trade appendix with pagination; 12 new tests, 686 total)
+Stopped at: Completed 06-05-PLAN.md (Report API routes — 4 endpoints, 26 tests, 712 total)
 Resume file: None
