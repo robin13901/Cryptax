@@ -9,6 +9,7 @@ import ImportDropzone from './components/ImportDropzone/ImportDropzone';
 import ImportSummary from './components/ImportSummary/ImportSummary';
 import PriceStatus from './components/PriceStatus/PriceStatus';
 import ReportTab from './components/Report/ReportTab';
+import SettingsTab from './components/Settings/SettingsTab';
 import TransactionList from './components/Transactions/TransactionList';
 import './App.css';
 
@@ -199,19 +200,7 @@ function App() {
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
               >
-                <div className="settings-placeholder">
-                  <h2 className="settings-placeholder__title">Einstellungen</h2>
-                  <p className="settings-placeholder__hint">
-                    Exchange-Verbindungen und weitere Einstellungen folgen.
-                  </p>
-                  <button
-                    type="button"
-                    className="logout-button"
-                    onClick={handleLogout}
-                  >
-                    Abmelden
-                  </button>
-                </div>
+                <SettingsTab onLogout={handleLogout} />
               </motion.div>
             )}
           </AnimatePresence>
