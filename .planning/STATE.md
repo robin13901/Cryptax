@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 6 IN PROGRESS — Plans 01 and 04 complete, CSV export module ready
+**Current focus:** Phase 6 IN PROGRESS — Plans 01, 02, and 04 complete; PDF builder + CSV export ready
 
 ## Current Position
 
 Phase: 6 of 7 (Steuerreport + PDF Export) — In progress
-Plan: 4 of ? complete (06-04)
-Status: In progress — 06-04 executed (CSV export builder)
-Last activity: 2026-03-23 — Completed 06-04-PLAN.md
+Plan: 2 of ? complete in sequence (06-02, but 06-04 also done out-of-order)
+Status: In progress — 06-02 executed (PDF builder + DejaVu Sans fonts)
+Last activity: 2026-03-23 — Completed 06-02-PLAN.md
 
-Progress: [███████░░░] 76% (38/49 plans complete)
+Progress: [███████░░░] 77% (39/49 plans complete)
 
 ## Performance Metrics
 
@@ -108,6 +108,11 @@ Recent decisions affecting current work:
 - 06-01-d: EarnCoinBreakdown as named interface for typed destructuring in PDF/CSV consumers
 - 06-01-e: TradeAppendix sorted by tradedAt ASC then symbol ASC for natural Steuerberater review order
 
+- 06-02-a: createRequire(import.meta.url) for PDFKit — CJS package in ESM backend (standard NodeNext interop)
+- 06-02-b: PDF info Keywords field stores section identifiers — body text CID-encoded with TTF; metadata always literal strings
+- 06-02-c: DejaVu Sans v2.37 bundled as TTF — SIL OFL, Latin Extended, comprehensive German umlaut coverage
+- 06-02-d: sectionHeader/keyValueLine/formatEurPdf exported for plan 06-03 trade appendix reuse
+
 - 06-04-a: Dot decimal separator in CSV (not German comma) — CSV is machine-readable import format; Steuerberater software expects standard notation
 - 06-04-b: No CSV library — flat structure, manual string building, zero runtime dependencies
 - 06-04-c: Summary section after blank separator row — reliable section delimiter for Excel and downstream scripts
@@ -127,5 +132,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-23
-Stopped at: Completed 06-04-PLAN.md (CSV export builder; 35 new tests, 540 total)
+Stopped at: Completed 06-02-PLAN.md (PDF builder + DejaVu Sans fonts; 26 new tests, 674 total)
 Resume file: None
