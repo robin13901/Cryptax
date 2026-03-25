@@ -2,6 +2,7 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  background: var(--crypto-dark);
 }
 
 .floating-lines-bg {
@@ -11,91 +12,53 @@
   will-change: transform;
 }
 
-.content {
+/* -- Sidebar-aware content area -- */
+.app-layout__content {
+  margin-left: 240px; /* matches sidebar expanded width */
+  min-height: 100vh;
   position: relative;
   z-index: 1;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.header {
-  text-align: center;
-  margin-bottom: 1.25rem;
-  position: relative;
+.app-layout__content--collapsed {
+  margin-left: 64px; /* matches sidebar collapsed width */
 }
 
-.header h1 {
+/* -- Content header (page title) -- */
+.content-header {
+  margin-bottom: 1.5rem;
+}
+
+.content-header__title {
   color: #ffffff;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin: 0 0 0.25rem;
+  margin: 0;
   letter-spacing: -0.02em;
 }
 
-.header .subtitle {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.85rem;
-  font-weight: 400;
-}
-
-.tab-bar-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-}
-
-.main {
+/* -- Main content area -- */
+.content-main {
   flex: 1;
   position: relative;
 }
 
-/* Navigation pills */
-.nav-pills {
-  display: flex;
-  justify-content: center;
-  gap: 0.2rem;
-  padding: 0.2rem;
-  background: rgba(10, 14, 24, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  width: fit-content;
-  margin: 0 auto;
-  backdrop-filter: blur(24px) saturate(1.4);
-  -webkit-backdrop-filter: blur(24px) saturate(1.4);
-}
+/* -- Responsive: mobile -- */
+@media (max-width: 768px) {
+  .app-layout__content,
+  .app-layout__content--collapsed {
+    margin-left: 64px; /* sidebar always collapsed on mobile */
+    padding: 1rem;
+  }
 
-.nav-pill {
-  padding: 0.4rem 1rem;
-  border-radius: 7px;
-  border: none;
-  cursor: pointer;
-  font-size: 0.82rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.4);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
+  .content-header__title {
+    font-size: 1.25rem;
+  }
 }
-
-.nav-pill:hover {
-  color: rgba(255, 255, 255, 0.7);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.nav-pill-active {
-  background: rgba(0, 112, 242, 0.35);
-  color: #fff;
-  font-weight: 600;
-}
-
-.nav-pill-active:hover {
-  background: rgba(0, 112, 242, 0.5);
-}
-
-/* KPI styles moved to KpiCards.css */
 
 /* Charts grid */
 .charts-grid {
