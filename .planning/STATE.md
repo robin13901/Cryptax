@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 8 (UI Redesign: Sidebar Layout) — Plan 08-01 complete, plan 08-02 next
+**Current focus:** Phase 8 (UI Redesign: Sidebar Layout) — Plan 08-03 complete, plan 08-04 next
 
 ## Current Position
 
 Phase: 8 of 8 (UI Redesign: Sidebar Layout) — In progress
-Plan: 2 of 4 in phase (08-02 complete)
+Plan: 3 of 4 in phase (08-03 complete)
 Status: In progress
-Last activity: 2026-03-25 — Completed 08-02-PLAN.md (App layout restructure, sidebar navigation)
+Last activity: 2026-03-25 — Completed 08-03-PLAN.md (CSS max-width cap removal for sidebar layout)
 
-Progress: [█████████░] 98% (52/55 plans complete)
+Progress: [█████████░] 98% (53/55 plans complete)
 
 ## Performance Metrics
 
@@ -190,6 +190,10 @@ Recent decisions affecting current work:
 - 08-02-c: content-header__title uses conditional rendering on activeTab — avoids extra mapping state, inline and readable
 - 08-02-d: overflow-x moved to html/body (not .app) — .app overflow:hidden clipped fixed sidebar; html/body level prevents horizontal scroll during transition without clipping
 
+- 08-03-a: Dashboard and Report use width:100% with no max-width — data-dense tabs should use all available space beside the 240px sidebar
+- 08-03-b: Settings keeps max-width:1000px with margin:0 auto — form-based tabs benefit from a readable line length, increased from 860px to 1000px
+- 08-03-c: No test modifications required — all component tests render components in isolation, not through App; CSS container properties are not queried by any test
+
 ### Pending Todos
 
 None yet.
@@ -203,5 +207,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed 08-02-PLAN.md (App layout restructure — sidebar navigation replaces pill tabs)
+Stopped at: Completed 08-03-PLAN.md (CSS max-width cap removal — Dashboard/Report fill width, Settings max-width 860→1000px)
 Resume file: None
