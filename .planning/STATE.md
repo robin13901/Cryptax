@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 7 (Exchange API + Security) — Plans 07-01 through 07-07 auto tasks complete, checkpoint pending
+**Current focus:** Phase 8 (UI Redesign: Sidebar Layout) — Plan 08-01 complete, plan 08-02 next
 
 ## Current Position
 
-Phase: 7 of 7 (Exchange API + Security) — Checkpoint: awaiting human verify
-Plan: 7 of 7 in phase (07-01 through 07-07 auto tasks done; checkpoint pending)
-Status: Checkpoint — sync flow implemented, awaiting end-to-end human verification
-Last activity: 2026-03-23 — Completed 07-07-PLAN.md auto tasks (Sync API + UI, 919 tests)
+Phase: 8 of 8 (UI Redesign: Sidebar Layout) — In progress
+Plan: 1 of 4 in phase (08-01 complete)
+Status: In progress
+Last activity: 2026-03-25 — Completed 08-01-PLAN.md (Sidebar component, 14 tests)
 
-Progress: [█████████░] 96% (50/51 plans complete — awaiting checkpoint)
+Progress: [█████████░] 97% (51/55 plans complete)
 
 ## Performance Metrics
 
@@ -181,6 +181,10 @@ Recent decisions affecting current work:
 - 07-07-d: Auto-sync on app mount is fire-and-forget — silent background refresh, no UI feedback
 - 07-07-e: sonner Toaster at bottom-right richColors — avoids covering tab navigation
 
+- 08-01-a: Do not import GlassSurface for sidebar — replicate glass CSS directly; GlassSurface requires fixed width/height props incompatible with 100vh flex column layout
+- 08-01-b: Inline SVG icons as named React functions — zero icon library; stroke="currentColor" inherits active/inactive color automatically
+- 08-01-c: TabId exported from Sidebar.tsx — canonical source; App.tsx will import from Sidebar in 08-02
+
 ### Pending Todos
 
 None yet.
@@ -193,6 +197,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-23
-Stopped at: Completed 07-06-PLAN.md (Settings Exchange Management UI — SettingsTab + CredentialForm + ExchangeCard + PasswordChange, 900 tests)
+Last session: 2026-03-25
+Stopped at: Completed 08-01-PLAN.md (Sidebar component + 14 unit tests)
 Resume file: None
