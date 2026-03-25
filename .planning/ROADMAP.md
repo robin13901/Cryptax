@@ -19,6 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
 - [ ] **Phase 6: Steuerreport + PDF Export** — Finanzamt-ready tax report generated and exportable as PDF and CSV
 - [ ] **Phase 7: Exchange API + Security** — Bitget API sync via ccxt, password protection, encrypted credential storage
+- [ ] **Phase 8: UI Redesign — Sidebar Layout** — Collapsible sidebar navigation replacing top pill tabs for a professional dashboard feel
 
 ---
 
@@ -220,9 +221,32 @@ Plans:
 
 ---
 
+### Phase 8: UI Redesign — Sidebar Layout
+
+**Goal:** The app uses a collapsible sidebar navigation instead of top pill tabs, giving it a professional dashboard feel that scales well on widescreen monitors while keeping the existing FloatingLines background and GlassSurface frosted glass aesthetic.
+
+**Depends on:** Phase 7
+
+**Success Criteria:**
+1. A glass-frosted sidebar on the left contains all navigation items (Dashboard, Transaktionen, Steuerreport, Einstellungen) with SVG icons and text labels; the active item has a visible blue accent.
+2. The sidebar collapses to icon-only mode (64px) and expands to full mode (240px) with a smooth CSS transition; the collapse state persists in localStorage across page reloads.
+3. The main content area fills the remaining viewport width beside the sidebar; Dashboard charts and Report tables stretch across the available space without max-width caps.
+4. On narrow viewports (768px and below), the sidebar is always in collapsed icon-only mode; the content area adjusts accordingly.
+5. Auth states (loading, setup, login) render full-screen without the sidebar; the sidebar only appears after authentication.
+
+**Plans:** 4 plans in 3 waves
+
+Plans:
+- [ ] 08-01-PLAN.md — Sidebar component: Sidebar.tsx + Sidebar.css + unit tests (Wave 1)
+- [ ] 08-02-PLAN.md — App.tsx + App.css restructure: sidebar layout replacing top pills (Wave 2)
+- [ ] 08-03-PLAN.md — Page container CSS adjustments + full test suite verification (Wave 2)
+- [ ] 08-04-PLAN.md — Visual verification checkpoint (Wave 3)
+
+---
+
 ## Progress
 
-**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 (strict data dependency chain).
+**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 (strict data dependency chain, Phase 8 is UI polish).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -233,5 +257,6 @@ Plans:
 | 5. Dashboard + Transaction UI | 7/7 | Complete | 2026-03-23 |
 | 6. Steuerreport + PDF Export | 7/7 | Gaps found (4/5) | 2026-03-23 |
 | 7. Exchange API + Security | 0/7 | Not started | - |
+| 8. UI Redesign — Sidebar Layout | 0/4 | Not started | - |
 
-**Total plans:** 49 across 7 phases
+**Total plans:** 53 across 8 phases
