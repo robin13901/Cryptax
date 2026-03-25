@@ -11,16 +11,25 @@ import ImportSummary from './components/ImportSummary/ImportSummary';
 import PriceStatus from './components/PriceStatus/PriceStatus';
 import ReportTab from './components/Report/ReportTab';
 import SettingsTab from './components/Settings/SettingsTab';
+import Sidebar from './components/Sidebar/Sidebar';
+import type { TabId } from './components/Sidebar/Sidebar';
 import TransactionList from './components/Transactions/TransactionList';
 import './App.css';
 
 type AuthState = 'loading' | 'setup' | 'login' | 'authenticated';
-type TabId = 'dashboard' | 'transactions' | 'report' | 'settings';
 
 function App() {
   const [authState, setAuthState] = useState<AuthState>('loading');
   const [activeTab, setActiveTab] = useState<TabId>('dashboard');
   const [importResponse, setImportResponse] = useState<ImportResponse | null>(null);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('cryptax-sidebar-collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   // Determine auth state on mount
   useEffect(() => {
@@ -56,12 +65,17 @@ function App() {
     });
   };
 
-  const tabs: { id: TabId; label: string }[] = [
-    { id: 'dashboard', label: 'Dashboard' },
-    { id: 'transactions', label: 'Transaktionen' },
-    { id: 'report', label: 'Steuerreport' },
-    { id: 'settings', label: 'Einstellungen' },
-  ];
+  const handleToggleSidebar = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem('cryptax-sidebar-collapsed', String(next));
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
 
   // ── Floating lines (shared background layer) ──────────────────────────────
   const floatingLinesBg = (
@@ -118,55 +132,48 @@ function App() {
   return (
     <div className="app">
       {floatingLinesBg}
-
-      {/* Toast notifications */}
       <Toaster position="bottom-right" richColors />
 
-      {/* Content layer */}
-      <div className="content">
-        <header className="header">
-          <h1>Cryptax</h1>
-          <p className="subtitle">Krypto-Steuerreport &amp; Portfolio Dashboard</p>
+      <Sidebar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={handleToggleSidebar}
+      />
+
+      <div className={`app-layout__content${sidebarCollapsed ? ' app-layout__content--collapsed' : ''}`}>
+        {/* Page title header */}
+        <header className="content-header">
+          <h1 className="content-header__title">
+            {activeTab === 'dashboard' && 'Dashboard'}
+            {activeTab === 'transactions' && 'Transaktionen'}
+            {activeTab === 'report' && 'Steuerreport'}
+            {activeTab === 'settings' && 'Einstellungen'}
+          </h1>
         </header>
 
-        {/* Tab Navigation */}
-        <div className="tab-bar-container">
-          <div className="nav-pills">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                className={`nav-pill ${activeTab === tab.id ? 'nav-pill-active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
         {/* Tab Content */}
-        <main className="main">
-          <AnimatePresence mode="sync">
+        <main className="content-main">
+          <AnimatePresence mode="wait">
             {activeTab === 'dashboard' && (
               <motion.div
                 key="dashboard"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
-                <Dashboard />
+                <Dashboard selectedYear={selectedYear} onYearChange={setSelectedYear} />
               </motion.div>
             )}
 
             {activeTab === 'transactions' && (
               <motion.div
                 key="transactions"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 {/* Collapsible import section */}
                 <details className="import-toggle">
@@ -196,22 +203,22 @@ function App() {
             {activeTab === 'report' && (
               <motion.div
                 key="report"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
-                <ReportTab />
+                <ReportTab selectedYear={selectedYear} onYearChange={setSelectedYear} />
               </motion.div>
             )}
 
             {activeTab === 'settings' && (
               <motion.div
                 key="settings"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
               >
                 <SettingsTab onLogout={handleLogout} />
               </motion.div>
