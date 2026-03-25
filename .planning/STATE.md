@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 8 of 8 (UI Redesign: Sidebar Layout) — In progress
-Plan: 1 of 4 in phase (08-01 complete)
+Plan: 2 of 4 in phase (08-02 complete)
 Status: In progress
-Last activity: 2026-03-25 — Completed 08-01-PLAN.md (Sidebar component, 14 tests)
+Last activity: 2026-03-25 — Completed 08-02-PLAN.md (App layout restructure, sidebar navigation)
 
-Progress: [█████████░] 97% (51/55 plans complete)
+Progress: [█████████░] 98% (52/55 plans complete)
 
 ## Performance Metrics
 
@@ -185,6 +185,11 @@ Recent decisions affecting current work:
 - 08-01-b: Inline SVG icons as named React functions — zero icon library; stroke="currentColor" inherits active/inactive color automatically
 - 08-01-c: TabId exported from Sidebar.tsx — canonical source; App.tsx will import from Sidebar in 08-02
 
+- 08-02-a: margin-left approach for content offset — sidebar is position:fixed so content needs margin-left:240px (expanded) / 64px (collapsed); no CSS grid needed
+- 08-02-b: TabId imported from Sidebar.tsx, local TabId type removed from App.tsx — single source of truth (established in 08-01-c)
+- 08-02-c: content-header__title uses conditional rendering on activeTab — avoids extra mapping state, inline and readable
+- 08-02-d: overflow-x moved to html/body (not .app) — .app overflow:hidden clipped fixed sidebar; html/body level prevents horizontal scroll during transition without clipping
+
 ### Pending Todos
 
 None yet.
@@ -198,5 +203,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-25
-Stopped at: Completed 08-01-PLAN.md (Sidebar component + 14 unit tests)
+Stopped at: Completed 08-02-PLAN.md (App layout restructure — sidebar navigation replaces pill tabs)
 Resume file: None
