@@ -237,10 +237,10 @@ Plans:
 **Plans:** 4 plans in 3 waves
 
 Plans:
-- [ ] 08-01-PLAN.md — Sidebar component: Sidebar.tsx + Sidebar.css + unit tests (Wave 1)
-- [ ] 08-02-PLAN.md — App.tsx + App.css restructure: sidebar layout replacing top pills (Wave 2)
-- [ ] 08-03-PLAN.md — Page container CSS adjustments + full test suite verification (Wave 2)
-- [ ] 08-04-PLAN.md — Visual verification checkpoint (Wave 3)
+- [x] 08-01-PLAN.md — Sidebar component: Sidebar.tsx + Sidebar.css + unit tests (Wave 1)
+- [x] 08-02-PLAN.md — App.tsx + App.css restructure: sidebar layout replacing top pills (Wave 2)
+- [x] 08-03-PLAN.md — Page container CSS adjustments + full test suite verification (Wave 2)
+- [x] 08-04-PLAN.md — Visual verification checkpoint (Wave 3)
 
 ---
 
@@ -257,6 +257,6 @@ Plans:
 | 5. Dashboard + Transaction UI | 7/7 | Complete | 2026-03-23 |
 | 6. Steuerreport + PDF Export | 7/7 | Gaps found (4/5) | 2026-03-23 |
 | 7. Exchange API + Security | 0/7 | Not started | - |
-| 8. UI Redesign — Sidebar Layout | 0/4 | Not started | - |
+| 8. UI Redesign — Sidebar Layout | 4/4 | Complete | 2026-03-26 |
 
-**Total plans:** 53 across 8 phases
+**Total plans:** 55 across 8 phases

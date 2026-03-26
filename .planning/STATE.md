@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 8 (UI Redesign: Sidebar Layout) — Plan 08-03 complete, plan 08-04 next
+**Current focus:** Phase 8 (UI Redesign: Sidebar Layout) — COMPLETE
 
 ## Current Position
 
-Phase: 8 of 8 (UI Redesign: Sidebar Layout) — In progress
-Plan: 3 of 4 in phase (08-03 complete)
-Status: In progress
-Last activity: 2026-03-25 — Completed 08-03-PLAN.md (CSS max-width cap removal for sidebar layout)
+Phase: 8 of 8 (UI Redesign: Sidebar Layout) — COMPLETE
+Plan: 4 of 4 in phase (all complete)
+Status: Phase complete — verified 5/5 success criteria
+Last activity: 2026-03-26 — Phase 08 complete (sidebar layout, 944 tests)
 
-Progress: [█████████░] 98% (53/55 plans complete)
+Progress: [██████████] 100% (55/55 plans complete)
 
 ## Performance Metrics
 
@@ -206,6 +206,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25
-Stopped at: Completed 08-03-PLAN.md (CSS max-width cap removal — Dashboard/Report fill width, Settings max-width 860→1000px)
+Last session: 2026-03-26
+Stopped at: Phase 08 complete — all 8 phases done, milestone ready for audit
 Resume file: None
