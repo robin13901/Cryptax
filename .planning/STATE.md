@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 9 of 9 (Electron Desktop App)
-Plan: 1 of 6 in phase
+Plan: 2 of 6 in phase
 Status: In progress
-Last activity: 2026-03-27 — Completed 09-01-PLAN.md (backend createApp factory + lazy DB init)
+Last activity: 2026-03-27 — Completed 09-02-PLAN.md (Electron workspace scaffold — config files and deps)
 
-Progress: [█████████░] 94% (56/61 plans complete)
+Progress: [█████████░] 95% (57/61 plans complete)
 
 ## Performance Metrics
 
@@ -187,6 +187,12 @@ Recent decisions affecting current work:
 - 09-01-d: initDb() throws if called twice (already initialized guard) — prevents accidental double-init
 - 09-01-e: Auto-init in ensureInitialized() reads DB_PATH env var — full backward compatibility for tests/dev
 
+- 09-02-a: vite@^7.3.1 pinned in electron workspace — electron-vite v5 peer dep is vite <=7; root stays on vite v8
+- 09-02-b: @vitejs/plugin-react@^5.1.4 (not v6) — v6 requires vite v8, v5.x supports vite v4-8
+- 09-02-c: postinstall removed from package.json — electron-builder install-app-deps fails before electron binary installed; moved to explicit rebuild script
+- 09-02-d: import.meta.dirname in electron.vite.config.ts — type=module ESM context; __dirname undefined; Node 23 has import.meta.dirname natively
+- 09-02-e: ELECTRON_SKIP_BINARY_DOWNLOAD=1 required on Windows with Cylance AV — asar file held by AV during npm reify rename causes EBUSY
+
 - 08-01-a: Do not import GlassSurface for sidebar — replicate glass CSS directly; GlassSurface requires fixed width/height props incompatible with 100vh flex column layout
 - 08-01-b: Inline SVG icons as named React functions — zero icon library; stroke="currentColor" inherits active/inactive color automatically
 - 08-01-c: TabId exported from Sidebar.tsx — canonical source; App.tsx will import from Sidebar in 08-02
@@ -213,9 +219,10 @@ None yet.
 ### Roadmap Evolution
 
 - Phase 9 added (2026-03-27): Electron Desktop App — transform web app into native desktop application with identical design and functionality
+- 09-02 Windows AV note: Cylance holds default_app.asar during npm install; always use ELECTRON_SKIP_BINARY_DOWNLOAD=1 for npm install on this machine. Run `node node_modules/electron/install.js` separately to get real binary before packaging.
 
 ## Session Continuity
 
-Last session: 2026-03-27T10:29:35Z
-Stopped at: Completed 09-01-PLAN.md — backend createApp() factory + lazy DB init
+Last session: 2026-03-27T10:55:51Z
+Stopped at: Completed 09-02-PLAN.md — Electron workspace scaffold (config files, deps, tsconfig)
 Resume file: None
