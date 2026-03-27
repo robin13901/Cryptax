@@ -1,0 +1,29 @@
+{
+  "name": "@cryptax/electron",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "package": "electron-vite build && electron-builder",
+    "make:win": "electron-vite build && electron-builder --win --x64",
+    "rebuild": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "@cryptax/backend": "*",
+    "@cryptax/shared": "*",
+    "@hono/node-server": "^1.19.11"
+  },
+  "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "@types/node": "^24.12.0",
+    "@vitejs/plugin-react": "^5.1.4",
+    "electron": "^41.1.0",
+    "electron-builder": "^26.8.1",
+    "electron-vite": "^5.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
+  }
+}
