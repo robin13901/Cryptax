@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import type { CanonicalType } from '@cryptax/shared';
+import { useEffect, useRef, useState } from 'react';
 import './TransactionFilters.css';
 
 export interface FilterState {
@@ -184,11 +184,7 @@ const TransactionFilters = ({
 
       {/* Reset button — only show when any filter is active */}
       {Object.values(filters).some(Boolean) && (
-        <button
-          type="button"
-          className="tx-filter-reset"
-          onClick={() => onChange(DEFAULT_FILTERS)}
-        >
+        <button type="button" className="tx-filter-reset" onClick={() => onChange(DEFAULT_FILTERS)}>
           Zurücksetzen
         </button>
       )}

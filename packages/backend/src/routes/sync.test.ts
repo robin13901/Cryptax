@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { SyncResult } from '@cryptax/shared';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { Hono } from 'hono';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SyncResult } from '@cryptax/shared';
 import * as schema from '../db/schema.js';
 
 // ---------------------------------------------------------------------------
@@ -240,13 +240,17 @@ describe('sync routes', () => {
                ('bitget', 'Account B', 'enc_b', '2026-01-01T00:00:00Z')
       `);
 
-      const rows = sqlite
-        .prepare('SELECT id FROM exchange_connections ORDER BY id')
-        .all() as { id: number }[];
+      const rows = sqlite.prepare('SELECT id FROM exchange_connections ORDER BY id').all() as {
+        id: number;
+      }[];
 
       mockSyncExchange
-        .mockResolvedValueOnce(makeSyncResult({ connectionId: rows[0].id, totalImported: 10, totalDuplicates: 2 }))
-        .mockResolvedValueOnce(makeSyncResult({ connectionId: rows[1].id, totalImported: 5, totalDuplicates: 1 }));
+        .mockResolvedValueOnce(
+          makeSyncResult({ connectionId: rows[0].id, totalImported: 10, totalDuplicates: 2 })
+        )
+        .mockResolvedValueOnce(
+          makeSyncResult({ connectionId: rows[1].id, totalImported: 5, totalDuplicates: 1 })
+        );
 
       const res = await app.request('/api/exchanges/sync-all', {
         method: 'POST',
@@ -270,12 +274,14 @@ describe('sync routes', () => {
                ('bitget', 'Bad Account', 'enc_bad', '2026-01-01T00:00:00Z')
       `);
 
-      const rows = sqlite
-        .prepare('SELECT id FROM exchange_connections ORDER BY id')
-        .all() as { id: number }[];
+      const rows = sqlite.prepare('SELECT id FROM exchange_connections ORDER BY id').all() as {
+        id: number;
+      }[];
 
       mockSyncExchange
-        .mockResolvedValueOnce(makeSyncResult({ connectionId: rows[0].id, totalImported: 7, totalDuplicates: 0 }))
+        .mockResolvedValueOnce(
+          makeSyncResult({ connectionId: rows[0].id, totalImported: 7, totalDuplicates: 0 })
+        )
         .mockRejectedValueOnce(new Error('API down'));
 
       const res = await app.request('/api/exchanges/sync-all', {

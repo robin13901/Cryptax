@@ -1,8 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import Sidebar from './Sidebar';
 import type { TabId } from './Sidebar';
+import Sidebar from './Sidebar';
 
 // ---------------------------------------------------------------------------
 // Default props
@@ -93,9 +93,7 @@ describe('Sidebar', () => {
     const buttons = screen.getAllByRole('button');
     // Nav item buttons should have title attributes when collapsed
     const navButtons = buttons.filter(
-      (btn) =>
-        btn.getAttribute('title') !== null &&
-        btn.getAttribute('aria-label') === null
+      (btn) => btn.getAttribute('title') !== null && btn.getAttribute('aria-label') === null
     );
 
     const titles = navButtons.map((btn) => btn.getAttribute('title'));
@@ -114,17 +112,13 @@ describe('Sidebar', () => {
   it('toggle button shows "ausklappen" label when collapsed', () => {
     render(<Sidebar {...defaultProps} collapsed={true} />);
 
-    expect(
-      screen.getByRole('button', { name: /sidebar ausklappen/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sidebar ausklappen/i })).toBeInTheDocument();
   });
 
   it('toggle button shows "einklappen" label when expanded', () => {
     render(<Sidebar {...defaultProps} collapsed={false} />);
 
-    expect(
-      screen.getByRole('button', { name: /sidebar einklappen/i })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /sidebar einklappen/i })).toBeInTheDocument();
   });
 
   it('applies sidebar--collapsed class when collapsed', () => {

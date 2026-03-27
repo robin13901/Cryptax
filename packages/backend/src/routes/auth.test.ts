@@ -80,10 +80,7 @@ function buildTestApp(): Hono {
 /**
  * Sets up the app with a password and returns a valid session cookie string.
  */
-async function setupAndLogin(
-  app: Hono,
-  password = 'testpassword123'
-): Promise<string> {
+async function setupAndLogin(app: Hono, password = 'testpassword123'): Promise<string> {
   await app.request('/api/auth/setup', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

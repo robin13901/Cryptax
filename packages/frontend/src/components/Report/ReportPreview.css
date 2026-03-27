@@ -71,6 +71,12 @@
   gap: 0.5rem 2rem;
 }
 
+@media (min-width: 1200px) {
+  .report-kv-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
 @media (max-width: 520px) {
   .report-kv-grid {
     grid-template-columns: 1fr;
@@ -151,7 +157,6 @@
   border-collapse: collapse;
   font-size: 0.82rem;
   width: 100%;
-  max-width: 380px;
 }
 
 .report-earn-table th,
@@ -206,9 +211,19 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
-/* Alternating rows */
-.trade-row--even td {
-  background: rgba(255, 255, 255, 0.025);
+/* Alignment helpers */
+.trade-cell--right {
+  text-align: right;
+}
+
+.trade-cell--center {
+  text-align: center;
+}
+
+/* Haltefrist "Ja" label */
+.trade-cell--taxfree-label {
+  color: var(--crypto-green);
+  font-weight: 600;
 }
 
 /* Tax-free rows — green left border accent */
@@ -216,17 +231,99 @@
   border-left: 3px solid var(--crypto-green);
 }
 
-/* Alignment helpers */
-.trade-cell--right {
-  text-align: right !important;
+/* ----------------------------------------------------------------
+   Sell header row (collapsible group header)
+   ---------------------------------------------------------------- */
+
+.trade-row--sell-header {
+  cursor: pointer;
 }
 
-.trade-cell--center {
-  text-align: center !important;
-}
-
-/* Haltefrist "Ja" label */
-.trade-cell--taxfree-label {
-  color: var(--crypto-green) !important;
+.trade-row--sell-header td {
   font-weight: 600;
+  background: rgba(0, 112, 242, 0.06);
+  border-bottom: 1px solid rgba(0, 112, 242, 0.12);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.trade-row--sell-header:hover td {
+  background: rgba(0, 112, 242, 0.1);
+}
+
+/* Chevron toggle icon */
+.trade-row__chevron {
+  display: inline-block;
+  margin-right: 0.35rem;
+  font-size: 0.6rem;
+  transition: transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.trade-row__chevron--expanded {
+  transform: rotate(90deg);
+}
+
+/* ----------------------------------------------------------------
+   Buy sub-row (lot consumption detail, inside expanded group)
+   ---------------------------------------------------------------- */
+
+.trade-row--buy-sub td {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.015);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.025);
+}
+
+.trade-row--buy-sub td:first-child {
+  padding-left: 1.6rem;
+}
+
+/* ----------------------------------------------------------------
+   Richtung badges (direction indicators)
+   ---------------------------------------------------------------- */
+
+.richtung-badge {
+  display: inline-block;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.richtung-badge--sell {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.richtung-badge--buy {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.richtung-badge--close-long {
+  color: #34d399;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.25);
+}
+
+.richtung-badge--close-short {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.25);
+}
+
+.richtung-badge--funding {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.richtung-badge--fee {
+  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }

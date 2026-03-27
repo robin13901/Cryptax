@@ -48,7 +48,7 @@ describe('SetupCard', () => {
     await user.type(secondInput, 'differentpw');
     await user.click(screen.getByRole('button', { name: /passwort setzen/i }));
 
-    expect(screen.getByRole('alert')).toHaveTextContent(/stimmen nicht ueberein/i);
+    expect(screen.getByRole('alert')).toHaveTextContent(/stimmen nicht überein/i);
     expect(fetch).not.toHaveBeenCalled();
   });
 

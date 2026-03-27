@@ -7,11 +7,7 @@ interface YearSelectorProps {
 export function YearSelector({ years, selected, onChange }: YearSelectorProps) {
   if (years.length === 0) {
     return (
-      <select
-        className="year-selector"
-        disabled
-        aria-label="Steuerjahr auswählen"
-      >
+      <select className="year-selector" disabled aria-label="Steuerjahr auswählen">
         <option>Keine Daten</option>
       </select>
     );

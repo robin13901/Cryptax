@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ReportTab from './ReportTab';
 
+const defaultProps = { selectedYear: 2026, onYearChange: vi.fn() };
+
 // ---------------------------------------------------------------------------
 // Mock data fixtures
 // ---------------------------------------------------------------------------
@@ -44,6 +46,7 @@ function makeReportData(overrides: Partial<ReportData> = {}): ReportData {
     tradeAppendix: [
       {
         id: 1,
+        sellTransactionId: 100,
         symbol: 'BTC',
         buyDate: '2023-01-15T10:00:00Z',
         sellDate: '2024-03-10T14:00:00Z',
@@ -58,6 +61,7 @@ function makeReportData(overrides: Partial<ReportData> = {}): ReportData {
       },
       {
         id: 2,
+        sellTransactionId: 200,
         symbol: 'ETH',
         buyDate: '2024-01-05T08:00:00Z',
         sellDate: '2024-06-20T11:00:00Z',
@@ -72,6 +76,7 @@ function makeReportData(overrides: Partial<ReportData> = {}): ReportData {
       },
       {
         id: 3,
+        sellTransactionId: 300,
         symbol: 'SOL',
         buyDate: '2024-02-01T09:00:00Z',
         sellDate: '2024-07-15T16:00:00Z',
@@ -85,13 +90,14 @@ function makeReportData(overrides: Partial<ReportData> = {}): ReportData {
         exchange: 'bitget',
       },
     ],
+    futuresAppendix: [],
     ...overrides,
   };
 }
 
 function mockFetch(yearsFn?: () => object, previewFn?: () => object | null) {
   vi.mocked(global.fetch).mockImplementation((url) => {
-    const urlStr = typeof url === 'string' ? url : (url as Request).url ?? '';
+    const urlStr = typeof url === 'string' ? url : ((url as Request).url ?? '');
 
     if (urlStr.includes('/api/report/years')) {
       return Promise.resolve({
@@ -157,7 +163,7 @@ describe('ReportTab', () => {
   it('renders year selector after loading years', async () => {
     mockFetch(() => ({ years: [2024, 2025] }));
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
       const selector = screen.getByRole('combobox', { name: /Steuerjahr/i });
@@ -173,10 +179,10 @@ describe('ReportTab', () => {
   it('shows empty state when no data for year', async () => {
     mockFetch(undefined, () => null);
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Keine Daten fuer/i)).toBeInTheDocument();
+      expect(screen.getByText(/Keine Daten für/i)).toBeInTheDocument();
     });
   });
 
@@ -184,7 +190,7 @@ describe('ReportTab', () => {
   it('renders preview when data available', async () => {
     mockFetch(undefined, () => makeReportData());
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
       expect(screen.getByText(/Anlage SO/i)).toBeInTheDocument();
@@ -196,10 +202,10 @@ describe('ReportTab', () => {
   it('download buttons are disabled when no data', async () => {
     mockFetch(undefined, () => null);
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/Keine Daten fuer/i)).toBeInTheDocument();
+      expect(screen.getByText(/Keine Daten für/i)).toBeInTheDocument();
     });
 
     const pdfBtn = screen.getByRole('button', { name: /PDF herunterladen/i });
@@ -212,7 +218,7 @@ describe('ReportTab', () => {
   it('download buttons are enabled when data available', async () => {
     mockFetch(undefined, () => makeReportData());
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
       const pdfBtn = screen.getByRole('button', { name: /PDF herunterladen/i });
@@ -227,7 +233,7 @@ describe('ReportTab', () => {
     const user = userEvent.setup();
     mockFetch(undefined, () => makeReportData());
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     // Wait for data to load
     await waitFor(() => {
@@ -251,7 +257,7 @@ describe('ReportTab', () => {
     const user = userEvent.setup();
     mockFetch(undefined, () => makeReportData());
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /CSV exportieren/i })).not.toBeDisabled();
@@ -269,16 +275,19 @@ describe('ReportTab', () => {
     });
   });
 
-  // Test 8: trade appendix shows correct number of rows
-  it('trade appendix shows correct number of rows', async () => {
-    mockFetch(undefined, () => makeReportData()); // fixture has 3 rows
+  // Test 8: trade appendix shows sell header rows when collapsed (default)
+  it('trade appendix shows correct number of sell headers', async () => {
+    mockFetch(undefined, () => makeReportData()); // fixture has 3 rows with distinct sellTransactionIds
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
-      // Table body rows for trade appendix
-      const rows = document.querySelectorAll('.report-trade-table tbody tr');
-      expect(rows.length).toBe(3);
+      // Default collapsed state: only sell header rows visible
+      const sellHeaders = document.querySelectorAll('[data-testid="sell-header"]');
+      expect(sellHeaders.length).toBe(3);
+      // No buy sub-rows visible
+      const buyRows = document.querySelectorAll('[data-testid="buy-sub"]');
+      expect(buyRows.length).toBe(0);
     });
   });
 
@@ -286,7 +295,7 @@ describe('ReportTab', () => {
   it('Freigrenze status displays correctly', async () => {
     mockFetch(undefined, () => makeReportData()); // earnSummary.freigrenzeStatus = 'under'
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     await waitFor(() => {
       // The earn section shows 'eingehalten' (under = ok)
@@ -298,7 +307,7 @@ describe('ReportTab', () => {
   it('shows loading state while fetching', async () => {
     // Delay the preview response to catch the loading state
     vi.mocked(global.fetch).mockImplementation((url) => {
-      const urlStr = typeof url === 'string' ? url : (url as Request).url ?? '';
+      const urlStr = typeof url === 'string' ? url : ((url as Request).url ?? '');
 
       if (urlStr.includes('/api/report/years')) {
         return Promise.resolve({
@@ -318,15 +327,15 @@ describe('ReportTab', () => {
                 status: 200,
                 json: () => Promise.resolve(makeReportData()),
               } as Response),
-            200,
-          ),
+            200
+          )
         );
       }
 
       return Promise.reject(new Error(`Unexpected fetch: ${urlStr}`));
     });
 
-    render(<ReportTab />);
+    render(<ReportTab {...defaultProps} />);
 
     // Loading indicator should appear at some point
     // The loading state triggers after years are loaded
@@ -337,5 +346,66 @@ describe('ReportTab', () => {
       // At least one of these should be present
       expect(loadingEl ?? previewEl).not.toBeNull();
     });
+  });
+
+  // Test 11: clicking sell header expands buy sub-rows
+  it('clicking sell header expands buy sub-rows', async () => {
+    const user = userEvent.setup();
+    mockFetch(undefined, () => makeReportData());
+
+    render(<ReportTab {...defaultProps} />);
+
+    await waitFor(() => {
+      expect(document.querySelectorAll('[data-testid="sell-header"]').length).toBe(3);
+    });
+
+    // Click first sell header to expand
+    const sellHeaders = document.querySelectorAll('[data-testid="sell-header"]');
+    await user.click(sellHeaders[0]);
+
+    await waitFor(() => {
+      // Now buy sub-rows should be visible for the first group (1 lot)
+      expect(document.querySelectorAll('[data-testid="buy-sub"]').length).toBe(1);
+    });
+  });
+
+  // Test 12: futures section renders when futuresAppendix has data
+  it('futures section renders when data present', async () => {
+    mockFetch(undefined, () =>
+      makeReportData({
+        futuresAppendix: [
+          {
+            id: 1,
+            transactionId: 10,
+            symbol: 'BTC',
+            date: '2024-05-01T10:00:00Z',
+            direction: 'Close Long',
+            realizedPnlEur: '500.00',
+            feeEur: '5.00',
+            exchange: 'bitget',
+          },
+        ],
+      })
+    );
+
+    render(<ReportTab {...defaultProps} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Futures-Positionen/i)).toBeInTheDocument();
+    });
+  });
+
+  // Test 13: futures section hidden when no futures data
+  it('futures section hidden when no futures data', async () => {
+    mockFetch(undefined, () => makeReportData()); // futuresAppendix = []
+
+    render(<ReportTab {...defaultProps} />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/Anlage SO/i)).toBeInTheDocument();
+    });
+
+    // Futures appendix section should not be present
+    expect(screen.queryByText(/Futures-Positionen \(/i)).not.toBeInTheDocument();
   });
 });

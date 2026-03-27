@@ -33,10 +33,7 @@ const CredentialForm = ({ onSave, onCancel }: CredentialFormProps) => {
   };
 
   const isValid =
-    label.trim() !== '' &&
-    apiKey.trim() !== '' &&
-    secret.trim() !== '' &&
-    passphrase.trim() !== '';
+    label.trim() !== '' && apiKey.trim() !== '' && secret.trim() !== '' && passphrase.trim() !== '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -192,7 +189,7 @@ const CredentialForm = ({ onSave, onCancel }: CredentialFormProps) => {
 
       {testing && (
         <p className="credential-form__status credential-form__status--testing">
-          Verbindung wird geprueft...
+          Verbindung wird geprüft...
         </p>
       )}
 

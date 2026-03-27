@@ -61,7 +61,6 @@ const LoginCard = ({ onSuccess }: LoginCardProps) => {
                   placeholder="Passwort"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  autoFocus
                   autoComplete="current-password"
                 />
               </div>

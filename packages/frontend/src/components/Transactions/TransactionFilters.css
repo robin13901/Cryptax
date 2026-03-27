@@ -4,10 +4,12 @@
   gap: 0.5rem;
   align-items: center;
   padding: 0.75rem 1rem;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 14, 24, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   margin-bottom: 1rem;
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
 }
 
 .tx-filter-group {
@@ -36,7 +38,9 @@
   font-size: 0.82rem;
   padding: 0.35rem 0.6rem;
   outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
   font-family: inherit;
 }
 

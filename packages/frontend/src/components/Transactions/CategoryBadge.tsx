@@ -28,7 +28,6 @@ function getCategory(canonicalType: CanonicalType): BadgeCategory {
     case 'transfer_in':
     case 'transfer_out':
       return 'Transfer';
-    case 'unknown':
     default:
       return 'Sonstige';
   }
@@ -45,13 +44,9 @@ const CATEGORY_CLASS: Record<BadgeCategory, string> = {
 
 const CategoryBadge = ({ canonicalType }: CategoryBadgeProps) => {
   const category = getCategory(canonicalType);
-  return (
-    <span className={`category-badge ${CATEGORY_CLASS[category]}`}>
-      {category}
-    </span>
-  );
+  return <span className={`category-badge ${CATEGORY_CLASS[category]}`}>{category}</span>;
 };
 
 export default CategoryBadge;
-export { getCategory };
 export type { BadgeCategory };
+export { getCategory };

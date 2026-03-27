@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 8 (UI Redesign: Sidebar Layout) — COMPLETE
+**Current focus:** Phase 9 (Electron Desktop App) — NOT STARTED
 
 ## Current Position
 
-Phase: 8 of 8 (UI Redesign: Sidebar Layout) — COMPLETE
-Plan: 4 of 4 in phase (all complete)
-Status: Phase complete — verified 5/5 success criteria
-Last activity: 2026-03-26 — Phase 08 complete (sidebar layout, 944 tests)
+Phase: 9 of 9 (Electron Desktop App) — NOT STARTED
+Plan: 0 of 0 in phase (not yet planned)
+Status: Phase added — awaiting planning
+Last activity: 2026-03-27 — Phase 09 added to roadmap
 
 Progress: [██████████] 100% (55/55 plans complete)
 
@@ -203,6 +203,10 @@ None yet.
 - Phase 7 research flag: ccxt Bitget v2 deep history pagination is untested
 - German tax law: Haltefrist exact day count — RESOLVED: using 366 days (conservative interpretation per 04-01)
 - Migration workflow: After `npm run db:generate`, manually add STRICT to new CREATE TABLE statements
+
+### Roadmap Evolution
+
+- Phase 9 added (2026-03-27): Electron Desktop App — transform web app into native desktop application with identical design and functionality
 
 ## Session Continuity
 

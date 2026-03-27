@@ -35,6 +35,7 @@ function buildEmptyResponse(taxYear: number): YearSummaryResponse {
     totalEstimatedTaxEur: '0',
     monthlySpot: [],
     monthlyFutures: [],
+    dailyPnl: [],
     perCoinGainLoss: [],
     portfolioAllocation: [],
     yearOverYear: [],
@@ -42,6 +43,7 @@ function buildEmptyResponse(taxYear: number): YearSummaryResponse {
     earnFreigrenzeEur: TAX_CONSTANTS.EARN_FREIGRENZE_EUR,
     spotNetForFreigrenze: '0',
     earnTotalForFreigrenze: '0',
+    computedAt: null,
   };
 }
 
@@ -73,6 +75,17 @@ export function registerSummaryRoutes(app: Hono) {
     if (engineCheck.length === 0) {
       return c.json(buildEmptyResponse(taxYear));
     }
+
+    // -----------------------------------------------------------------------
+    // Latest computedAt timestamp
+    // -----------------------------------------------------------------------
+    const latestRow = db
+      .select({ computedAt: taxSummaries.computedAt })
+      .from(taxSummaries)
+      .orderBy(sql`${taxSummaries.computedAt} DESC`)
+      .limit(1)
+      .all();
+    const computedAt = latestRow[0]?.computedAt ?? null;
 
     // -----------------------------------------------------------------------
     // Available years
@@ -116,8 +129,14 @@ export function registerSummaryRoutes(app: Hono) {
     const monthlySpotRows = db
       .select({
         month: sql<string>`strftime('%Y-%m', ${transactions.tradedAt})`.as('month'),
-        gains: sql<string>`CAST(SUM(CASE WHEN CAST(${lotConsumptions.gainLossEur} AS REAL) > 0 THEN CAST(${lotConsumptions.gainLossEur} AS REAL) ELSE 0 END) AS TEXT)`.as('gains'),
-        losses: sql<string>`CAST(SUM(CASE WHEN CAST(${lotConsumptions.gainLossEur} AS REAL) < 0 THEN CAST(${lotConsumptions.gainLossEur} AS REAL) ELSE 0 END) AS TEXT)`.as('losses'),
+        gains:
+          sql<string>`CAST(SUM(CASE WHEN CAST(${lotConsumptions.gainLossEur} AS REAL) > 0 THEN CAST(${lotConsumptions.gainLossEur} AS REAL) ELSE 0 END) AS TEXT)`.as(
+            'gains'
+          ),
+        losses:
+          sql<string>`CAST(SUM(CASE WHEN CAST(${lotConsumptions.gainLossEur} AS REAL) < 0 THEN CAST(${lotConsumptions.gainLossEur} AS REAL) ELSE 0 END) AS TEXT)`.as(
+            'losses'
+          ),
       })
       .from(lotConsumptions)
       .innerJoin(transactions, eq(lotConsumptions.sellTransactionId, transactions.id))
@@ -138,7 +157,9 @@ export function registerSummaryRoutes(app: Hono) {
     const monthlyFuturesRows = db
       .select({
         month: sql<string>`strftime('%Y-%m', ${transactions.tradedAt})`.as('month'),
-        pnl: sql<string>`CAST(SUM(CAST(${futuresPositions.realizedPnlEur} AS REAL) - CAST(${futuresPositions.feeEur} AS REAL)) AS TEXT)`.as('pnl'),
+        pnl: sql<string>`CAST(SUM(CAST(${futuresPositions.realizedPnlEur} AS REAL) - CAST(${futuresPositions.feeEur} AS REAL)) AS TEXT)`.as(
+          'pnl'
+        ),
       })
       .from(futuresPositions)
       .innerJoin(transactions, eq(futuresPositions.transactionId, transactions.id))
@@ -153,9 +174,48 @@ export function registerSummaryRoutes(app: Hono) {
     }));
 
     // -----------------------------------------------------------------------
-    // Per-coin gain/loss (DASH-04)
+    // Daily P&L — combines spot + futures for cumulative chart
     // -----------------------------------------------------------------------
-    const perCoinRows = db
+    const dailySpotRows = db
+      .select({
+        date: sql<string>`strftime('%Y-%m-%d', ${transactions.tradedAt})`.as('date'),
+        net: sql<string>`CAST(SUM(CAST(${lotConsumptions.gainLossEur} AS REAL)) AS TEXT)`.as('net'),
+      })
+      .from(lotConsumptions)
+      .innerJoin(transactions, eq(lotConsumptions.sellTransactionId, transactions.id))
+      .where(eq(lotConsumptions.taxYear, taxYear))
+      .groupBy(sql`strftime('%Y-%m-%d', ${transactions.tradedAt})`)
+      .all();
+
+    const dailyFuturesRows = db
+      .select({
+        date: sql<string>`strftime('%Y-%m-%d', ${transactions.tradedAt})`.as('date'),
+        net: sql<string>`CAST(SUM(CAST(${futuresPositions.realizedPnlEur} AS REAL) - CAST(${futuresPositions.feeEur} AS REAL)) AS TEXT)`.as(
+          'net'
+        ),
+      })
+      .from(futuresPositions)
+      .innerJoin(transactions, eq(futuresPositions.transactionId, transactions.id))
+      .where(eq(futuresPositions.taxYear, taxYear))
+      .groupBy(sql`strftime('%Y-%m-%d', ${transactions.tradedAt})`)
+      .all();
+
+    const dailyMap = new Map<string, number>();
+    for (const r of dailySpotRows) {
+      dailyMap.set(r.date, (dailyMap.get(r.date) ?? 0) + parseFloat(r.net ?? '0'));
+    }
+    for (const r of dailyFuturesRows) {
+      dailyMap.set(r.date, (dailyMap.get(r.date) ?? 0) + parseFloat(r.net ?? '0'));
+    }
+
+    const dailyPnl = Array.from(dailyMap.entries())
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([date, net]) => ({ date, net: String(net) }));
+
+    // -----------------------------------------------------------------------
+    // Per-coin gain/loss (DASH-04) — combines spot + futures
+    // -----------------------------------------------------------------------
+    const perCoinSpotRows = db
       .select({
         symbol: fifoLots.symbol,
         net: sql<string>`CAST(SUM(CAST(${lotConsumptions.gainLossEur} AS REAL)) AS TEXT)`.as('net'),
@@ -164,13 +224,33 @@ export function registerSummaryRoutes(app: Hono) {
       .innerJoin(fifoLots, eq(lotConsumptions.lotId, fifoLots.id))
       .where(eq(lotConsumptions.taxYear, taxYear))
       .groupBy(fifoLots.symbol)
-      .orderBy(sql`SUM(CAST(${lotConsumptions.gainLossEur} AS REAL)) DESC`)
       .all();
 
-    const perCoinGainLoss = perCoinRows.map((r) => ({
-      symbol: r.symbol,
-      net: r.net ?? '0',
-    }));
+    const perCoinFuturesRows = db
+      .select({
+        symbol: transactions.symbol,
+        net: sql<string>`CAST(SUM(CAST(${futuresPositions.realizedPnlEur} AS REAL) - CAST(${futuresPositions.feeEur} AS REAL)) AS TEXT)`.as(
+          'net'
+        ),
+      })
+      .from(futuresPositions)
+      .innerJoin(transactions, eq(futuresPositions.transactionId, transactions.id))
+      .where(eq(futuresPositions.taxYear, taxYear))
+      .groupBy(transactions.symbol)
+      .all();
+
+    // Merge spot + futures per-coin into a single map
+    const perCoinMap = new Map<string, number>();
+    for (const r of perCoinSpotRows) {
+      perCoinMap.set(r.symbol, (perCoinMap.get(r.symbol) ?? 0) + parseFloat(r.net ?? '0'));
+    }
+    for (const r of perCoinFuturesRows) {
+      perCoinMap.set(r.symbol, (perCoinMap.get(r.symbol) ?? 0) + parseFloat(r.net ?? '0'));
+    }
+
+    const perCoinGainLoss = Array.from(perCoinMap.entries())
+      .map(([symbol, net]) => ({ symbol, net: String(net) }))
+      .sort((a, b) => parseFloat(b.net) - parseFloat(a.net));
 
     // -----------------------------------------------------------------------
     // Portfolio allocation — open lots only (DASH-03), not filtered by year
@@ -178,12 +258,17 @@ export function registerSummaryRoutes(app: Hono) {
     const portfolioRows = db
       .select({
         symbol: fifoLots.symbol,
-        valueEur: sql<string>`CAST(SUM(CAST(${fifoLots.remainingAmount} AS REAL) * CAST(${fifoLots.costPerUnitEur} AS REAL)) AS TEXT)`.as('valueEur'),
+        valueEur:
+          sql<string>`CAST(SUM(CAST(${fifoLots.remainingAmount} AS REAL) * CAST(${fifoLots.costPerUnitEur} AS REAL)) AS TEXT)`.as(
+            'valueEur'
+          ),
       })
       .from(fifoLots)
       .where(sql`CAST(${fifoLots.remainingAmount} AS REAL) > 0`)
       .groupBy(fifoLots.symbol)
-      .orderBy(sql`SUM(CAST(${fifoLots.remainingAmount} AS REAL) * CAST(${fifoLots.costPerUnitEur} AS REAL)) DESC`)
+      .orderBy(
+        sql`SUM(CAST(${fifoLots.remainingAmount} AS REAL) * CAST(${fifoLots.costPerUnitEur} AS REAL)) DESC`
+      )
       .all();
 
     const portfolioAllocation = portfolioRows.map((r) => ({
@@ -197,10 +282,7 @@ export function registerSummaryRoutes(app: Hono) {
     const allSummaries = db.select().from(taxSummaries).all();
 
     // Group by taxYear and pivot by bucket
-    const yoyMap = new Map<
-      number,
-      { spotNet: string; futuresNet: string; earnNet: string }
-    >();
+    const yoyMap = new Map<number, { spotNet: string; futuresNet: string; earnNet: string }>();
     for (const row of allSummaries) {
       if (!yoyMap.has(row.taxYear)) {
         yoyMap.set(row.taxYear, { spotNet: '0', futuresNet: '0', earnNet: '0' });
@@ -243,6 +325,7 @@ export function registerSummaryRoutes(app: Hono) {
       totalEstimatedTaxEur,
       monthlySpot,
       monthlyFutures,
+      dailyPnl,
       perCoinGainLoss,
       portfolioAllocation,
       yearOverYear,
@@ -250,6 +333,7 @@ export function registerSummaryRoutes(app: Hono) {
       earnFreigrenzeEur: TAX_CONSTANTS.EARN_FREIGRENZE_EUR,
       spotNetForFreigrenze,
       earnTotalForFreigrenze,
+      computedAt,
     };
 
     return c.json(response);

@@ -4,9 +4,9 @@ import type {
   TransactionDetailResponse,
   TransactionPageResponse,
 } from '@cryptax/shared';
-import { and, asc, between, count, desc, eq, like, or, sql } from 'drizzle-orm';
+import { and, asc, between, count, desc, eq, like, not, or, sql } from 'drizzle-orm';
 import type { Hono } from 'hono';
-import { db } from '../db/client.js';
+import { db, sqlite } from '../db/client.js';
 import {
   earnIncome,
   fifoLots,
@@ -19,11 +19,7 @@ import {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function parseIntParam(
-  raw: string | undefined,
-  defaultValue: number,
-  max?: number,
-): number {
+function parseIntParam(raw: string | undefined, defaultValue: number, max?: number): number {
   if (!raw) return defaultValue;
   const parsed = parseInt(raw, 10);
   if (Number.isNaN(parsed)) return defaultValue;
@@ -43,10 +39,138 @@ function buildSortExpr(sortBy: string, sortDir: string) {
       return direction(transactions.symbol);
     case 'canonicalType':
       return direction(transactions.canonicalType);
-    case 'tradedAt':
     default:
       return direction(transactions.tradedAt);
   }
+}
+
+/**
+ * Derive base coin from symbol + sourceType.
+ * "BTC/EUR" → "BTC", "BTCUSDT" → "BTC", "BTC" → "BTC"
+ */
+function deriveBaseCoin(symbol: string, sourceType: string): string {
+  // spot_order / futures_order with slash: "BTC/EUR" → "BTC"
+  const slashIdx = symbol.indexOf('/');
+  if (slashIdx !== -1) return symbol.slice(0, slashIdx);
+
+  // futures: strip known suffixes
+  if (sourceType === 'futures_order' || sourceType === 'futures_tx') {
+    const upper = symbol.toUpperCase();
+    for (const suffix of ['USDT', 'USD', 'EUR', 'BTC', 'PERP']) {
+      if (upper.endsWith(suffix) && upper.length > suffix.length) {
+        return upper.slice(0, upper.length - suffix.length);
+      }
+    }
+  }
+
+  return symbol;
+}
+
+/**
+ * Derive trading pair from symbol + sourceType.
+ * spot_order: "BTC/EUR" → "BTC/EUR"
+ * futures_order/futures_tx: "BTCUSDT" → "BTCUSDT"
+ * spot_tx/earn: bare coin → null (no pair info)
+ */
+function deriveTradingPair(symbol: string, sourceType: string): string | null {
+  if (sourceType === 'spot_order') return symbol;
+  if (sourceType === 'futures_order' || sourceType === 'futures_tx') return symbol;
+  return null;
+}
+
+/**
+ * SQL condition to exclude spot_tx rows that have a matching spot_order
+ * at the same traded_at timestamp. Bitget uses different order IDs in
+ * spot_tx vs spot_order, so we match by timestamp instead.
+ */
+function buildCollapseCondition() {
+  return not(
+    and(
+      eq(transactions.sourceType, 'spot_tx'),
+      sql`${transactions.tradedAt} IN (SELECT traded_at FROM transactions WHERE source_type = 'spot_order')`
+    )!
+  );
+}
+
+/**
+ * Batch-load fees from spot_tx siblings for a set of spot_order traded_at
+ * timestamps. Returns a map: tradedAt → aggregated absolute fee from spot_tx.
+ */
+function loadSpotTxFees(tradedAts: string[]): Map<string, string> {
+  const map = new Map<string, string>();
+  if (tradedAts.length === 0) return map;
+
+  const placeholders = tradedAts.map(() => '?').join(',');
+
+  // For each traded_at, find the spot_tx rows and pick the largest absolute fee.
+  const rows = sqlite
+    .prepare(
+      `SELECT traded_at AS tradedAt,
+              CAST(MAX(ABS(CAST(fee AS REAL))) AS TEXT) AS fee
+       FROM transactions
+       WHERE source_type = 'spot_tx'
+         AND traded_at IN (${placeholders})
+         AND ABS(CAST(fee AS REAL)) > 0
+       GROUP BY traded_at`
+    )
+    .all(...tradedAts) as { tradedAt: string; fee: string }[];
+
+  for (const row of rows) {
+    map.set(row.tradedAt, row.fee);
+  }
+
+  return map;
+}
+
+/**
+ * Batch-load P&L values for a set of transaction IDs.
+ * Sources: lot_consumptions (FIFO sells), futures_positions, earn_income.
+ */
+function loadPnlForIds(ids: number[]): Map<number, string> {
+  const map = new Map<number, string>();
+  if (ids.length === 0) return map;
+
+  const placeholders = ids.map(() => '?').join(',');
+
+  // 1. FIFO lot consumptions: SUM(gain_loss_eur) grouped by sell_transaction_id
+  const fifoRows = sqlite
+    .prepare(
+      `SELECT sell_transaction_id AS txId, CAST(SUM(CAST(gain_loss_eur AS REAL)) AS TEXT) AS pnl
+       FROM lot_consumptions
+       WHERE sell_transaction_id IN (${placeholders})
+       GROUP BY sell_transaction_id`
+    )
+    .all(...ids) as { txId: number; pnl: string }[];
+  for (const row of fifoRows) {
+    map.set(row.txId, row.pnl);
+  }
+
+  // 2. Futures positions: realizedPnlEur - feeEur
+  const futuresRows = sqlite
+    .prepare(
+      `SELECT transaction_id AS txId,
+              CAST(CAST(realized_pnl_eur AS REAL) - CAST(fee_eur AS REAL) AS TEXT) AS pnl
+       FROM futures_positions
+       WHERE transaction_id IN (${placeholders})`
+    )
+    .all(...ids) as { txId: number; pnl: string }[];
+  for (const row of futuresRows) {
+    if (!map.has(row.txId)) map.set(row.txId, row.pnl);
+  }
+
+  // 3. Earn income: eurValueAtReceipt
+  const earnRows = sqlite
+    .prepare(
+      `SELECT transaction_id AS txId, eur_value_at_receipt AS pnl
+       FROM earn_income
+       WHERE transaction_id IN (${placeholders})`
+    )
+    .all(...ids) as { txId: number; pnl: string }[];
+  for (const row of earnRows) {
+    if (!map.has(row.txId)) map.set(row.txId, row.pnl);
+  }
+
+  return map;
 }
 
 // ---------------------------------------------------------------------------
@@ -65,8 +189,7 @@ export function registerTransactionRoutes(app: Hono) {
   // GET /api/transactions
   // -------------------------------------------------------------------------
   app.get('/api/transactions', (c) => {
-    const { year, type, coin, from, to, search, sortBy, sortDir, limit, offset } =
-      c.req.query();
+    const { year, type, coin, from, to, search, sortBy, sortDir, limit, offset } = c.req.query();
 
     const parsedLimit = parseIntParam(limit, 50, 200);
     const parsedOffset = parseIntParam(offset, 0);
@@ -75,25 +198,31 @@ export function registerTransactionRoutes(app: Hono) {
     const conditions: ReturnType<typeof eq>[] = [];
     if (year) conditions.push(eq(transactions.taxYear, Number(year)));
     if (type) conditions.push(eq(transactions.canonicalType, type));
-    if (coin) conditions.push(eq(transactions.symbol, coin));
+    if (coin) {
+      // Match both bare coin ("MOZ") and pair ("MOZ/USDT", "MOZ/EUR")
+      conditions.push(
+        or(eq(transactions.symbol, coin), like(transactions.symbol, `${coin}/%`)) as ReturnType<
+          typeof eq
+        >
+      );
+    }
     if (from && to) conditions.push(between(transactions.tradedAt, from, to));
     if (search) {
       conditions.push(
         or(
           like(transactions.symbol, `%${search}%`),
-          like(transactions.orderId, `%${search}%`),
-        ) as ReturnType<typeof eq>,
+          like(transactions.orderId, `%${search}%`)
+        ) as ReturnType<typeof eq>
       );
     }
+
+    // Collapse spot_tx rows that have a matching spot_order (same orderId)
+    conditions.push(buildCollapseCondition() as ReturnType<typeof eq>);
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     // Count query
-    const countResult = db
-      .select({ count: count() })
-      .from(transactions)
-      .where(whereClause)
-      .get();
+    const countResult = db.select({ count: count() }).from(transactions).where(whereClause).get();
     const total = countResult?.count ?? 0;
 
     // Sort expression
@@ -112,6 +241,7 @@ export function registerTransactionRoutes(app: Hono) {
         price: transactions.price,
         fee: transactions.fee,
         eurPrice: transactions.eurPrice,
+        totalValue: transactions.totalValue,
         tradedAt: transactions.tradedAt,
         taxYear: transactions.taxYear,
         exchange: transactions.exchange,
@@ -123,26 +253,58 @@ export function registerTransactionRoutes(app: Hono) {
       .offset(parsedOffset)
       .all();
 
+    // Batch-load P&L for fetched transaction IDs
+    const ids = items.map((i) => i.id);
+    const pnlMap = loadPnlForIds(ids);
+
+    // Batch-load fees from spot_tx siblings for spot_order rows (by traded_at)
+    const spotOrderTradedAts = items
+      .filter((i) => i.sourceType === 'spot_order')
+      .map((i) => i.tradedAt);
+    const spotTxFeeMap = loadSpotTxFees(spotOrderTradedAts);
+
+    // Available years for filter dropdown (unfiltered, always all years)
+    const yearRows = db
+      .selectDistinct({ taxYear: transactions.taxYear })
+      .from(transactions)
+      .orderBy(desc(transactions.taxYear))
+      .all();
+    const availableYears = yearRows.map((r) => r.taxYear);
+
     const response: TransactionPageResponse = {
-      items: items.map((item) => ({
-        id: item.id,
-        orderId: item.orderId,
-        symbol: item.symbol,
-        canonicalType: item.canonicalType as import('@cryptax/shared').CanonicalType,
-        sourceType: item.sourceType as import('@cryptax/shared').SourceType,
-        side: item.side as import('@cryptax/shared').TransactionSide,
-        amount: item.amount,
-        price: item.price,
-        fee: item.fee,
-        eurPrice: item.eurPrice,
-        tradedAt: item.tradedAt,
-        taxYear: item.taxYear,
-        exchange: item.exchange,
-      })),
+      items: items.map((item) => {
+        // For spot_order rows, merge the fee from the related spot_tx
+        let fee = item.fee;
+        if (item.sourceType === 'spot_order') {
+          const spotTxFee = spotTxFeeMap.get(item.tradedAt);
+          if (spotTxFee) fee = spotTxFee;
+        }
+
+        return {
+          id: item.id,
+          orderId: item.orderId,
+          symbol: item.symbol,
+          baseCoin: deriveBaseCoin(item.symbol, item.sourceType),
+          tradingPair: deriveTradingPair(item.symbol, item.sourceType),
+          canonicalType: item.canonicalType as import('@cryptax/shared').CanonicalType,
+          sourceType: item.sourceType as import('@cryptax/shared').SourceType,
+          side: item.side as import('@cryptax/shared').TransactionSide,
+          amount: item.amount,
+          price: item.price,
+          fee,
+          eurPrice: item.eurPrice,
+          totalValue: item.totalValue,
+          tradedAt: item.tradedAt,
+          taxYear: item.taxYear,
+          exchange: item.exchange,
+          gainLossEur: pnlMap.get(item.id) ?? null,
+        };
+      }),
       total,
       hasMore: parsedOffset + parsedLimit < total,
       offset: parsedOffset,
       limit: parsedLimit,
+      availableYears,
     };
 
     return c.json(response);
@@ -159,11 +321,7 @@ export function registerTransactionRoutes(app: Hono) {
     }
 
     // Fetch full transaction
-    const txRow = db
-      .select()
-      .from(transactions)
-      .where(eq(transactions.id, id))
-      .get();
+    const txRow = db.select().from(transactions).where(eq(transactions.id, id)).get();
 
     if (!txRow) {
       return c.json({ error: `Transaction not found: ${id}` }, 404);
@@ -238,11 +396,7 @@ export function registerTransactionRoutes(app: Hono) {
       : null;
 
     // Compute taxImpact
-    const taxImpact = computeTaxImpact(
-      lotConsumptionDetails,
-      futuresPosition,
-      earnIncomeData,
-    );
+    const taxImpact = computeTaxImpact(lotConsumptionDetails, futuresPosition, earnIncomeData);
 
     const response: TransactionDetailResponse = {
       transaction: {
@@ -266,7 +420,8 @@ export function registerTransactionRoutes(app: Hono) {
         eurPrice: txRow.eurPrice,
         priceSource: txRow.priceSource as import('@cryptax/shared').PriceSource,
         priceResolvedAt: txRow.priceResolvedAt,
-        priceFailureReason: txRow.priceFailureReason as import('@cryptax/shared').PriceFailureReason,
+        priceFailureReason:
+          txRow.priceFailureReason as import('@cryptax/shared').PriceFailureReason,
       },
       lotConsumptions: lotConsumptionDetails,
       futuresPosition,
@@ -290,7 +445,7 @@ function sumMoneyStrings(values: MoneyString[]): MoneyString {
 function computeTaxImpact(
   lots: LotConsumptionDetail[],
   futuresPos: { realizedPnlEur: MoneyString; feeEur: MoneyString } | null,
-  earn: { amount: MoneyString; eurValueAtReceipt: MoneyString } | null,
+  earn: { amount: MoneyString; eurValueAtReceipt: MoneyString } | null
 ): TransactionDetailResponse['taxImpact'] {
   // Private sale (FIFO lots)
   if (lots.length > 0) {
@@ -306,8 +461,7 @@ function computeTaxImpact(
 
   // Futures P&L
   if (futuresPos) {
-    const pnl =
-      parseFloat(futuresPos.realizedPnlEur) - parseFloat(futuresPos.feeEur);
+    const pnl = parseFloat(futuresPos.realizedPnlEur) - parseFloat(futuresPos.feeEur);
     return {
       bucket: 'futures_pnl',
       totalGainLossEur: String(pnl),

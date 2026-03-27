@@ -6,13 +6,7 @@ import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { Hono } from 'hono';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as schema from '../db/schema.js';
-import {
-  fifoLots,
-  futuresPositions,
-  lotConsumptions,
-  taxSummaries,
-  transactions,
-} from '../db/schema.js';
+import { fifoLots, lotConsumptions, taxSummaries, transactions } from '../db/schema.js';
 
 // ---------------------------------------------------------------------------
 // DB mock — same pattern as engine.test.ts
@@ -216,10 +210,13 @@ describe('GET /api/summary/:year — buckets and KPIs', () => {
   afterEach(() => sqlite.close());
 
   it('returns correct buckets for the requested year', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '1300', tradeCount: 3 }),
-      makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, netEur: '500', tradeCount: 2 }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '1300', tradeCount: 3 }),
+        makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, netEur: '500', tradeCount: 2 }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     expect(res.status).toBe(200);
@@ -239,10 +236,13 @@ describe('GET /api/summary/:year — buckets and KPIs', () => {
   });
 
   it('does NOT return buckets for other years', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2023, netEur: '999' }),
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '1300' }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ bucket: 'private_sale', taxYear: 2023, netEur: '999' }),
+        makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '1300' }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -252,11 +252,14 @@ describe('GET /api/summary/:year — buckets and KPIs', () => {
   });
 
   it('aggregates totalNetEur from all buckets', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '1300' }),
-      makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, netEur: '500' }),
-      makeSummaryInsert({ bucket: 'staking_earn', taxYear: 2024, netEur: '200' }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '1300' }),
+        makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, netEur: '500' }),
+        makeSummaryInsert({ bucket: 'staking_earn', taxYear: 2024, netEur: '200' }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -267,10 +270,23 @@ describe('GET /api/summary/:year — buckets and KPIs', () => {
   });
 
   it('aggregates totalTaxableEur and totalEstimatedTaxEur correctly', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, taxableAmountEur: '300', estimatedTaxEur: '0' }),
-      makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, taxableAmountEur: '500', estimatedTaxEur: '131.875' }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({
+          bucket: 'private_sale',
+          taxYear: 2024,
+          taxableAmountEur: '300',
+          estimatedTaxEur: '0',
+        }),
+        makeSummaryInsert({
+          bucket: 'futures_pnl',
+          taxYear: 2024,
+          taxableAmountEur: '500',
+          estimatedTaxEur: '131.875',
+        }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -289,11 +305,14 @@ describe('GET /api/summary/:year — available years', () => {
   afterEach(() => sqlite.close());
 
   it('returns all years from tax_summaries', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2022 }),
-      makeSummaryInsert({ taxYear: 2023 }),
-      makeSummaryInsert({ taxYear: 2024 }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ taxYear: 2022 }),
+        makeSummaryInsert({ taxYear: 2023 }),
+        makeSummaryInsert({ taxYear: 2024 }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -305,9 +324,10 @@ describe('GET /api/summary/:year — available years', () => {
   });
 
   it('includes years even if requested year has no data', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2022 }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([makeSummaryInsert({ taxYear: 2022 })])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -332,44 +352,63 @@ describe('GET /api/summary/:year — monthly spot data', () => {
     mockDb.insert(taxSummaries).values(makeSummaryInsert()).run();
 
     // Insert two transactions in different months
-    const [tx1] = mockDb.insert(transactions).values(
-      makeTxInsert({ tradedAt: '2024-01-15T00:00:00.000Z', canonicalType: 'sell', checksum: 'tx1' })
-    ).returning().all();
+    const [tx1] = mockDb
+      .insert(transactions)
+      .values(
+        makeTxInsert({
+          tradedAt: '2024-01-15T00:00:00.000Z',
+          canonicalType: 'sell',
+          checksum: 'tx1',
+        })
+      )
+      .returning()
+      .all();
 
-    const [tx2] = mockDb.insert(transactions).values(
-      makeTxInsert({ tradedAt: '2024-02-10T00:00:00.000Z', canonicalType: 'sell', checksum: 'tx2' })
-    ).returning().all();
+    const [tx2] = mockDb
+      .insert(transactions)
+      .values(
+        makeTxInsert({
+          tradedAt: '2024-02-10T00:00:00.000Z',
+          canonicalType: 'sell',
+          checksum: 'tx2',
+        })
+      )
+      .returning()
+      .all();
 
     // Insert fifo lots (needed for lot_consumptions FK)
     const [lot1] = mockDb.insert(fifoLots).values(makeLotInsert()).returning().all();
 
     // Insert lot consumptions
-    mockDb.insert(lotConsumptions).values([
-      {
-        lotId: lot1.id,
-        sellTransactionId: tx1.id,
-        amountConsumed: '0.05',
-        costBasisEur: '1500',
-        proceedsEur: '2000',
-        gainLossEur: '500',
-        feeEur: '0',
-        heldDays: 100,
-        haltefristMet: false,
-        taxYear: 2024,
-      },
-      {
-        lotId: lot1.id,
-        sellTransactionId: tx2.id,
-        amountConsumed: '0.02',
-        costBasisEur: '600',
-        proceedsEur: '400',
-        gainLossEur: '-200',
-        feeEur: '0',
-        heldDays: 50,
-        haltefristMet: false,
-        taxYear: 2024,
-      },
-    ]).run();
+    mockDb
+      .insert(lotConsumptions)
+      .values([
+        {
+          lotId: lot1.id,
+          sellTransactionId: tx1.id,
+          amountConsumed: '0.05',
+          costBasisEur: '1500',
+          proceedsEur: '2000',
+          gainLossEur: '500',
+          feeEur: '0',
+          heldDays: 100,
+          haltefristMet: false,
+          taxYear: 2024,
+        },
+        {
+          lotId: lot1.id,
+          sellTransactionId: tx2.id,
+          amountConsumed: '0.02',
+          costBasisEur: '600',
+          proceedsEur: '400',
+          gainLossEur: '-200',
+          feeEur: '0',
+          heldDays: 50,
+          haltefristMet: false,
+          taxYear: 2024,
+        },
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -380,12 +419,12 @@ describe('GET /api/summary/:year — monthly spot data', () => {
     const feb = body.monthlySpot.find((m) => m.month === '2024-02');
 
     expect(jan).toBeDefined();
-    expect(parseFloat(jan!.gains)).toBeCloseTo(500, 5);
-    expect(parseFloat(jan!.losses)).toBeCloseTo(0, 5);
+    expect(parseFloat(jan?.gains)).toBeCloseTo(500, 5);
+    expect(parseFloat(jan?.losses)).toBeCloseTo(0, 5);
 
     expect(feb).toBeDefined();
-    expect(parseFloat(feb!.gains)).toBeCloseTo(0, 5);
-    expect(parseFloat(feb!.losses)).toBeCloseTo(-200, 5);
+    expect(parseFloat(feb?.gains)).toBeCloseTo(0, 5);
+    expect(parseFloat(feb?.losses)).toBeCloseTo(-200, 5);
   });
 
   it('returns empty monthlySpot when no lot consumptions exist for year', async () => {
@@ -409,11 +448,14 @@ describe('GET /api/summary/:year — portfolio allocation', () => {
   it('only includes lots with remaining_amount > 0', async () => {
     mockDb.insert(taxSummaries).values(makeSummaryInsert()).run();
 
-    mockDb.insert(fifoLots).values([
-      makeLotInsert({ symbol: 'BTC', remainingAmount: '0.5', costPerUnitEur: '30000' }),
-      makeLotInsert({ symbol: 'ETH', remainingAmount: '0', costPerUnitEur: '2000' }),
-      makeLotInsert({ symbol: 'SOL', remainingAmount: '10', costPerUnitEur: '150' }),
-    ]).run();
+    mockDb
+      .insert(fifoLots)
+      .values([
+        makeLotInsert({ symbol: 'BTC', remainingAmount: '0.5', costPerUnitEur: '30000' }),
+        makeLotInsert({ symbol: 'ETH', remainingAmount: '0', costPerUnitEur: '2000' }),
+        makeLotInsert({ symbol: 'SOL', remainingAmount: '10', costPerUnitEur: '150' }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -427,9 +469,10 @@ describe('GET /api/summary/:year — portfolio allocation', () => {
   it('calculates portfolio value as remainingAmount * costPerUnitEur', async () => {
     mockDb.insert(taxSummaries).values(makeSummaryInsert()).run();
 
-    mockDb.insert(fifoLots).values([
-      makeLotInsert({ symbol: 'BTC', remainingAmount: '0.5', costPerUnitEur: '30000' }),
-    ]).run();
+    mockDb
+      .insert(fifoLots)
+      .values([makeLotInsert({ symbol: 'BTC', remainingAmount: '0.5', costPerUnitEur: '30000' })])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -437,17 +480,28 @@ describe('GET /api/summary/:year — portfolio allocation', () => {
     const btc = body.portfolioAllocation.find((p) => p.symbol === 'BTC');
     expect(btc).toBeDefined();
     // 0.5 * 30000 = 15000
-    expect(parseFloat(btc!.valueEur)).toBeCloseTo(15000, 5);
+    expect(parseFloat(btc?.valueEur)).toBeCloseTo(15000, 5);
   });
 
   it('portfolio allocation is not filtered by year', async () => {
     // Insert summaries for 2023 (so engineHasRun=true)
-    mockDb.insert(taxSummaries).values(makeSummaryInsert({ taxYear: 2023 })).run();
+    mockDb
+      .insert(taxSummaries)
+      .values(makeSummaryInsert({ taxYear: 2023 }))
+      .run();
 
     // Insert lots from 2023 with remaining amount
-    mockDb.insert(fifoLots).values([
-      makeLotInsert({ symbol: 'BTC', remainingAmount: '1', costPerUnitEur: '20000', taxYear: 2023 }),
-    ]).run();
+    mockDb
+      .insert(fifoLots)
+      .values([
+        makeLotInsert({
+          symbol: 'BTC',
+          remainingAmount: '1',
+          costPerUnitEur: '20000',
+          taxYear: 2023,
+        }),
+      ])
+      .run();
 
     // Request for 2024 (different year)
     const res = await app.request('/api/summary/2024');
@@ -468,9 +522,10 @@ describe('GET /api/summary/:year — Freigrenze', () => {
   afterEach(() => sqlite.close());
 
   it('returns spotNetForFreigrenze from private_sale bucket netEur', async () => {
-    mockDb.insert(taxSummaries).values(
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '850' })
-    ).run();
+    mockDb
+      .insert(taxSummaries)
+      .values(makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '850' }))
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -479,10 +534,13 @@ describe('GET /api/summary/:year — Freigrenze', () => {
   });
 
   it('returns earnTotalForFreigrenze from staking_earn bucket netEur', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '100' }),
-      makeSummaryInsert({ bucket: 'staking_earn', taxYear: 2024, netEur: '180' }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ bucket: 'private_sale', taxYear: 2024, netEur: '100' }),
+        makeSummaryInsert({ bucket: 'staking_earn', taxYear: 2024, netEur: '180' }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -491,9 +549,10 @@ describe('GET /api/summary/:year — Freigrenze', () => {
   });
 
   it('returns 0 for spotNetForFreigrenze when no private_sale bucket exists', async () => {
-    mockDb.insert(taxSummaries).values(
-      makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, netEur: '500' })
-    ).run();
+    mockDb
+      .insert(taxSummaries)
+      .values(makeSummaryInsert({ bucket: 'futures_pnl', taxYear: 2024, netEur: '500' }))
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -522,12 +581,15 @@ describe('GET /api/summary/:year — year-over-year', () => {
   afterEach(() => sqlite.close());
 
   it('returns year-over-year data for all years in tax_summaries', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2022, bucket: 'private_sale', netEur: '400' }),
-      makeSummaryInsert({ taxYear: 2023, bucket: 'private_sale', netEur: '600' }),
-      makeSummaryInsert({ taxYear: 2023, bucket: 'futures_pnl', netEur: '200' }),
-      makeSummaryInsert({ taxYear: 2024, bucket: 'private_sale', netEur: '1300' }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ taxYear: 2022, bucket: 'private_sale', netEur: '400' }),
+        makeSummaryInsert({ taxYear: 2023, bucket: 'private_sale', netEur: '600' }),
+        makeSummaryInsert({ taxYear: 2023, bucket: 'futures_pnl', netEur: '200' }),
+        makeSummaryInsert({ taxYear: 2024, bucket: 'private_sale', netEur: '1300' }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;
@@ -546,11 +608,14 @@ describe('GET /api/summary/:year — year-over-year', () => {
   });
 
   it('year-over-year is sorted ascending by year', async () => {
-    mockDb.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2024, bucket: 'private_sale' }),
-      makeSummaryInsert({ taxYear: 2022, bucket: 'private_sale' }),
-      makeSummaryInsert({ taxYear: 2023, bucket: 'private_sale' }),
-    ]).run();
+    mockDb
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ taxYear: 2024, bucket: 'private_sale' }),
+        makeSummaryInsert({ taxYear: 2022, bucket: 'private_sale' }),
+        makeSummaryInsert({ taxYear: 2023, bucket: 'private_sale' }),
+      ])
+      .run();
 
     const res = await app.request('/api/summary/2024');
     const body = (await res.json()) as YearSummaryResponse;

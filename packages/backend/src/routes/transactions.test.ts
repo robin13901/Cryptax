@@ -1,9 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type {
-  TransactionDetailResponse,
-  TransactionPageResponse,
-} from '@cryptax/shared';
+import type { TransactionDetailResponse, TransactionPageResponse } from '@cryptax/shared';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { Hono } from 'hono';
@@ -15,13 +12,14 @@ import * as schema from '../db/schema.js';
 // ---------------------------------------------------------------------------
 
 let mockDb: ReturnType<typeof drizzle<typeof schema>>;
+let mockSqlite: ReturnType<typeof Database>;
 
 vi.mock('../db/client.js', () => ({
   get db() {
     return mockDb;
   },
   get sqlite() {
-    return undefined;
+    return mockSqlite;
   },
 }));
 
@@ -74,7 +72,7 @@ function makeTransaction(
     taxYear: number;
     checksum: string;
     eurPrice: string;
-  }> = {},
+  }> = {}
 ): number {
   const defaults = {
     orderId: 'ORD-001',
@@ -112,7 +110,7 @@ function makeTransaction(
         (@orderId, @exchange, @sourceType, @canonicalType, @symbol, @side, @amount,
          @price, @fee, @totalValue, @tradedAt, @taxYear, @sourceFile, @rawRow,
          @checksum, @importedAt, @batchId, @eurPrice, @priceSource,
-         @priceResolvedAt, @priceFailureReason)`,
+         @priceResolvedAt, @priceFailureReason)`
     )
     .run(defaults);
 
@@ -130,7 +128,7 @@ function makeFifoLot(
     remainingAmount?: string;
     costBasisEur?: string;
     costPerUnitEur?: string;
-  },
+  }
 ): number {
   const result = sqlite
     .prepare(
@@ -139,7 +137,7 @@ function makeFifoLot(
          cost_per_unit_eur, fee_eur, acquired_at, transaction_id, tax_year)
        VALUES
         (@symbol, @originalAmount, @remainingAmount, @costBasisEur,
-         @costPerUnitEur, @feeEur, @acquiredAt, @transactionId, @taxYear)`,
+         @costPerUnitEur, @feeEur, @acquiredAt, @transactionId, @taxYear)`
     )
     .run({
       symbol: opts.symbol,
@@ -165,7 +163,7 @@ function makeLotConsumption(
     heldDays?: number;
     haltefristMet?: number;
     gainLossEur?: string;
-  },
+  }
 ): number {
   const result = sqlite
     .prepare(
@@ -174,7 +172,7 @@ function makeLotConsumption(
          proceeds_eur, gain_loss_eur, fee_eur, held_days, haltefrist_met, tax_year)
        VALUES
         (@lotId, @sellTransactionId, @amountConsumed, @costBasisEur,
-         @proceedsEur, @gainLossEur, @feeEur, @heldDays, @haltefristMet, @taxYear)`,
+         @proceedsEur, @gainLossEur, @feeEur, @heldDays, @haltefristMet, @taxYear)`
     )
     .run({
       lotId: opts.lotId,
@@ -205,6 +203,7 @@ function setupApp() {
   sqlite.pragma('foreign_keys = ON');
   applyMigrations(sqlite);
   mockDb = drizzle(sqlite, { schema });
+  mockSqlite = sqlite;
 
   app = new Hono();
   registerTransactionRoutes(app);
@@ -263,9 +262,21 @@ describe('GET /api/transactions', () => {
   });
 
   it('filters by year', async () => {
-    makeTransaction(sqlite, { checksum: 'c1', taxYear: 2023, tradedAt: '2023-06-01T00:00:00.000Z' });
-    makeTransaction(sqlite, { checksum: 'c2', taxYear: 2024, tradedAt: '2024-06-01T00:00:00.000Z' });
-    makeTransaction(sqlite, { checksum: 'c3', taxYear: 2024, tradedAt: '2024-07-01T00:00:00.000Z' });
+    makeTransaction(sqlite, {
+      checksum: 'c1',
+      taxYear: 2023,
+      tradedAt: '2023-06-01T00:00:00.000Z',
+    });
+    makeTransaction(sqlite, {
+      checksum: 'c2',
+      taxYear: 2024,
+      tradedAt: '2024-06-01T00:00:00.000Z',
+    });
+    makeTransaction(sqlite, {
+      checksum: 'c3',
+      taxYear: 2024,
+      tradedAt: '2024-07-01T00:00:00.000Z',
+    });
 
     const res = await app.request('/api/transactions?year=2024');
     expect(res.status).toBe(200);
@@ -298,7 +309,30 @@ describe('GET /api/transactions', () => {
 
     const body = (await res.json()) as TransactionPageResponse;
     expect(body.total).toBe(2);
-    expect(body.items.every((i) => i.symbol === 'BTC')).toBe(true);
+    expect(body.items.every((i) => i.baseCoin === 'BTC')).toBe(true);
+  });
+
+  it('coin filter matches spot_order pair symbols (e.g. BTC/EUR)', async () => {
+    makeTransaction(sqlite, {
+      checksum: 'c-order',
+      symbol: 'BTC/EUR',
+      sourceType: 'spot_order',
+      orderId: 'ORD-COIN-001',
+    });
+    makeTransaction(sqlite, {
+      checksum: 'c-tx',
+      symbol: 'ETH',
+      sourceType: 'spot_tx',
+      orderId: 'ORD-COIN-002',
+    });
+
+    const res = await app.request('/api/transactions?coin=BTC');
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as TransactionPageResponse;
+    expect(body.total).toBe(1);
+    expect(body.items[0].baseCoin).toBe('BTC');
+    expect(body.items[0].tradingPair).toBe('BTC/EUR');
   });
 
   it('filters by date range', async () => {
@@ -307,7 +341,7 @@ describe('GET /api/transactions', () => {
     makeTransaction(sqlite, { checksum: 'c3', tradedAt: '2024-12-31T00:00:00.000Z' });
 
     const res = await app.request(
-      '/api/transactions?from=2024-01-01T00:00:00.000Z&to=2024-07-01T00:00:00.000Z',
+      '/api/transactions?from=2024-01-01T00:00:00.000Z&to=2024-07-01T00:00:00.000Z'
     );
     expect(res.status).toBe(200);
 
@@ -414,6 +448,8 @@ describe('GET /api/transactions', () => {
     expect(item).toHaveProperty('id');
     expect(item).toHaveProperty('orderId', 'ORD-FIELD-TEST');
     expect(item).toHaveProperty('symbol', 'ETH');
+    expect(item).toHaveProperty('baseCoin');
+    expect(item).toHaveProperty('tradingPair');
     expect(item).toHaveProperty('canonicalType', 'sell');
     expect(item).toHaveProperty('sourceType', 'spot_order');
     expect(item).toHaveProperty('eurPrice', '3200');
@@ -422,6 +458,180 @@ describe('GET /api/transactions', () => {
     expect(item).toHaveProperty('taxYear');
     expect(item).toHaveProperty('amount');
     expect(item).toHaveProperty('fee');
+    expect(item).toHaveProperty('totalValue');
+    expect(item).toHaveProperty('gainLossEur');
+  });
+
+  it('returns gainLossEur from FIFO lot consumptions for sell transactions', async () => {
+    const buyId = makeTransaction(sqlite, {
+      checksum: 'c-buy-pnl',
+      symbol: 'ETH',
+      canonicalType: 'buy',
+      tradedAt: '2024-01-01T00:00:00.000Z',
+      taxYear: 2024,
+    });
+    const lotId = makeFifoLot(sqlite, {
+      symbol: 'ETH',
+      acquiredAt: '2024-01-01T00:00:00.000Z',
+      taxYear: 2024,
+      transactionId: buyId,
+    });
+    const sellId = makeTransaction(sqlite, {
+      checksum: 'c-sell-pnl',
+      symbol: 'ETH',
+      canonicalType: 'sell',
+      side: 'sell',
+      tradedAt: '2024-06-15T00:00:00.000Z',
+      taxYear: 2024,
+    });
+    makeLotConsumption(sqlite, {
+      lotId,
+      sellTransactionId: sellId,
+      taxYear: 2024,
+      gainLossEur: '1500.50',
+    });
+
+    const res = await app.request('/api/transactions');
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as TransactionPageResponse;
+    const sellItem = body.items.find((i) => i.id === sellId);
+    expect(sellItem).toBeDefined();
+    expect(parseFloat(sellItem?.gainLossEur!)).toBeCloseTo(1500.5, 1);
+
+    // Buy should have no P&L
+    const buyItem = body.items.find((i) => i.id === buyId);
+    expect(buyItem?.gainLossEur).toBeNull();
+  });
+
+  it('returns gainLossEur from futures positions', async () => {
+    const txId = makeTransaction(sqlite, {
+      checksum: 'c-futures-pnl-list',
+      symbol: 'BTC',
+      canonicalType: 'futures_close_long',
+      taxYear: 2024,
+    });
+    sqlite
+      .prepare(
+        `INSERT INTO futures_positions (symbol, realized_pnl_eur, fee_eur, transaction_id, tax_year)
+         VALUES ('BTC', '800', '20', @transactionId, 2024)`
+      )
+      .run({ transactionId: txId });
+
+    const res = await app.request('/api/transactions');
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as TransactionPageResponse;
+    const item = body.items.find((i) => i.id === txId);
+    expect(item).toBeDefined();
+    expect(parseFloat(item?.gainLossEur!)).toBeCloseTo(780, 1); // 800 - 20
+  });
+
+  it('collapses spot_tx rows when a matching spot_order exists (same timestamp)', async () => {
+    const tradedAt = '2024-12-10T11:15:01.000Z';
+    makeTransaction(sqlite, {
+      checksum: 'c-order',
+      orderId: 'ORD-ORDER-001',
+      symbol: 'MOZ/USDT',
+      sourceType: 'spot_order',
+      canonicalType: 'buy',
+      amount: '1234.56',
+      price: '0.04',
+      fee: '0',
+      tradedAt,
+    });
+    // spot_tx for the base coin (MOZ) — different orderId from Bitget
+    makeTransaction(sqlite, {
+      checksum: 'c-tx-base',
+      orderId: 'ORD-TX-001',
+      symbol: 'MOZ',
+      sourceType: 'spot_tx',
+      canonicalType: 'buy',
+      amount: '1234.56',
+      fee: '-1.234',
+      tradedAt,
+    });
+    // spot_tx for the quote coin (USDT) — different orderId from Bitget
+    makeTransaction(sqlite, {
+      checksum: 'c-tx-quote',
+      orderId: 'ORD-TX-002',
+      symbol: 'USDT',
+      sourceType: 'spot_tx',
+      canonicalType: 'sell',
+      amount: '-49.38',
+      fee: '0',
+      tradedAt,
+    });
+
+    const res = await app.request('/api/transactions');
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as TransactionPageResponse;
+    // Should only have 1 row (the spot_order), not 3
+    expect(body.total).toBe(1);
+    expect(body.items).toHaveLength(1);
+    expect(body.items[0].sourceType).toBe('spot_order');
+    expect(body.items[0].baseCoin).toBe('MOZ');
+    expect(body.items[0].tradingPair).toBe('MOZ/USDT');
+  });
+
+  it('keeps spot_tx rows that have no matching spot_order', async () => {
+    makeTransaction(sqlite, {
+      checksum: 'c-standalone',
+      orderId: 'ORD-STANDALONE',
+      symbol: 'BTC',
+      sourceType: 'spot_tx',
+      canonicalType: 'buy',
+      tradedAt: '2024-12-10T11:00:00.000Z',
+    });
+
+    const res = await app.request('/api/transactions');
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as TransactionPageResponse;
+    expect(body.total).toBe(1);
+    expect(body.items[0].sourceType).toBe('spot_tx');
+    expect(body.items[0].baseCoin).toBe('BTC');
+    expect(body.items[0].tradingPair).toBeNull();
+  });
+
+  it('merges fee from spot_tx into the collapsed spot_order row', async () => {
+    const tradedAt = '2024-12-10T11:14:38.000Z';
+    makeTransaction(sqlite, {
+      checksum: 'c-order-fee',
+      orderId: 'ORD-ORDER-FEE',
+      symbol: 'ETH/EUR',
+      sourceType: 'spot_order',
+      canonicalType: 'sell',
+      fee: '0',
+      tradedAt,
+    });
+    makeTransaction(sqlite, {
+      checksum: 'c-tx-fee',
+      orderId: 'ORD-TX-FEE-1',
+      symbol: 'EUR',
+      sourceType: 'spot_tx',
+      canonicalType: 'buy',
+      fee: '-3.25',
+      tradedAt,
+    });
+    makeTransaction(sqlite, {
+      checksum: 'c-tx-fee2',
+      orderId: 'ORD-TX-FEE-2',
+      symbol: 'ETH',
+      sourceType: 'spot_tx',
+      canonicalType: 'sell',
+      fee: '0',
+      tradedAt,
+    });
+
+    const res = await app.request('/api/transactions');
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as TransactionPageResponse;
+    expect(body.items).toHaveLength(1);
+    // Fee from spot_tx should be merged (abs of -3.25 = 3.25)
+    expect(parseFloat(body.items[0].fee)).toBeCloseTo(3.25, 2);
   });
 });
 
@@ -591,7 +801,7 @@ describe('GET /api/transactions/:id', () => {
     sqlite
       .prepare(
         `INSERT INTO futures_positions (symbol, realized_pnl_eur, fee_eur, transaction_id, tax_year)
-         VALUES ('BTC', '500', '10', @transactionId, 2024)`,
+         VALUES ('BTC', '500', '10', @transactionId, 2024)`
       )
       .run({ transactionId: txId });
 
@@ -620,7 +830,7 @@ describe('GET /api/transactions/:id', () => {
     sqlite
       .prepare(
         `INSERT INTO earn_income (symbol, amount, eur_value_at_receipt, received_at, transaction_id, tax_year)
-         VALUES ('USDT', '100', '92', '2024-03-01T00:00:00.000Z', @transactionId, 2024)`,
+         VALUES ('USDT', '100', '92', '2024-03-01T00:00:00.000Z', @transactionId, 2024)`
       )
       .run({ transactionId: txId });
 

@@ -560,7 +560,7 @@ describe('Integration: Cross-format consistency', () => {
     const csvRes = await app.request('/api/report/2024/csv');
     const csvText = await csvRes.text();
 
-    expect(csvText).toContain(`Geschaetzte Abgeltungssteuer EUR${';'}${estimatedTaxEur}`);
+    expect(csvText).toContain(`Geschätzte Abgeltungssteuer EUR${';'}${estimatedTaxEur}`);
   });
 
   it('PDF buffer is non-empty and starts with %PDF- (format smoke check)', async () => {

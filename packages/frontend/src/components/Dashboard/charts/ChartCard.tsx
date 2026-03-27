@@ -1,4 +1,3 @@
-import GlassSurface from '../../GlassSurface/GlassSurface';
 import './ChartCard.css';
 
 interface ChartCardProps {
@@ -9,16 +8,10 @@ interface ChartCardProps {
 
 const ChartCard = ({ title, children, className = '' }: ChartCardProps) => {
   return (
-    <GlassSurface
-      width="100%"
-      height="auto"
-      borderRadius={12}
-      backgroundOpacity={0.1}
-      className={`chart-card ${className}`}
-    >
+    <div className={`chart-card ${className}`}>
       <div className="chart-card__title">{title}</div>
       <div className="chart-card__body">{children}</div>
-    </GlassSurface>
+    </div>
   );
 };
 

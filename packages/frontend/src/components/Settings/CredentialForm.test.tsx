@@ -7,10 +7,7 @@ import CredentialForm from './CredentialForm';
 // Helpers
 // ---------------------------------------------------------------------------
 
-function renderCredentialForm(
-  onSave = vi.fn(),
-  onCancel = vi.fn()
-) {
+function renderCredentialForm(onSave = vi.fn(), onCancel = vi.fn()) {
   return render(<CredentialForm onSave={onSave} onCancel={onCancel} />);
 }
 
@@ -143,9 +140,7 @@ describe('CredentialForm', () => {
     };
 
     vi.mocked(fetch)
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify(savedConnection), { status: 201 })
-      )
+      .mockResolvedValueOnce(new Response(JSON.stringify(savedConnection), { status: 201 }))
       .mockResolvedValueOnce(
         new Response(JSON.stringify({ success: false, error: 'ccxt not yet installed' }), {
           status: 200,

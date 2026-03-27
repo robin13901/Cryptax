@@ -41,7 +41,9 @@
   font-size: 0.85rem;
   font-weight: 600;
   padding: 0.45rem 1rem;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
   white-space: nowrap;
 }
 

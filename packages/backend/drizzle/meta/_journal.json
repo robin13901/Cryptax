@@ -22,6 +22,13 @@
       "when": 1774193260544,
       "tag": "0002_eur_price_columns",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1774193260545,
+      "tag": "0003_app_settings",
+      "breakpoints": true
     }
   ]
 }

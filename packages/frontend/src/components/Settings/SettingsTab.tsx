@@ -114,7 +114,11 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
           const body = await res.json<{ error?: string }>();
           throw new Error(body.error ?? 'Sync-All fehlgeschlagen');
         }
-        return res.json<{ results: SyncResult[]; totalImported: number; totalDuplicates: number }>();
+        return res.json<{
+          results: SyncResult[];
+          totalImported: number;
+          totalDuplicates: number;
+        }>();
       })
       .then(({ results, totalImported, totalDuplicates }) => {
         // Update each connection's sync state individually
@@ -165,9 +169,9 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
   return (
     <div className="settings-tab">
       {/* Section 1: Exchange connections */}
-      <section className="settings-tab__section" aria-label="Boersenverbindungen">
+      <section className="settings-tab__section" aria-label="Börsenverbindungen">
         <div className="settings-tab__section-header">
-          <h2 className="settings-tab__section-title">Boersenverbindungen</h2>
+          <h2 className="settings-tab__section-title">Börsenverbindungen</h2>
           <div className="settings-tab__section-actions">
             {connections.length > 0 && (
               <button
@@ -184,7 +188,7 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
               className="settings-tab__btn settings-tab__btn--add"
               onClick={() => setShowForm((v) => !v)}
             >
-              {showForm ? 'Abbrechen' : '+ Verbindung hinzufuegen'}
+              {showForm ? 'Abbrechen' : '+ Verbindung hinzufügen'}
             </button>
           </div>
         </div>
@@ -199,10 +203,7 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
           >
             <div className="settings-tab__form-inner">
               <h3 className="settings-tab__form-title">Bitget verbinden</h3>
-              <CredentialForm
-                onSave={handleSave}
-                onCancel={() => setShowForm(false)}
-              />
+              <CredentialForm onSave={handleSave} onCancel={() => setShowForm(false)} />
             </div>
           </GlassSurface>
         )}
@@ -212,7 +213,7 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
         ) : connections.length === 0 && !showForm ? (
           <div className="settings-tab__empty">
             <p className="settings-tab__empty-text">
-              Keine Exchange-Verbindungen konfiguriert. Fuege eine Verbindung hinzu, um Trades
+              Keine Exchange-Verbindungen konfiguriert. Füge eine Verbindung hinzu, um Trades
               automatisch zu importieren.
             </p>
           </div>
@@ -250,7 +251,7 @@ const SettingsTab = ({ onLogout }: SettingsTabProps) => {
           className="settings-tab__app-settings-surface"
         >
           <div className="settings-tab__app-settings-inner">
-            <h3 className="settings-tab__subsection-title">Passwort aendern</h3>
+            <h3 className="settings-tab__subsection-title">Passwort ändern</h3>
             <PasswordChange onLogout={onLogout} />
           </div>
         </GlassSurface>

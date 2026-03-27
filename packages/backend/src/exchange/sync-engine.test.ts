@@ -3,14 +3,15 @@ import path from 'node:path';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SyncResult } from '@cryptax/shared';
 import * as schema from '../db/schema.js';
 
 // ---------------------------------------------------------------------------
 // vi.hoisted — TDZ-safe ref for mockDb (must exist before vi.mock factory runs)
 // ---------------------------------------------------------------------------
 
-const { mockDbRef } = vi.hoisted(() => ({ mockDbRef: { current: null as ReturnType<typeof drizzle<typeof schema>> | null } }));
+const { mockDbRef } = vi.hoisted(() => ({
+  mockDbRef: { current: null as ReturnType<typeof drizzle<typeof schema>> | null },
+}));
 
 // ---------------------------------------------------------------------------
 // Module mocks — declared before any imports that resolve them
@@ -36,11 +37,10 @@ vi.mock('./bitget-adapter.js', () => ({
   })),
 }));
 
-// Import syncExchange AFTER mocks are declared
-import { syncExchange } from './sync-engine.js';
-
 // encryptCredentials used directly in test helper (no mock — we need real encryption)
 import { encryptCredentials } from '../auth/credential-cipher.js';
+// Import syncExchange AFTER mocks are declared
+import { syncExchange } from './sync-engine.js';
 
 // ---------------------------------------------------------------------------
 // Migration helper (matches exchanges.test.ts pattern)
@@ -147,11 +147,11 @@ describe('syncExchange', () => {
   function insertConnection(opts: { lastSyncAt?: string } = {}): number {
     const encrypted = encryptCredentials(
       JSON.stringify({ apiKey: 'test-key', secret: 'test-secret', password: 'test-pass' }),
-      MASTER_KEY,
+      MASTER_KEY
     );
 
-    const row = mockDbRef.current!
-      .insert(schema.exchangeConnections)
+    const row = mockDbRef.current
+      ?.insert(schema.exchangeConnections)
       .values({
         exchange: 'bitget',
         label: 'Test Bitget',
@@ -162,7 +162,7 @@ describe('syncExchange', () => {
       .returning({ id: schema.exchangeConnections.id })
       .get();
 
-    return row!.id;
+    return row?.id;
   }
 
   // -------------------------------------------------------------------------
@@ -266,8 +266,8 @@ describe('syncExchange', () => {
     const result = await syncExchange(connectionId);
 
     // Verify the watermark was written to DB
-    const conn = mockDbRef.current!
-      .select({ lastSyncAt: schema.exchangeConnections.lastSyncAt })
+    const _conn = mockDbRef.current
+      ?.select({ lastSyncAt: schema.exchangeConnections.lastSyncAt })
       .from(schema.exchangeConnections)
       .where(schema.exchangeConnections.id === connectionId)
       .get();

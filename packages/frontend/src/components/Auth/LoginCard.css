@@ -62,7 +62,9 @@
   font-size: 0.95rem;
   padding: 0.7rem 1rem;
   outline: none;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
 .login-card__input::placeholder {

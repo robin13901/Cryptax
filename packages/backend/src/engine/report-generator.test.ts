@@ -152,13 +152,17 @@ describe('Scenario 1: No data for year', () => {
 
   it('returns null when data exists for a different year', () => {
     // Insert summary for 2023 only
-    db.insert(taxSummaries).values(makeTaxSummary({ taxYear: 2023 })).run();
+    db.insert(taxSummaries)
+      .values(makeTaxSummary({ taxYear: 2023 }))
+      .run();
     const result = generator.generate(2024);
     expect(result).toBeNull();
   });
 
   it('returns non-null when summary exists for the requested year', () => {
-    db.insert(taxSummaries).values(makeTaxSummary({ taxYear: 2024 })).run();
+    db.insert(taxSummaries)
+      .values(makeTaxSummary({ taxYear: 2024 }))
+      .run();
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
   });
@@ -186,7 +190,7 @@ describe('Scenario 2: SpotSummary correct aggregation', () => {
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const spot = result!.spotSummary;
+    const spot = result?.spotSummary;
     expect(spot.totalGainsEur).toBe('5000');
     expect(spot.totalLossesEur).toBe('-1000');
     expect(spot.netEur).toBe('4000');
@@ -201,7 +205,7 @@ describe('Scenario 2: SpotSummary correct aggregation', () => {
       .run();
 
     const result = generator.generate(2024);
-    expect(result!.spotSummary.freigrenzeStatus).toBe('over');
+    expect(result?.spotSummary.freigrenzeStatus).toBe('over');
   });
 
   it('sets freigrenzeStatus = "under" when net = 1000 (at cliff, not exceeded)', () => {
@@ -210,7 +214,7 @@ describe('Scenario 2: SpotSummary correct aggregation', () => {
       .run();
 
     const result = generator.generate(2024);
-    expect(result!.spotSummary.freigrenzeStatus).toBe('under');
+    expect(result?.spotSummary.freigrenzeStatus).toBe('under');
   });
 
   it('sets freigrenzeStatus = "under" when net < 1000', () => {
@@ -219,14 +223,16 @@ describe('Scenario 2: SpotSummary correct aggregation', () => {
       .run();
 
     const result = generator.generate(2024);
-    expect(result!.spotSummary.freigrenzeStatus).toBe('under');
+    expect(result?.spotSummary.freigrenzeStatus).toBe('under');
   });
 
-  it('counts taxFreeTradeCount from distinct sell transactions with haltefristMet=true', () => {
+  it('counts taxFreeTradeCount from all lot consumptions with haltefristMet=true', () => {
     // Insert two transactions (buy + sell)
     const buyTx = db
       .insert(transactions)
-      .values(makeTransaction({ canonicalType: 'buy', amount: '2', tradedAt: '2022-01-01T00:00:00.000Z' }))
+      .values(
+        makeTransaction({ canonicalType: 'buy', amount: '2', tradedAt: '2022-01-01T00:00:00.000Z' })
+      )
       .returning({ id: transactions.id })
       .get();
     const sellTx = db
@@ -282,14 +288,14 @@ describe('Scenario 2: SpotSummary correct aggregation', () => {
     db.insert(taxSummaries).values(makeTaxSummary()).run();
 
     const result = generator.generate(2024);
-    // Two lot consumptions, same sell transaction — should count as 1 unique sell
-    expect(result!.spotSummary.taxFreeTradeCount).toBe(1);
+    // Two lot consumptions, same sell transaction — each counts as one disposal
+    expect(result?.spotSummary.taxFreeTradeCount).toBe(2);
   });
 
   it('returns taxFreeTradeCount = 0 when no haltefrist-met consumptions exist', () => {
     db.insert(taxSummaries).values(makeTaxSummary()).run();
     const result = generator.generate(2024);
-    expect(result!.spotSummary.taxFreeTradeCount).toBe(0);
+    expect(result?.spotSummary.taxFreeTradeCount).toBe(0);
   });
 });
 
@@ -302,7 +308,12 @@ describe('Scenario 3: FuturesSummary correct Abgeltungssteuer', () => {
     // Also seed a private_sale to ensure guard passes
     db.insert(taxSummaries)
       .values([
-        makeTaxSummary({ bucket: 'private_sale', totalGainsEur: '0', netEur: '0', taxableAmountEur: '0' }),
+        makeTaxSummary({
+          bucket: 'private_sale',
+          totalGainsEur: '0',
+          netEur: '0',
+          taxableAmountEur: '0',
+        }),
         makeTaxSummary({
           bucket: 'futures_pnl',
           totalGainsEur: '2000',
@@ -318,7 +329,7 @@ describe('Scenario 3: FuturesSummary correct Abgeltungssteuer', () => {
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const futures = result!.futuresSummary;
+    const futures = result?.futuresSummary;
     expect(futures.totalGainsEur).toBe('2000');
     expect(futures.totalLossesEur).toBe('-500');
     expect(futures.netEur).toBe('1500');
@@ -355,21 +366,35 @@ describe('Scenario 3: FuturesSummary correct Abgeltungssteuer', () => {
 
     db.insert(futuresPositions)
       .values([
-        { symbol: 'BTCUSDT', realizedPnlEur: '600', feeEur: '10', transactionId: tx1.id, taxYear: 2024 },
-        { symbol: 'ETHUSDT', realizedPnlEur: '400', feeEur: '15.5', transactionId: tx2.id, taxYear: 2024 },
+        {
+          symbol: 'BTCUSDT',
+          realizedPnlEur: '600',
+          feeEur: '10',
+          transactionId: tx1.id,
+          taxYear: 2024,
+        },
+        {
+          symbol: 'ETHUSDT',
+          realizedPnlEur: '400',
+          feeEur: '15.5',
+          transactionId: tx2.id,
+          taxYear: 2024,
+        },
       ])
       .run();
 
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
     // totalFees = 10 + 15.5 = 25.5
-    expect(parseFloat(result!.futuresSummary.totalFeesEur)).toBeCloseTo(25.5, 5);
+    expect(parseFloat(result?.futuresSummary.totalFeesEur)).toBeCloseTo(25.5, 5);
   });
 
   it('returns totalFeesEur = "0" when no futures_positions exist', () => {
-    db.insert(taxSummaries).values(makeTaxSummary({ bucket: 'futures_pnl' })).run();
+    db.insert(taxSummaries)
+      .values(makeTaxSummary({ bucket: 'futures_pnl' }))
+      .run();
     const result = generator.generate(2024);
-    expect(parseFloat(result!.futuresSummary.totalFeesEur)).toBe(0);
+    expect(parseFloat(result?.futuresSummary.totalFeesEur)).toBe(0);
   });
 });
 
@@ -409,16 +434,37 @@ describe('Scenario 4: EarnSummary per-coin breakdown and Freigrenze', () => {
 
     db.insert(earnIncome)
       .values([
-        { symbol: 'ETH', amount: '0.1', eurValueAtReceipt: '300', receivedAt: '2024-03-01T00:00:00.000Z', transactionId: tx1.id, taxYear: 2024 },
-        { symbol: 'ETH', amount: '0.05', eurValueAtReceipt: '150', receivedAt: '2024-06-01T00:00:00.000Z', transactionId: tx2.id, taxYear: 2024 },
-        { symbol: 'SOL', amount: '2', eurValueAtReceipt: '50', receivedAt: '2024-09-01T00:00:00.000Z', transactionId: tx3.id, taxYear: 2024 },
+        {
+          symbol: 'ETH',
+          amount: '0.1',
+          eurValueAtReceipt: '300',
+          receivedAt: '2024-03-01T00:00:00.000Z',
+          transactionId: tx1.id,
+          taxYear: 2024,
+        },
+        {
+          symbol: 'ETH',
+          amount: '0.05',
+          eurValueAtReceipt: '150',
+          receivedAt: '2024-06-01T00:00:00.000Z',
+          transactionId: tx2.id,
+          taxYear: 2024,
+        },
+        {
+          symbol: 'SOL',
+          amount: '2',
+          eurValueAtReceipt: '50',
+          receivedAt: '2024-09-01T00:00:00.000Z',
+          transactionId: tx3.id,
+          taxYear: 2024,
+        },
       ])
       .run();
 
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const earn = result!.earnSummary;
+    const earn = result?.earnSummary;
     expect(parseFloat(earn.totalIncomeEur)).toBeCloseTo(500, 5);
     expect(earn.recordCount).toBe(3);
     expect(earn.freigrenzeLimitEur).toBe('256');
@@ -431,17 +477,24 @@ describe('Scenario 4: EarnSummary per-coin breakdown and Freigrenze', () => {
     const sol = earn.perCoinBreakdown.find((c) => c.symbol === 'SOL');
 
     expect(eth).toBeDefined();
-    expect(parseFloat(eth!.totalEur)).toBeCloseTo(450, 5);
-    expect(eth!.count).toBe(2);
+    expect(parseFloat(eth?.totalEur)).toBeCloseTo(450, 5);
+    expect(eth?.count).toBe(2);
 
     expect(sol).toBeDefined();
-    expect(parseFloat(sol!.totalEur)).toBeCloseTo(50, 5);
-    expect(sol!.count).toBe(1);
+    expect(parseFloat(sol?.totalEur)).toBeCloseTo(50, 5);
+    expect(sol?.count).toBe(1);
   });
 
   it('sets freigrenzeStatus = "under" when totalIncomeEur <= 256', () => {
     db.insert(taxSummaries)
-      .values(makeTaxSummary({ bucket: 'staking_earn', totalGainsEur: '100', netEur: '100', tradeCount: 1 }))
+      .values(
+        makeTaxSummary({
+          bucket: 'staking_earn',
+          totalGainsEur: '100',
+          netEur: '100',
+          tradeCount: 1,
+        })
+      )
       .run();
 
     const tx = db
@@ -450,21 +503,30 @@ describe('Scenario 4: EarnSummary per-coin breakdown and Freigrenze', () => {
       .returning({ id: transactions.id })
       .get();
     db.insert(earnIncome)
-      .values({ symbol: 'ETH', amount: '1', eurValueAtReceipt: '100', receivedAt: '2024-01-01T00:00:00.000Z', transactionId: tx.id, taxYear: 2024 })
+      .values({
+        symbol: 'ETH',
+        amount: '1',
+        eurValueAtReceipt: '100',
+        receivedAt: '2024-01-01T00:00:00.000Z',
+        transactionId: tx.id,
+        taxYear: 2024,
+      })
       .run();
 
     const result = generator.generate(2024);
-    expect(result!.earnSummary.freigrenzeStatus).toBe('under');
+    expect(result?.earnSummary.freigrenzeStatus).toBe('under');
   });
 
   it('returns empty perCoinBreakdown when no earn_income rows exist', () => {
     db.insert(taxSummaries)
-      .values(makeTaxSummary({ bucket: 'staking_earn', totalGainsEur: '0', netEur: '0', tradeCount: 0 }))
+      .values(
+        makeTaxSummary({ bucket: 'staking_earn', totalGainsEur: '0', netEur: '0', tradeCount: 0 })
+      )
       .run();
 
     const result = generator.generate(2024);
-    expect(result!.earnSummary.perCoinBreakdown).toHaveLength(0);
-    expect(parseFloat(result!.earnSummary.totalIncomeEur)).toBe(0);
+    expect(result?.earnSummary.perCoinBreakdown).toHaveLength(0);
+    expect(parseFloat(result?.earnSummary.totalIncomeEur)).toBe(0);
   });
 });
 
@@ -479,7 +541,13 @@ describe('Scenario 5: TradeAppendix includes both haltefrist-met and non-met row
     // Two buy transactions
     const buy1 = db
       .insert(transactions)
-      .values(makeTransaction({ canonicalType: 'buy', tradedAt: '2022-01-01T00:00:00.000Z', taxYear: 2022 }))
+      .values(
+        makeTransaction({
+          canonicalType: 'buy',
+          tradedAt: '2022-01-01T00:00:00.000Z',
+          taxYear: 2022,
+        })
+      )
       .returning({ id: transactions.id })
       .get();
     const buy2 = db
@@ -547,22 +615,22 @@ describe('Scenario 5: TradeAppendix includes both haltefrist-met and non-met row
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const appendix = result!.tradeAppendix;
+    const appendix = result?.tradeAppendix;
     expect(appendix).toHaveLength(2);
 
     const taxFreeRow = appendix.find((r) => r.haltefristMet === true);
     const taxableRow = appendix.find((r) => r.haltefristMet === false);
 
     expect(taxFreeRow).toBeDefined();
-    expect(taxFreeRow!.heldDays).toBe(943);
-    expect(taxFreeRow!.costBasisEur).toBe('40000');
-    expect(taxFreeRow!.proceedsEur).toBe('50000');
-    expect(taxFreeRow!.gainLossEur).toBe('10000');
-    expect(taxFreeRow!.exchange).toBe('bitget');
+    expect(taxFreeRow?.heldDays).toBe(943);
+    expect(taxFreeRow?.costBasisEur).toBe('40000');
+    expect(taxFreeRow?.proceedsEur).toBe('50000');
+    expect(taxFreeRow?.gainLossEur).toBe('10000');
+    expect(taxFreeRow?.exchange).toBe('bitget');
 
     expect(taxableRow).toBeDefined();
-    expect(taxableRow!.heldDays).toBe(213);
-    expect(taxableRow!.haltefristMet).toBe(false);
+    expect(taxableRow?.heldDays).toBe(213);
+    expect(taxableRow?.haltefristMet).toBe(false);
   });
 });
 
@@ -693,7 +761,7 @@ describe('Scenario 6: TradeAppendix sorted by sellDate ASC then symbol ASC', () 
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const appendix = result!.tradeAppendix;
+    const appendix = result?.tradeAppendix;
     expect(appendix).toHaveLength(3);
 
     // First two rows: March sells (same date), ETH before SOL alphabetically
@@ -716,12 +784,14 @@ describe('Scenario 6: TradeAppendix sorted by sellDate ASC then symbol ASC', () 
 describe('Scenario 7: Missing buckets return zero-valued summaries', () => {
   it('returns zero-valued FuturesSummary when no futures_pnl bucket exists', () => {
     // Only private_sale in tax_summaries
-    db.insert(taxSummaries).values(makeTaxSummary({ bucket: 'private_sale' })).run();
+    db.insert(taxSummaries)
+      .values(makeTaxSummary({ bucket: 'private_sale' }))
+      .run();
 
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const futures = result!.futuresSummary;
+    const futures = result?.futuresSummary;
     expect(futures).toBeDefined();
     expect(futures.totalGainsEur).toBe('0');
     expect(futures.totalLossesEur).toBe('0');
@@ -733,12 +803,14 @@ describe('Scenario 7: Missing buckets return zero-valued summaries', () => {
   });
 
   it('returns zero-valued EarnSummary when no staking_earn bucket exists', () => {
-    db.insert(taxSummaries).values(makeTaxSummary({ bucket: 'private_sale' })).run();
+    db.insert(taxSummaries)
+      .values(makeTaxSummary({ bucket: 'private_sale' }))
+      .run();
 
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const earn = result!.earnSummary;
+    const earn = result?.earnSummary;
     expect(earn).toBeDefined();
     expect(parseFloat(earn.totalIncomeEur)).toBe(0);
     expect(earn.recordCount).toBe(0);
@@ -763,7 +835,7 @@ describe('Scenario 7: Missing buckets return zero-valued summaries', () => {
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
 
-    const spot = result!.spotSummary;
+    const spot = result?.spotSummary;
     expect(spot).toBeDefined();
     expect(spot.totalGainsEur).toBe('0');
     expect(spot.netEur).toBe('0');
@@ -828,28 +900,28 @@ describe('Scenario 8: Mixed year — all three buckets', () => {
 
     const result = generator.generate(2024);
     expect(result).not.toBeNull();
-    expect(result!.taxYear).toBe(2024);
-    expect(typeof result!.generatedAt).toBe('string');
+    expect(result?.taxYear).toBe(2024);
+    expect(typeof result?.generatedAt).toBe('string');
 
     // Spot
-    expect(result!.spotSummary.totalGainsEur).toBe('3000');
-    expect(result!.spotSummary.netEur).toBe('2500');
-    expect(result!.spotSummary.freigrenzeStatus).toBe('over');
-    expect(result!.spotSummary.tradeCount).toBe(4);
+    expect(result?.spotSummary.totalGainsEur).toBe('3000');
+    expect(result?.spotSummary.netEur).toBe('2500');
+    expect(result?.spotSummary.freigrenzeStatus).toBe('over');
+    expect(result?.spotSummary.tradeCount).toBe(4);
 
     // Futures
-    expect(result!.futuresSummary.netEur).toBe('1200');
-    expect(result!.futuresSummary.estimatedTaxEur).toBe('316.5');
-    expect(result!.futuresSummary.tradeCount).toBe(2);
+    expect(result?.futuresSummary.netEur).toBe('1200');
+    expect(result?.futuresSummary.estimatedTaxEur).toBe('316.5');
+    expect(result?.futuresSummary.tradeCount).toBe(2);
 
     // Earn
-    expect(parseFloat(result!.earnSummary.totalIncomeEur)).toBeCloseTo(300, 5);
-    expect(result!.earnSummary.freigrenzeStatus).toBe('over');
-    expect(result!.earnSummary.perCoinBreakdown).toHaveLength(1);
-    expect(result!.earnSummary.perCoinBreakdown[0].symbol).toBe('DOT');
+    expect(parseFloat(result?.earnSummary.totalIncomeEur)).toBeCloseTo(300, 5);
+    expect(result?.earnSummary.freigrenzeStatus).toBe('over');
+    expect(result?.earnSummary.perCoinBreakdown).toHaveLength(1);
+    expect(result?.earnSummary.perCoinBreakdown[0].symbol).toBe('DOT');
 
     // No consumptions seeded → empty appendix
-    expect(result!.tradeAppendix).toHaveLength(0);
+    expect(result?.tradeAppendix).toHaveLength(0);
   });
 
   it('includes complete TradeAppendixRow fields for each row', () => {
@@ -857,7 +929,13 @@ describe('Scenario 8: Mixed year — all three buckets', () => {
 
     const buyTx = db
       .insert(transactions)
-      .values(makeTransaction({ canonicalType: 'buy', tradedAt: '2024-01-01T00:00:00.000Z', exchange: 'bitget' }))
+      .values(
+        makeTransaction({
+          canonicalType: 'buy',
+          tradedAt: '2024-01-01T00:00:00.000Z',
+          exchange: 'bitget',
+        })
+      )
       .returning({ id: transactions.id })
       .get();
     const sellTx = db
@@ -905,7 +983,7 @@ describe('Scenario 8: Mixed year — all three buckets', () => {
       .run();
 
     const result = generator.generate(2024);
-    const row = result!.tradeAppendix[0];
+    const row = result?.tradeAppendix[0];
 
     expect(row.symbol).toBe('BTC');
     expect(row.buyDate).toBe('2024-01-01T00:00:00.000Z');
@@ -919,5 +997,6 @@ describe('Scenario 8: Mixed year — all three buckets', () => {
     expect(row.haltefristMet).toBe(false);
     expect(row.exchange).toBe('bitget');
     expect(typeof row.id).toBe('number');
+    expect(typeof row.sellTransactionId).toBe('number');
   });
 });

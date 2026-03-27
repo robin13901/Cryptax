@@ -11,8 +11,8 @@ import ImportSummary from './components/ImportSummary/ImportSummary';
 import PriceStatus from './components/PriceStatus/PriceStatus';
 import ReportTab from './components/Report/ReportTab';
 import SettingsTab from './components/Settings/SettingsTab';
-import Sidebar from './components/Sidebar/Sidebar';
 import type { TabId } from './components/Sidebar/Sidebar';
+import Sidebar from './components/Sidebar/Sidebar';
 import TransactionList from './components/Transactions/TransactionList';
 import './App.css';
 
@@ -141,7 +141,9 @@ function App() {
         onToggleCollapse={handleToggleSidebar}
       />
 
-      <div className={`app-layout__content${sidebarCollapsed ? ' app-layout__content--collapsed' : ''}`}>
+      <div
+        className={`app-layout__content${sidebarCollapsed ? ' app-layout__content--collapsed' : ''}`}
+      >
         {/* Page title header */}
         <header className="content-header">
           <h1 className="content-header__title">

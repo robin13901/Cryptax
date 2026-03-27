@@ -51,21 +51,17 @@ describe('SettingsTab', () => {
   });
 
   it('renders exchange connections section heading', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(screen.getByRole('region', { name: /boersenverbindungen/i })).toBeInTheDocument();
+      expect(screen.getByRole('region', { name: /börsenverbindungen/i })).toBeInTheDocument();
     });
   });
 
   it('renders app settings section heading', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
@@ -75,16 +71,12 @@ describe('SettingsTab', () => {
   });
 
   it('shows empty state when no connections exist', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/keine exchange-verbindungen konfiguriert/i)
-      ).toBeInTheDocument();
+      expect(screen.getByText(/keine exchange-verbindungen konfiguriert/i)).toBeInTheDocument();
     });
   });
 
@@ -107,35 +99,27 @@ describe('SettingsTab', () => {
   });
 
   it('shows add connection button', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /verbindung hinzufuegen/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /verbindung hinzufügen/i })).toBeInTheDocument();
     });
   });
 
   it('shows CredentialForm when add button is clicked', async () => {
     const user = userEvent.setup();
 
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /verbindung hinzufuegen/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /verbindung hinzufügen/i })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: /verbindung hinzufuegen/i }));
+    await user.click(screen.getByRole('button', { name: /verbindung hinzufügen/i }));
 
     // CredentialForm should now be visible
     expect(screen.getByLabelText('Bezeichnung')).toBeInTheDocument();
@@ -145,19 +129,15 @@ describe('SettingsTab', () => {
   it('hides form when cancel is clicked inside CredentialForm', async () => {
     const user = userEvent.setup();
 
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(
-        screen.getByRole('button', { name: /verbindung hinzufuegen/i })
-      ).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /verbindung hinzufügen/i })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: /verbindung hinzufuegen/i }));
+    await user.click(screen.getByRole('button', { name: /verbindung hinzufügen/i }));
     expect(screen.getByLabelText('API Key')).toBeInTheDocument();
 
     // Click cancel inside form — target the CredentialForm cancel button specifically
@@ -169,9 +149,7 @@ describe('SettingsTab', () => {
   });
 
   it('renders password change section with password fields', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
@@ -182,9 +160,7 @@ describe('SettingsTab', () => {
   });
 
   it('renders logout button in app settings section', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
@@ -197,9 +173,7 @@ describe('SettingsTab', () => {
     const onLogout = vi.fn();
     const user = userEvent.setup();
 
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     render(<SettingsTab onLogout={onLogout} />);
 
@@ -214,9 +188,7 @@ describe('SettingsTab', () => {
   });
 
   it('fetches connections from /api/exchanges on mount', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
@@ -244,10 +216,10 @@ describe('SettingsTab', () => {
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /verbindung hinzufuegen/i })).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /verbindung hinzufügen/i })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole('button', { name: /verbindung hinzufuegen/i }));
+    await user.click(screen.getByRole('button', { name: /verbindung hinzufügen/i }));
 
     // Fill and submit form
     await user.type(screen.getByLabelText('Bezeichnung'), 'Neu hinzugefuegt');
@@ -275,9 +247,7 @@ describe('SettingsTab', () => {
   });
 
   it('does not show "Alle synchronisieren" button when no connections', async () => {
-    vi.mocked(fetch).mockResolvedValueOnce(
-      new Response(JSON.stringify([]), { status: 200 })
-    );
+    vi.mocked(fetch).mockResolvedValueOnce(new Response(JSON.stringify([]), { status: 200 }));
 
     renderSettingsTab();
 
@@ -330,7 +300,9 @@ describe('SettingsTab', () => {
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /sync account synchronisieren/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /sync account synchronisieren/i })
+      ).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('button', { name: /sync account synchronisieren/i }));
@@ -358,7 +330,9 @@ describe('SettingsTab', () => {
     renderSettingsTab();
 
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: /error account synchronisieren/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /error account synchronisieren/i })
+      ).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole('button', { name: /error account synchronisieren/i }));

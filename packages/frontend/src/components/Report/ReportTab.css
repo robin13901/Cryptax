@@ -45,13 +45,15 @@
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: opacity 0.15s, transform 0.1s;
+  transition:
+    opacity 0.15s,
+    transform 0.1s;
 }
 
 .report-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-  transform: none !important;
+  transform: none;
 }
 
 .report-btn:not(:disabled):hover {

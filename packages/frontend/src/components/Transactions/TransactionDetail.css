@@ -17,10 +17,10 @@
   z-index: 201;
   display: flex;
   flex-direction: column;
-  background: rgba(18, 24, 38, 0.85);
-  backdrop-filter: blur(24px) saturate(1.5);
-  -webkit-backdrop-filter: blur(24px) saturate(1.5);
-  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(10, 14, 24, 0.88);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
@@ -44,7 +44,9 @@
   font-size: 1rem;
   line-height: 1;
   padding: 0.3rem 0.55rem;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .tx-detail-nav-btn:hover {
@@ -76,7 +78,9 @@
   font-size: 1.1rem;
   line-height: 1;
   padding: 0.3rem 0.55rem;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 }
 
 .tx-detail-close-btn:hover {
@@ -110,8 +114,8 @@
 
 /* Section */
 .tx-detail-section {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   padding: 1rem 1.1rem;
 }
@@ -144,7 +148,7 @@
 .tx-detail-dd {
   font-size: 0.82rem;
   color: rgba(255, 255, 255, 0.88);
-  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
   margin: 0;
   text-align: right;
   word-break: break-all;
@@ -181,7 +185,7 @@
   text-align: right;
   padding: 0.35rem 0.4rem;
   color: rgba(255, 255, 255, 0.8);
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   white-space: nowrap;
 }
@@ -236,7 +240,7 @@
 
 .tx-detail-tax-value {
   font-size: 0.88rem;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
   color: rgba(255, 255, 255, 0.88);
 }
 
@@ -322,5 +326,7 @@
 }
 
 @keyframes tx-detail-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

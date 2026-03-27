@@ -1,9 +1,6 @@
-import { eq } from 'drizzle-orm';
 import type { SyncResult } from '@cryptax/shared';
-import {
-  decryptCredentials,
-  getCredentialMasterKey,
-} from '../auth/credential-cipher.js';
+import { eq } from 'drizzle-orm';
+import { decryptCredentials, getCredentialMasterKey } from '../auth/credential-cipher.js';
 import { db } from '../db/client.js';
 import { exchangeConnections, importBatches } from '../db/schema.js';
 import { batchInsert } from '../import/insert.js';
@@ -67,9 +64,7 @@ export async function syncExchange(connectionId: number): Promise<SyncResult> {
   // -------------------------------------------------------------------------
   // 4. Determine incremental since timestamp from last watermark
   // -------------------------------------------------------------------------
-  const since = connection.lastSyncAt
-    ? new Date(connection.lastSyncAt).getTime()
-    : undefined;
+  const since = connection.lastSyncAt ? new Date(connection.lastSyncAt).getTime() : undefined;
 
   // -------------------------------------------------------------------------
   // 5. Fetch spot + futures independently (partial failure allowed)
@@ -122,9 +117,8 @@ export async function syncExchange(connectionId: number): Promise<SyncResult> {
       }
     }
   } else {
-    const errMsg = spotResult.reason instanceof Error
-      ? spotResult.reason.message
-      : String(spotResult.reason);
+    const errMsg =
+      spotResult.reason instanceof Error ? spotResult.reason.message : String(spotResult.reason);
     warnings.push(`Spot trade fetch failed: ${errMsg}`);
     spotStats = { imported: 0, duplicates: 0, errors: 1 };
   }
@@ -170,9 +164,10 @@ export async function syncExchange(connectionId: number): Promise<SyncResult> {
       }
     }
   } else {
-    const errMsg = futuresResult.reason instanceof Error
-      ? futuresResult.reason.message
-      : String(futuresResult.reason);
+    const errMsg =
+      futuresResult.reason instanceof Error
+        ? futuresResult.reason.message
+        : String(futuresResult.reason);
     warnings.push(`Futures trade fetch failed: ${errMsg}`);
     futuresStats = { imported: 0, duplicates: 0, errors: 1 };
   }

@@ -50,7 +50,7 @@ test.describe('Steuerreport E2E', () => {
 
     // Should show either report section headers or the empty-state message
     const hasContent = await page
-      .getByText(/Anlage SO|Keine Daten|Privates Veraeusserungsgeschaeft/)
+      .getByText(/Anlage SO|Keine Daten|Privates Veräußerungsgeschäft/)
       .isVisible();
     expect(hasContent).toBe(true);
   });

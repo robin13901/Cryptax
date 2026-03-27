@@ -1,4 +1,3 @@
-import GlassSurface from '../GlassSurface/GlassSurface';
 import './FreigrenzeBar.css';
 
 interface FreigrenzeBarProps {
@@ -52,40 +51,27 @@ function SingleBar({ label, sublabel, current, limit }: SingleBarProps) {
         aria-valuemax={limit}
         aria-label={`${label} Freigrenze: ${formatEurSimple(current)} von ${formatEurSimple(limit)}`}
       >
-        <div
-          className="freigrenze-bar-fill"
-          style={{ width: `${pct}%`, backgroundColor: color }}
-        />
+        <div className="freigrenze-bar-fill" style={{ width: `${pct}%`, backgroundColor: color }} />
       </div>
       {exceeded && (
         <p className="freigrenze-bar-warning">
-          Freigrenze uberschritten! Gewinne sind steuerpflichtig.
+          Freigrenze überschritten! Gewinne sind steuerpflichtig.
         </p>
       )}
     </div>
   );
 }
 
-export function FreigrenzeBar({ spotCurrent, spotLimit, earnCurrent, earnLimit }: FreigrenzeBarProps) {
+export function FreigrenzeBar({
+  spotCurrent,
+  spotLimit,
+  earnCurrent,
+  earnLimit,
+}: FreigrenzeBarProps) {
   return (
-    <GlassSurface width="100%" height="auto" borderRadius={10} backgroundOpacity={0.1}>
-      <div className="freigrenze-container">
-        <h3 className="freigrenze-title">Freigrenze-Status</h3>
-        <div className="freigrenze-bars">
-          <SingleBar
-            label="Spot"
-            sublabel="§23 EStG"
-            current={spotCurrent}
-            limit={spotLimit}
-          />
-          <SingleBar
-            label="Earn"
-            sublabel="§22 EStG"
-            current={earnCurrent}
-            limit={earnLimit}
-          />
-        </div>
-      </div>
-    </GlassSurface>
+    <div className="freigrenze-container">
+      <SingleBar label="Spot" sublabel="§23 EStG" current={spotCurrent} limit={spotLimit} />
+      <SingleBar label="Earn" sublabel="§22 EStG" current={earnCurrent} limit={earnLimit} />
+    </div>
   );
 }

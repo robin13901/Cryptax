@@ -248,7 +248,7 @@ describe('Scenario 1: Three BTC buys, partial sell crossing two lots + Haltefris
     expect(privateSale2024?.totalGainsEur).toBe('4000');
     // Tax-free gain from Lot A is not in totalGainsEur (only taxable gains counted)
     expect(privateSale2024?.totalLossesEur).toBe('0');
-    expect(privateSale2024?.tradeCount).toBe(1); // 1 unique sell transaction
+    expect(privateSale2024?.tradeCount).toBe(2); // 2 lot consumptions (1 sell × 2 lots)
 
     // No errors, no sellsWithoutLots
     expect(result.fifo.sellsWithoutLots).toHaveLength(0);

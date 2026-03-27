@@ -73,7 +73,7 @@ import { registerReportRoutes } from './report.js';
 // ---------------------------------------------------------------------------
 
 function makeTxInsert(
-  overrides: Partial<typeof transactions.$inferInsert> = {},
+  overrides: Partial<typeof transactions.$inferInsert> = {}
 ): typeof transactions.$inferInsert {
   return {
     exchange: 'bitget',
@@ -94,7 +94,7 @@ function makeTxInsert(
 }
 
 function makeSummaryInsert(
-  overrides: Partial<typeof taxSummaries.$inferInsert> = {},
+  overrides: Partial<typeof taxSummaries.$inferInsert> = {}
 ): typeof taxSummaries.$inferInsert {
   return {
     taxYear: 2024,
@@ -111,7 +111,7 @@ function makeSummaryInsert(
 }
 
 function makeLotInsert(
-  overrides: Partial<typeof fifoLots.$inferInsert> = {},
+  overrides: Partial<typeof fifoLots.$inferInsert> = {}
 ): typeof fifoLots.$inferInsert {
   return {
     symbol: 'BTC',
@@ -150,7 +150,7 @@ function seedTestData(year: number, checksum = 'chk-001'): void {
         taxYear: year,
         tradedAt: `${year}-06-01T12:00:00.000Z`,
         checksum,
-      }),
+      })
     )
     .returning()
     .all();
@@ -164,7 +164,7 @@ function seedTestData(year: number, checksum = 'chk-001'): void {
         canonicalType: 'buy',
         tradedAt: `${year - 1}-01-01T00:00:00.000Z`,
         checksum: `${checksum}-buy`,
-      }),
+      })
     )
     .returning()
     .all();
@@ -177,7 +177,7 @@ function seedTestData(year: number, checksum = 'chk-001'): void {
         taxYear: year,
         acquiredAt: `${year - 1}-01-01T00:00:00.000Z`,
         transactionId: buyTx.id,
-      }),
+      })
     )
     .returning()
     .all();
@@ -256,10 +256,13 @@ describe('GET /api/report/years', () => {
   });
 
   it('returns years from tax_summaries', async () => {
-    mockDbRef.current.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2024 }),
-      makeSummaryInsert({ taxYear: 2025, bucket: 'futures_pnl' }),
-    ]).run();
+    mockDbRef.current
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ taxYear: 2024 }),
+        makeSummaryInsert({ taxYear: 2025, bucket: 'futures_pnl' }),
+      ])
+      .run();
 
     const res = await app.request('/api/report/years');
     expect(res.status).toBe(200);
@@ -269,11 +272,14 @@ describe('GET /api/report/years', () => {
   });
 
   it('returns years sorted ascending', async () => {
-    mockDbRef.current.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2025 }),
-      makeSummaryInsert({ taxYear: 2023 }),
-      makeSummaryInsert({ taxYear: 2024, bucket: 'futures_pnl' }),
-    ]).run();
+    mockDbRef.current
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ taxYear: 2025 }),
+        makeSummaryInsert({ taxYear: 2023 }),
+        makeSummaryInsert({ taxYear: 2024, bucket: 'futures_pnl' }),
+      ])
+      .run();
 
     const res = await app.request('/api/report/years');
     const body = (await res.json()) as { years: number[] };
@@ -281,11 +287,14 @@ describe('GET /api/report/years', () => {
   });
 
   it('deduplicates years (multiple buckets per year)', async () => {
-    mockDbRef.current.insert(taxSummaries).values([
-      makeSummaryInsert({ taxYear: 2024, bucket: 'private_sale' }),
-      makeSummaryInsert({ taxYear: 2024, bucket: 'futures_pnl' }),
-      makeSummaryInsert({ taxYear: 2024, bucket: 'staking_earn' }),
-    ]).run();
+    mockDbRef.current
+      .insert(taxSummaries)
+      .values([
+        makeSummaryInsert({ taxYear: 2024, bucket: 'private_sale' }),
+        makeSummaryInsert({ taxYear: 2024, bucket: 'futures_pnl' }),
+        makeSummaryInsert({ taxYear: 2024, bucket: 'staking_earn' }),
+      ])
+      .run();
 
     const res = await app.request('/api/report/years');
     const body = (await res.json()) as { years: number[] };

@@ -480,6 +480,63 @@ describe('runFifoEngine', () => {
     expect(skippedIds).toContain(transferIn.id);
   });
 
+  it('handles negative sell amounts from spot_tx CSV (signed amounts)', () => {
+    // Bitget spot_tx CSVs store sell amounts as negative (e.g. "-233.32")
+    const buy = makeTx({
+      canonicalType: 'buy',
+      sourceType: 'spot_tx',
+      symbol: 'MOZ',
+      amount: '1234.56',
+      eurPrice: '0.04',
+      fee: '0.05',
+      tradedAt: '2024-12-10T11:15:00.000Z',
+    });
+    const sell = makeTx({
+      canonicalType: 'sell',
+      side: 'sell',
+      sourceType: 'spot_tx',
+      symbol: 'MOZ',
+      amount: '-233.32', // negative from CSV
+      eurPrice: '0.04',
+      fee: '-0.16', // negative fee from CSV
+      tradedAt: '2024-12-10T14:36:00.000Z',
+    });
+
+    const result = runFifoEngine([buy, sell]);
+
+    expect(result.consumptions).toHaveLength(1);
+    const c = result.consumptions[0];
+    expect(c.sellTransactionId).toBe(sell.id);
+    expect(c.amountConsumed.toNumber()).toBeCloseTo(233.32, 6);
+    // proceeds = 233.32 * 0.04 = 9.3328
+    expect(c.proceedsEur.toNumber()).toBeCloseTo(9.3328, 4);
+    expect(c.gainLossEur.isFinite()).toBe(true);
+    expect(result.sellsWithoutLots).toHaveLength(0);
+    // Lot should have remaining = 1234.56 - 233.32 = 1001.24
+    expect(result.lots[0].remainingAmount.toNumber()).toBeCloseTo(1001.24, 6);
+  });
+
+  it('handles negative buy fee from spot_tx CSV', () => {
+    // spot_tx CSVs may store fees as negative (e.g. "-0.05")
+    const buy = makeTx({
+      canonicalType: 'buy',
+      sourceType: 'spot_tx',
+      symbol: 'MOZ',
+      amount: '1000',
+      eurPrice: '0.04',
+      fee: '-0.05', // negative fee from CSV
+    });
+
+    const result = runFifoEngine([buy]);
+
+    expect(result.lots).toHaveLength(1);
+    const lot = result.lots[0];
+    // feeEur = abs(-0.05) * 0.04 = 0.002
+    expect(lot.feeEur.toNumber()).toBeCloseTo(0.002, 6);
+    // costPerUnitEur = (0.04 * 1000 + 0.002) / 1000 = 0.040002
+    expect(lot.costPerUnitEur.toNumber()).toBeCloseTo(0.040002, 6);
+  });
+
   it('does not mutate the input transaction array', () => {
     const txs = [
       makeTx({ canonicalType: 'buy', tradedAt: '2024-02-01T00:00:00.000Z' }),

@@ -11,14 +11,14 @@
  * Follows the registerXxxRoutes(app: Hono) pattern used by other route modules.
  */
 
-import { eq, sql } from 'drizzle-orm';
+import type { ReportData } from '@cryptax/shared';
+import { sql } from 'drizzle-orm';
 import type { Context, Hono } from 'hono';
 import { db } from '../db/client.js';
 import { taxSummaries } from '../db/schema.js';
 import { ReportGenerator } from '../engine/report-generator.js';
-import { buildPdf } from '../report/pdf-builder.js';
 import { buildCsv } from '../report/csv-builder.js';
-import type { ReportData } from '@cryptax/shared';
+import { buildPdf } from '../report/pdf-builder.js';
 
 // ---------------------------------------------------------------------------
 // Shared helper — parse year param and generate ReportData
@@ -35,7 +35,7 @@ import type { ReportData } from '@cryptax/shared';
  */
 async function getReportData(
   c: Context,
-  rawYear: string,
+  rawYear: string
 ): Promise<{ data: ReportData; error?: never } | { data?: never; error: Response }> {
   const taxYear = parseInt(rawYear, 10);
   if (Number.isNaN(taxYear)) {
@@ -49,7 +49,7 @@ async function getReportData(
 
   if (data === null) {
     return {
-      error: c.json({ error: `Keine Daten fuer das Jahr ${taxYear}` }, 404) as Response,
+      error: c.json({ error: `Keine Daten für das Jahr ${taxYear}` }, 404) as Response,
     };
   }
 
@@ -110,7 +110,7 @@ export function registerReportRoutes(app: Hono) {
     // Convert Node.js Buffer to ArrayBuffer — Hono's body() accepts ArrayBuffer
     const arrayBuffer = pdfBuffer.buffer.slice(
       pdfBuffer.byteOffset,
-      pdfBuffer.byteOffset + pdfBuffer.byteLength,
+      pdfBuffer.byteOffset + pdfBuffer.byteLength
     ) as ArrayBuffer;
     return c.body(arrayBuffer);
   });

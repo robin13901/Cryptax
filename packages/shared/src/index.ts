@@ -17,6 +17,12 @@ export {
 } from './decimal/index.js';
 export type { EngineRunResponse } from './types/engine.js';
 export type {
+  ConnectionTestResult,
+  ExchangeConnection,
+  ExchangeCredentials,
+  SyncResult,
+} from './types/exchange.js';
+export type {
   ImportBatch,
   ImportFileError,
   ImportResponse,
@@ -28,6 +34,16 @@ export type {
   PriceStatusResponse,
 } from './types/price.js';
 export type {
+  EarnCoinBreakdown,
+  EarnSummary,
+  FuturesAppendixRow,
+  FuturesSummary,
+  ReportData,
+  SpotSummary,
+  TradeAppendixRow,
+} from './types/report.js';
+export type { YearSummaryResponse } from './types/summary.js';
+export type {
   DashboardKpi,
   EarnIncome,
   FifoLot,
@@ -36,21 +52,6 @@ export type {
   TaxBucket,
   TaxSummary,
 } from './types/tax.js';
-export type {
-  EarnCoinBreakdown,
-  EarnSummary,
-  FuturesSummary,
-  ReportData,
-  SpotSummary,
-  TradeAppendixRow,
-} from './types/report.js';
-export type { YearSummaryResponse } from './types/summary.js';
-export type {
-  ConnectionTestResult,
-  ExchangeConnection,
-  ExchangeCredentials,
-  SyncResult,
-} from './types/exchange.js';
 export type {
   CanonicalType,
   ImportError,

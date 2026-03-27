@@ -58,7 +58,7 @@ describe('normalizeApiTrade', () => {
   it('always sets exchange to "bitget"', () => {
     const result = normalizeApiTrade(
       makeCcxtTrade() as Parameters<typeof normalizeApiTrade>[0],
-      'spot_tx',
+      'spot_tx'
     );
     expect(result.exchange).toBe('bitget');
   });
@@ -66,7 +66,7 @@ describe('normalizeApiTrade', () => {
   it('preserves spot_tx sourceType', () => {
     const result = normalizeApiTrade(
       makeCcxtTrade() as Parameters<typeof normalizeApiTrade>[0],
-      'spot_tx',
+      'spot_tx'
     );
     expect(result.sourceType).toBe('spot_tx');
   });
@@ -74,7 +74,7 @@ describe('normalizeApiTrade', () => {
   it('preserves futures_tx sourceType', () => {
     const result = normalizeApiTrade(
       makeCcxtTrade() as Parameters<typeof normalizeApiTrade>[0],
-      'futures_tx',
+      'futures_tx'
     );
     expect(result.sourceType).toBe('futures_tx');
   });
@@ -186,7 +186,10 @@ describe('normalizeApiTrade', () => {
   it('extracts correct taxYear for different years', () => {
     const ts2022 = new Date('2022-06-15T10:00:00Z').getTime();
     const trade = makeCcxtTrade({ timestamp: ts2022 });
-    const result = normalizeApiTrade(trade as Parameters<typeof normalizeApiTrade>[0], 'futures_tx');
+    const result = normalizeApiTrade(
+      trade as Parameters<typeof normalizeApiTrade>[0],
+      'futures_tx'
+    );
     expect(result.taxYear).toBe(2022);
   });
 
@@ -197,7 +200,7 @@ describe('normalizeApiTrade', () => {
   it('sets sourceFile to null (no CSV file for API trades)', () => {
     const result = normalizeApiTrade(
       makeCcxtTrade() as Parameters<typeof normalizeApiTrade>[0],
-      'spot_tx',
+      'spot_tx'
     );
     expect(result.sourceFile).toBeNull();
   });
@@ -221,7 +224,7 @@ describe('normalizeApiTrade', () => {
   it('produces a non-empty 64-char hex checksum', () => {
     const result = normalizeApiTrade(
       makeCcxtTrade() as Parameters<typeof normalizeApiTrade>[0],
-      'spot_tx',
+      'spot_tx'
     );
     expect(result.checksum).toMatch(/^[0-9a-f]{64}$/);
   });
@@ -234,15 +237,24 @@ describe('normalizeApiTrade', () => {
   });
 
   it('different trade.id produces different checksum', () => {
-    const t1 = normalizeApiTrade(makeCcxtTrade({ id: 'fill-A' }) as Parameters<typeof normalizeApiTrade>[0], 'spot_tx');
-    const t2 = normalizeApiTrade(makeCcxtTrade({ id: 'fill-B' }) as Parameters<typeof normalizeApiTrade>[0], 'spot_tx');
+    const t1 = normalizeApiTrade(
+      makeCcxtTrade({ id: 'fill-A' }) as Parameters<typeof normalizeApiTrade>[0],
+      'spot_tx'
+    );
+    const t2 = normalizeApiTrade(
+      makeCcxtTrade({ id: 'fill-B' }) as Parameters<typeof normalizeApiTrade>[0],
+      'spot_tx'
+    );
     expect(t1.checksum).not.toBe(t2.checksum);
   });
 
   it('different sourceType produces different checksum for same trade.id', () => {
     const trade = makeCcxtTrade({ id: 'fill-001' });
     const spot = normalizeApiTrade(trade as Parameters<typeof normalizeApiTrade>[0], 'spot_tx');
-    const futures = normalizeApiTrade(trade as Parameters<typeof normalizeApiTrade>[0], 'futures_tx');
+    const futures = normalizeApiTrade(
+      trade as Parameters<typeof normalizeApiTrade>[0],
+      'futures_tx'
+    );
     expect(spot.checksum).not.toBe(futures.checksum);
   });
 
@@ -297,7 +309,10 @@ describe('normalizeApiTrade', () => {
       fee: { cost: 0.62, currency: 'USDT' },
     });
 
-    const result = normalizeApiTrade(trade as Parameters<typeof normalizeApiTrade>[0], 'futures_tx');
+    const result = normalizeApiTrade(
+      trade as Parameters<typeof normalizeApiTrade>[0],
+      'futures_tx'
+    );
 
     expect(result).toMatchObject({
       orderId: 'fill-fut-099',

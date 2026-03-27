@@ -6,6 +6,7 @@ import { streamSSE } from 'hono/streaming';
 import { db } from '../db/client.js';
 import { transactions } from '../db/schema.js';
 import { createDefaultEnrichmentDeps, runEnrichment } from '../prices/enrichment-engine.js';
+import { triggerEngineBackground } from './engine.js';
 
 // ---------------------------------------------------------------------------
 // Concurrent-run guard
@@ -133,6 +134,7 @@ export function registerPriceRoutes(app: Hono) {
       return c.json(response, 200);
     } finally {
       isRunning = false;
+      triggerEngineBackground();
     }
   });
 
@@ -179,6 +181,7 @@ export function registerPriceRoutes(app: Hono) {
         });
       } finally {
         isRunning = false;
+        triggerEngineBackground();
       }
     });
   });
@@ -244,6 +247,8 @@ export function registerPriceRoutes(app: Hono) {
       .where(eq(transactions.id, transactionId))
       .run();
 
+    triggerEngineBackground();
+
     return c.json({
       transactionId,
       eurPrice: priceDecimal.toFixed(),
@@ -269,5 +274,6 @@ export function triggerEnrichmentBackground(): void {
     .catch((err) => console.error('[enrichment] background run failed:', err))
     .finally(() => {
       isRunning = false;
+      triggerEngineBackground();
     });
 }

@@ -1,6 +1,6 @@
+import type { SyncResult } from '@cryptax/shared';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import type { SyncResult } from '@cryptax/shared';
 import SyncProgress from './SyncProgress';
 
 function makeSyncResult(overrides: Partial<SyncResult> = {}): SyncResult {
@@ -21,7 +21,7 @@ describe('SyncProgress', () => {
   it('renders spinner and text when syncing=true', () => {
     render(<SyncProgress syncing={true} />);
 
-    expect(screen.getByLabelText('Synchronisierung laeuft')).toBeInTheDocument();
+    expect(screen.getByLabelText('Synchronisierung läuft')).toBeInTheDocument();
     expect(screen.getByText('Synchronisiere...')).toBeInTheDocument();
   });
 
@@ -51,14 +51,14 @@ describe('SyncProgress', () => {
     render(<SyncProgress syncing={true} result={result} />);
 
     // Should show syncing state, not done state
-    expect(screen.getByLabelText('Synchronisierung laeuft')).toBeInTheDocument();
+    expect(screen.getByLabelText('Synchronisierung läuft')).toBeInTheDocument();
     expect(screen.queryByLabelText('Synchronisierung abgeschlossen')).not.toBeInTheDocument();
   });
 
   it('syncing=true takes priority over error', () => {
     render(<SyncProgress syncing={true} error="Some error" />);
 
-    expect(screen.getByLabelText('Synchronisierung laeuft')).toBeInTheDocument();
+    expect(screen.getByLabelText('Synchronisierung läuft')).toBeInTheDocument();
     expect(screen.queryByLabelText('Synchronisierungsfehler')).not.toBeInTheDocument();
   });
 

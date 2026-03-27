@@ -7,10 +7,11 @@
  * - Fees reduce the gain (Werbungskosten)
  * - Results aggregated per tax year
  */
+
+import { toDecimal } from '@cryptax/shared';
 import { describe, expect, it } from 'vitest';
 import { calculateSpotTax } from './spot-tax-calculator.js';
 import type { ConsumptionRecord } from './types.js';
-import { toDecimal } from '@cryptax/shared';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -231,7 +232,7 @@ describe('calculateSpotTax', () => {
     expect(result[1].taxableAmountEur).toBe('1200'); // > 1000, full amount
   });
 
-  it('counts trades correctly (unique sellTransactionIds)', () => {
+  it('counts trades correctly (total lot consumptions, not unique sellTransactionIds)', () => {
     // 3 sell transactions, but one sell consumed 2 lots → 4 consumption records
     const sell1Lot1 = makeConsumption({ sellTransactionId: 1001, taxYear: 2024 });
     const sell1Lot2 = makeConsumption({ sellTransactionId: 1001, taxYear: 2024 });
@@ -240,7 +241,7 @@ describe('calculateSpotTax', () => {
 
     const result = calculateSpotTax([sell1Lot1, sell1Lot2, sell2Lot1, sell3Lot1]);
 
-    expect(result[0].tradeCount).toBe(3); // 3 unique sell transaction IDs
+    expect(result[0].tradeCount).toBe(4); // 4 lot consumptions (each is a Veräußerungsgeschäft)
   });
 
   it('negative net gain (net loss) is not taxable', () => {

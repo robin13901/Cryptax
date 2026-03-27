@@ -16,7 +16,7 @@ const PasswordChange = ({ onLogout }: PasswordChangeProps) => {
   const validate = (): string | null => {
     if (!currentPassword) return 'Bitte aktuelles Passwort eingeben';
     if (newPassword.length < 8) return 'Neues Passwort muss mindestens 8 Zeichen lang sein';
-    if (newPassword !== confirmPassword) return 'Passworter stimmen nicht ueberein';
+    if (newPassword !== confirmPassword) return 'Passwörter stimmen nicht überein';
     return null;
   };
 
@@ -50,7 +50,7 @@ const PasswordChange = ({ onLogout }: PasswordChangeProps) => {
         setConfirmPassword('');
       } else {
         const data = await res.json<{ error?: string }>();
-        setError(data.error ?? 'Passwort konnte nicht geaendert werden');
+        setError(data.error ?? 'Passwort konnte nicht geändert werden');
       }
     } catch {
       setError('Verbindungsfehler');
@@ -94,7 +94,7 @@ const PasswordChange = ({ onLogout }: PasswordChangeProps) => {
 
         <div className="password-change__field">
           <label className="password-change__label" htmlFor="pw-confirm">
-            Neues Passwort bestaetigen
+            Neues Passwort bestätigen
           </label>
           <input
             id="pw-confirm"
@@ -115,7 +115,7 @@ const PasswordChange = ({ onLogout }: PasswordChangeProps) => {
 
         {success && (
           <p className="password-change__success" role="status">
-            Passwort erfolgreich geaendert
+            Passwort erfolgreich geändert
           </p>
         )}
 
@@ -124,7 +124,7 @@ const PasswordChange = ({ onLogout }: PasswordChangeProps) => {
           className="password-change__btn"
           disabled={saving || !currentPassword || !newPassword || !confirmPassword}
         >
-          {saving ? 'Speichern...' : 'Passwort aendern'}
+          {saving ? 'Speichern...' : 'Passwort ändern'}
         </button>
       </form>
 

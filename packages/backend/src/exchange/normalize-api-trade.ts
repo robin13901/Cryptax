@@ -32,11 +32,10 @@ import type { transactions } from '../db/schema.js';
  */
 export function normalizeApiTrade(
   trade: Trade,
-  sourceType: 'spot_tx' | 'futures_tx',
+  sourceType: 'spot_tx' | 'futures_tx'
 ): typeof transactions.$inferInsert {
-  const tradedAt = trade.timestamp != null
-    ? new Date(trade.timestamp).toISOString()
-    : new Date().toISOString();
+  const tradedAt =
+    trade.timestamp != null ? new Date(trade.timestamp).toISOString() : new Date().toISOString();
 
   const taxYear = parseInt(tradedAt.substring(0, 4), 10);
 

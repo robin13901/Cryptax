@@ -8,17 +8,29 @@ import './TransactionList.css';
 
 type SortColumn = 'tradedAt' | 'amount' | 'symbol' | 'canonicalType';
 type SortDir = 'asc' | 'desc';
+export type CurrencyMode = 'eur' | 'token';
 
 const PAGE_SIZE = 50;
+const COL_COUNT = 10;
 
-const COLUMNS: { key: SortColumn | null; label: string }[] = [
+interface ColumnDef {
+  key: SortColumn | null;
+  label: string;
+  toggleable?: boolean;
+  numeric?: boolean;
+}
+
+const COLUMNS: ColumnDef[] = [
   { key: 'tradedAt', label: 'Datum' },
   { key: 'symbol', label: 'Coin' },
+  { key: null, label: 'Paar' },
   { key: 'canonicalType', label: 'Typ' },
   { key: null, label: 'Richtung' },
-  { key: 'amount', label: 'Menge' },
-  { key: null, label: 'EUR Wert' },
-  { key: null, label: 'Gebühr' },
+  { key: 'amount', label: 'Anteile', numeric: true },
+  { key: null, label: 'Kurs', toggleable: true, numeric: true },
+  { key: null, label: 'Wert', toggleable: true, numeric: true },
+  { key: null, label: 'P&L', toggleable: true, numeric: true },
+  { key: null, label: 'Gebühr', toggleable: true, numeric: true },
 ];
 
 const TransactionList = () => {
@@ -34,6 +46,7 @@ const TransactionList = () => {
   const [offset, setOffset] = useState(0);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
+  const [currencyMode, setCurrencyMode] = useState<CurrencyMode>('eur');
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -55,7 +68,7 @@ const TransactionList = () => {
       if (filters.dateTo) p.set('to', filters.dateTo);
       return p;
     },
-    [filters, sortBy, sortDir],
+    [filters, sortBy, sortDir]
   );
 
   // Fetch a page, optionally appending to existing list
@@ -77,17 +90,16 @@ const TransactionList = () => {
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-        const data: TransactionPageResponse = await res.json() as TransactionPageResponse;
+        const data: TransactionPageResponse = (await res.json()) as TransactionPageResponse;
 
         setItems((prev) => (append ? [...prev, ...data.items] : data.items));
         setTotal(data.total);
         setHasMore(data.hasMore);
         setOffset(currentOffset + data.items.length);
 
-        // Extract years for filter dropdown on first load
-        if (!append && availableYears.length === 0) {
-          const years = [...new Set(data.items.map((i) => i.taxYear))].sort((a, b) => b - a);
-          if (years.length) setAvailableYears(years);
+        // Use backend-provided available years
+        if (data.availableYears?.length) {
+          setAvailableYears(data.availableYears);
         }
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') return;
@@ -97,7 +109,7 @@ const TransactionList = () => {
         setInitialLoading(false);
       }
     },
-    [buildParams, availableYears.length],
+    [buildParams]
   );
 
   // Reset and reload when filters / sort changes
@@ -107,7 +119,7 @@ const TransactionList = () => {
     setHasMore(false);
     void fetchPage(0, false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters, sortBy, sortDir]);
+  }, [fetchPage]);
 
   // IntersectionObserver for infinite scroll
   useEffect(() => {
@@ -119,7 +131,7 @@ const TransactionList = () => {
           void fetchPage(offset, true);
         }
       },
-      { threshold: 0.1 },
+      { threshold: 0.1 }
     );
 
     if (sentinelRef.current) {
@@ -150,13 +162,15 @@ const TransactionList = () => {
     if (idx === -1) return;
     const nextIdx = direction === 'prev' ? idx - 1 : idx + 1;
     if (nextIdx >= 0 && nextIdx < items.length) {
-      setSelectedId(items[nextIdx]!.id);
+      setSelectedId(items[nextIdx]?.id);
     }
   };
 
   const selectedIdx = selectedId !== null ? items.findIndex((i) => i.id === selectedId) : -1;
   const hasPrev = selectedIdx > 0;
   const hasNext = selectedIdx >= 0 && selectedIdx < items.length - 1;
+
+  const toggleCurrencyMode = () => setCurrencyMode((m) => (m === 'eur' ? 'token' : 'eur'));
 
   const getSortIndicator = (col: SortColumn | null) => {
     if (col === null || col !== sortBy) return null;
@@ -168,9 +182,7 @@ const TransactionList = () => {
       <div className="tx-list-header">
         <h2 className="tx-list-title">Transaktionen</h2>
         {!initialLoading && (
-          <span className="tx-list-count">
-            {total.toLocaleString('de-DE')} gesamt
-          </span>
+          <span className="tx-list-count">{total.toLocaleString('de-DE')} gesamt</span>
         )}
       </div>
 
@@ -186,37 +198,57 @@ const TransactionList = () => {
         <table className="tx-table" aria-label="Transaktionsliste">
           <thead>
             <tr>
-              {COLUMNS.map((col, i) => (
-                <th
-                  key={i}
-                  className={`tx-th${col.key ? ' tx-th--sortable' : ''}${col.key === sortBy ? ' tx-th--active' : ''}`}
-                  onClick={col.key ? () => handleSort(col.key!) : undefined}
-                  tabIndex={col.key ? 0 : undefined}
-                  onKeyDown={
-                    col.key
-                      ? (e) => {
-                          if (e.key === 'Enter' || e.key === ' ') handleSort(col.key!);
-                        }
-                      : undefined
-                  }
-                  aria-sort={
-                    col.key && col.key === sortBy
-                      ? sortDir === 'asc'
-                        ? 'ascending'
-                        : 'descending'
-                      : undefined
-                  }
-                >
-                  {col.label}
-                  {col.key && getSortIndicator(col.key)}
-                </th>
-              ))}
+              {COLUMNS.map((col, i) => {
+                const isSortable = !!col.key;
+                const isToggleable = !!col.toggleable;
+                const isActive = col.key === sortBy;
+                const clickable = isSortable || isToggleable;
+                return (
+                  <th
+                    key={i}
+                    className={`tx-th${isSortable ? ' tx-th--sortable' : ''}${isActive ? ' tx-th--active' : ''}${isToggleable ? ' tx-th--toggleable' : ''}${col.numeric ? ' tx-th--numeric' : ''}`}
+                    onClick={
+                      isSortable
+                        ? () => handleSort(col.key!)
+                        : isToggleable
+                          ? toggleCurrencyMode
+                          : undefined
+                    }
+                    tabIndex={clickable ? 0 : undefined}
+                    onKeyDown={
+                      clickable
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              if (isSortable) handleSort(col.key!);
+                              else toggleCurrencyMode();
+                            }
+                          }
+                        : undefined
+                    }
+                    aria-sort={
+                      col.key && isActive
+                        ? sortDir === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : undefined
+                    }
+                  >
+                    {col.label}
+                    {isSortable && getSortIndicator(col.key)}
+                    {isToggleable && (
+                      <span className="tx-currency-badge">
+                        {currencyMode === 'eur' ? '€' : 'Token'}
+                      </span>
+                    )}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
             {initialLoading ? (
               <tr>
-                <td colSpan={7} className="tx-loading-cell">
+                <td colSpan={COL_COUNT} className="tx-loading-cell">
                   <div className="tx-skeleton-rows">
                     {Array.from({ length: 8 }).map((_, i) => (
                       <div key={i} className="tx-skeleton-row" />
@@ -226,7 +258,7 @@ const TransactionList = () => {
               </tr>
             ) : items.length === 0 ? (
               <tr>
-                <td colSpan={7} className="tx-empty-cell">
+                <td colSpan={COL_COUNT} className="tx-empty-cell">
                   Keine Transaktionen gefunden
                 </td>
               </tr>
@@ -237,6 +269,7 @@ const TransactionList = () => {
                   item={item}
                   selected={selectedId === item.id}
                   onSelect={setSelectedId}
+                  currencyMode={currencyMode}
                 />
               ))
             )}

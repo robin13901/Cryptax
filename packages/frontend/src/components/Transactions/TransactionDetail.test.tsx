@@ -9,7 +9,7 @@ import TransactionDetail from './TransactionDetail';
 // ---------------------------------------------------------------------------
 
 function makeTransaction(
-  overrides: Partial<TransactionDetailResponse['transaction']> = {},
+  overrides: Partial<TransactionDetailResponse['transaction']> = {}
 ): TransactionDetailResponse['transaction'] {
   return {
     id: 42,
@@ -90,9 +90,7 @@ describe('TransactionDetail', () => {
   });
 
   it('is not visible when transactionId is null (renders nothing)', () => {
-    const { container } = render(
-      <TransactionDetail {...defaultProps} transactionId={null} />,
-    );
+    const { container } = render(<TransactionDetail {...defaultProps} transactionId={null} />);
     // No panel rendered when id is null
     expect(container.querySelector('.tx-detail-panel')).not.toBeInTheDocument();
     expect(container.querySelector('.tx-detail-overlay')).not.toBeInTheDocument();
@@ -100,10 +98,17 @@ describe('TransactionDetail', () => {
 
   it('shows loading state initially when transactionId is provided', async () => {
     vi.mocked(global.fetch).mockImplementation(
-      () => new Promise((resolve) => setTimeout(() => resolve({
-        ok: true,
-        json: () => Promise.resolve(makeDetail()),
-      } as Response), 200)),
+      () =>
+        new Promise((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                ok: true,
+                json: () => Promise.resolve(makeDetail()),
+              } as Response),
+            200
+          )
+        )
     );
 
     render(<TransactionDetail {...defaultProps} transactionId={42} />);
@@ -335,13 +340,7 @@ describe('TransactionDetail', () => {
       json: () => Promise.resolve(makeDetail()),
     } as Response);
 
-    render(
-      <TransactionDetail
-        {...defaultProps}
-        transactionId={42}
-        onClose={onClose}
-      />,
-    );
+    render(<TransactionDetail {...defaultProps} transactionId={42} onClose={onClose} />);
 
     await waitFor(() => {
       expect(screen.getByLabelText('Schließen')).toBeInTheDocument();
@@ -359,11 +358,7 @@ describe('TransactionDetail', () => {
     } as Response);
 
     const { container } = render(
-      <TransactionDetail
-        {...defaultProps}
-        transactionId={42}
-        onClose={onClose}
-      />,
+      <TransactionDetail {...defaultProps} transactionId={42} onClose={onClose} />
     );
 
     await waitFor(() => {
@@ -388,7 +383,7 @@ describe('TransactionDetail', () => {
         onNavigate={onNavigate}
         hasPrev={true}
         hasNext={false}
-      />,
+      />
     );
 
     await userEvent.click(screen.getByLabelText('Vorherige Transaktion'));
@@ -409,7 +404,7 @@ describe('TransactionDetail', () => {
         onNavigate={onNavigate}
         hasPrev={false}
         hasNext={true}
-      />,
+      />
     );
 
     await userEvent.click(screen.getByLabelText('Nächste Transaktion'));
@@ -422,9 +417,7 @@ describe('TransactionDetail', () => {
       json: () => Promise.resolve(makeDetail()),
     } as Response);
 
-    render(
-      <TransactionDetail {...defaultProps} transactionId={42} hasPrev={false} />,
-    );
+    render(<TransactionDetail {...defaultProps} transactionId={42} hasPrev={false} />);
 
     const prevBtn = screen.getByLabelText('Vorherige Transaktion');
     expect(prevBtn).toBeDisabled();
@@ -436,9 +429,7 @@ describe('TransactionDetail', () => {
       json: () => Promise.resolve(makeDetail()),
     } as Response);
 
-    render(
-      <TransactionDetail {...defaultProps} transactionId={42} hasNext={false} />,
-    );
+    render(<TransactionDetail {...defaultProps} transactionId={42} hasNext={false} />);
 
     const nextBtn = screen.getByLabelText('Nächste Transaktion');
     expect(nextBtn).toBeDisabled();
@@ -461,9 +452,7 @@ describe('TransactionDetail', () => {
       json: () => Promise.resolve(makeDetail()),
     } as Response);
 
-    const { rerender } = render(
-      <TransactionDetail {...defaultProps} transactionId={10} />,
-    );
+    const { rerender } = render(<TransactionDetail {...defaultProps} transactionId={10} />);
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith('/api/transactions/10');

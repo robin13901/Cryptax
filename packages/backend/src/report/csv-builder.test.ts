@@ -14,8 +14,8 @@
  *   - Sequential row numbering (Nr column)
  */
 
-import { describe, expect, it } from 'vitest';
 import type { ReportData, TradeAppendixRow } from '@cryptax/shared';
+import { describe, expect, it } from 'vitest';
 import { buildCsv, escapeCsvField } from './csv-builder.js';
 
 // ---------------------------------------------------------------------------
@@ -25,6 +25,7 @@ import { buildCsv, escapeCsvField } from './csv-builder.js';
 function makeTradeRow(overrides: Partial<TradeAppendixRow> = {}): TradeAppendixRow {
   return {
     id: 1,
+    sellTransactionId: 1,
     symbol: 'BTC',
     buyDate: '2024-01-01T00:00:00.000Z',
     sellDate: '2024-09-01T00:00:00.000Z',
@@ -75,9 +76,16 @@ function makeReportData(overrides: Partial<ReportData> = {}): ReportData {
     },
     tradeAppendix: [
       makeTradeRow({ id: 1, symbol: 'BTC', haltefristMet: false, gainLossEur: '5000.00' }),
-      makeTradeRow({ id: 2, symbol: 'ETH', haltefristMet: true, gainLossEur: '-500.00', heldDays: 400 }),
+      makeTradeRow({
+        id: 2,
+        symbol: 'ETH',
+        haltefristMet: true,
+        gainLossEur: '-500.00',
+        heldDays: 400,
+      }),
       makeTradeRow({ id: 3, symbol: 'SOL', haltefristMet: false, gainLossEur: '200.00' }),
     ],
+    futuresAppendix: [],
     ...overrides,
   };
 }
@@ -154,9 +162,9 @@ describe('German header labels', () => {
     expect(header).toContain('Kaufdatum');
     expect(header).toContain('Verkaufdatum');
     expect(header).toContain('Einstandswert EUR');
-    expect(header).toContain('Haltefrist erfuellt');
+    expect(header).toContain('Haltefrist erfüllt');
     expect(header).toContain('Steuerfrei');
-    expect(header).toContain('Boerse');
+    expect(header).toContain('Börse');
   });
 
   it('header row has all 13 expected column labels in order', () => {
@@ -170,13 +178,13 @@ describe('German header labels', () => {
     expect(fields[3]).toBe('Verkaufdatum');
     expect(fields[4]).toBe('Menge');
     expect(fields[5]).toBe('Einstandswert EUR');
-    expect(fields[6]).toBe('Erloes EUR');
+    expect(fields[6]).toBe('Erlös EUR');
     expect(fields[7]).toBe('Gewinn/Verlust EUR');
-    expect(fields[8]).toBe('Gebuehr EUR');
+    expect(fields[8]).toBe('Gebühr EUR');
     expect(fields[9]).toBe('Haltedauer Tage');
-    expect(fields[10]).toBe('Haltefrist erfuellt');
+    expect(fields[10]).toBe('Haltefrist erfüllt');
     expect(fields[11]).toBe('Steuerfrei');
-    expect(fields[12]).toBe('Boerse');
+    expect(fields[12]).toBe('Börse');
   });
 });
 
@@ -214,25 +222,25 @@ describe('Data row count matches tradeAppendix length', () => {
 // ---------------------------------------------------------------------------
 
 describe('Haltefrist Ja/Nein mapping', () => {
-  it('haltefristMet=true renders "Ja" in both Haltefrist erfuellt and Steuerfrei columns', () => {
+  it('haltefristMet=true renders "Ja" in both Haltefrist erfüllt and Steuerfrei columns', () => {
     const data = makeReportData({
       tradeAppendix: [makeTradeRow({ haltefristMet: true })],
     });
     const csv = buildCsv(data);
     const lines = parseLines(csv);
     const fields = splitFields(lines[1]); // first data row
-    expect(fields[10]).toBe('Ja'); // Haltefrist erfuellt
+    expect(fields[10]).toBe('Ja'); // Haltefrist erfüllt
     expect(fields[11]).toBe('Ja'); // Steuerfrei
   });
 
-  it('haltefristMet=false renders "Nein" in both Haltefrist erfuellt and Steuerfrei columns', () => {
+  it('haltefristMet=false renders "Nein" in both Haltefrist erfüllt and Steuerfrei columns', () => {
     const data = makeReportData({
       tradeAppendix: [makeTradeRow({ haltefristMet: false })],
     });
     const csv = buildCsv(data);
     const lines = parseLines(csv);
     const fields = splitFields(lines[1]);
-    expect(fields[10]).toBe('Nein'); // Haltefrist erfuellt
+    expect(fields[10]).toBe('Nein'); // Haltefrist erfüllt
     expect(fields[11]).toBe('Nein'); // Steuerfrei
   });
 
@@ -315,14 +323,14 @@ describe('Summary section', () => {
     data.spotSummary.freigrenzeStatus = 'under';
     const csv = buildCsv(data);
     expect(csv).toContain('Eingehalten');
-    expect(csv).not.toContain('Ueberschritten');
+    expect(csv).not.toContain('Überschritten');
   });
 
-  it('summary shows "Ueberschritten" when freigrenzeStatus is "over"', () => {
+  it('summary shows "Überschritten" when freigrenzeStatus is "over"', () => {
     const data = makeReportData();
     data.spotSummary.freigrenzeStatus = 'over';
     const csv = buildCsv(data);
-    expect(csv).toContain('Ueberschritten');
+    expect(csv).toContain('Überschritten');
   });
 
   it('summary contains futures net EUR and estimated tax', () => {
@@ -332,7 +340,7 @@ describe('Summary section', () => {
     const csv = buildCsv(data);
     expect(csv).toContain('Futures Netto EUR');
     expect(csv).toContain('1500');
-    expect(csv).toContain('Geschaetzte Abgeltungssteuer EUR');
+    expect(csv).toContain('Geschätzte Abgeltungssteuer EUR');
     expect(csv).toContain('395.625');
   });
 
@@ -447,11 +455,7 @@ describe('Sequential Nr column', () => {
   });
 
   it('Nr column counts only data rows (not affected by summary rows)', () => {
-    const rows = [
-      makeTradeRow({ id: 1 }),
-      makeTradeRow({ id: 2 }),
-      makeTradeRow({ id: 3 }),
-    ];
+    const rows = [makeTradeRow({ id: 1 }), makeTradeRow({ id: 2 }), makeTradeRow({ id: 3 })];
     const csv = buildCsv(makeReportData({ tradeAppendix: rows }));
     const lines = parseLines(csv);
 
@@ -503,18 +507,18 @@ describe('Complete row field mapping', () => {
     const lines = parseLines(csv);
     const fields = splitFields(lines[1]);
 
-    expect(fields[0]).toBe('1');                        // Nr
-    expect(fields[1]).toBe('ETH');                      // Symbol
+    expect(fields[0]).toBe('1'); // Nr
+    expect(fields[1]).toBe('ETH'); // Symbol
     expect(fields[2]).toBe('2023-05-10T12:00:00.000Z'); // Kaufdatum
     expect(fields[3]).toBe('2024-02-15T09:30:00.000Z'); // Verkaufdatum
-    expect(fields[4]).toBe('2.5');                      // Menge
-    expect(fields[5]).toBe('4000.00');                  // Einstandswert EUR
-    expect(fields[6]).toBe('6000.00');                  // Erloes EUR
-    expect(fields[7]).toBe('2000.00');                  // Gewinn/Verlust EUR
-    expect(fields[8]).toBe('15.75');                    // Gebuehr EUR
-    expect(fields[9]).toBe('281');                      // Haltedauer Tage
-    expect(fields[10]).toBe('Nein');                    // Haltefrist erfuellt
-    expect(fields[11]).toBe('Nein');                    // Steuerfrei
-    expect(fields[12]).toBe('binance');                 // Boerse
+    expect(fields[4]).toBe('2.5'); // Menge
+    expect(fields[5]).toBe('4000.00'); // Einstandswert EUR
+    expect(fields[6]).toBe('6000.00'); // Erlös EUR
+    expect(fields[7]).toBe('2000.00'); // Gewinn/Verlust EUR
+    expect(fields[8]).toBe('15.75'); // Gebühr EUR
+    expect(fields[9]).toBe('281'); // Haltedauer Tage
+    expect(fields[10]).toBe('Nein'); // Haltefrist erfüllt
+    expect(fields[11]).toBe('Nein'); // Steuerfrei
+    expect(fields[12]).toBe('binance'); // Börse
   });
 });

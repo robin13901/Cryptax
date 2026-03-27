@@ -62,24 +62,23 @@ describe('runFuturesPnlEngine', () => {
     expect(result.skipped).toHaveLength(0);
   });
 
-  it('records realized P&L for futures_close_short', () => {
+  it('captures tx.fee on close trades', () => {
     const tx = makeTx({
-      canonicalType: 'futures_close_short',
-      symbol: 'ETHUSDT',
-      amount: '150',
-      eurPrice: '0.91',
-      taxYear: 2023,
+      canonicalType: 'futures_close_long',
+      symbol: 'BTCUSDT',
+      amount: '250',
+      fee: '-5',
+      eurPrice: '0.92',
+      taxYear: 2024,
     });
 
     const result = runFuturesPnlEngine([tx]);
 
     expect(result.positions).toHaveLength(1);
-    expect(result.positions[0].transactionId).toBe(tx.id);
-    expect(result.positions[0].symbol).toBe('ETH');
-    // 150 * 0.91 = 136.5
-    expect(result.positions[0].realizedPnlEur).toBe('136.5');
-    expect(result.positions[0].feeEur).toBe('0');
-    expect(result.positions[0].taxYear).toBe(2023);
+    // 250 * 0.92 = 230
+    expect(result.positions[0].realizedPnlEur).toBe('230');
+    // abs(-5 * 0.92) = 4.6
+    expect(result.positions[0].feeEur).toBe('4.6');
   });
 
   it('handles negative P&L (loss)', () => {
@@ -152,18 +151,40 @@ describe('runFuturesPnlEngine', () => {
     expect(result.positions[0].feeEur).toBe('0');
   });
 
-  it('skips futures_open_long and futures_open_short', () => {
-    const openLong = makeTx({ canonicalType: 'futures_open_long', symbol: 'BTCUSDT' });
-    const openShort = makeTx({ canonicalType: 'futures_open_short', symbol: 'ETHUSDT' });
+  it('records fee-only for futures_open_long and futures_open_short with fees', () => {
+    const openLong = makeTx({
+      canonicalType: 'futures_open_long',
+      symbol: 'BTCUSDT',
+      fee: '-2.5',
+      eurPrice: '0.92',
+    });
+    const openShort = makeTx({
+      canonicalType: 'futures_open_short',
+      symbol: 'ETHUSDT',
+      fee: '-1.0',
+      eurPrice: '0.91',
+    });
 
     const result = runFuturesPnlEngine([openLong, openShort]);
 
+    expect(result.positions).toHaveLength(2);
+    expect(result.positions[0].realizedPnlEur).toBe('0');
+    // abs(-2.5 * 0.92) = 2.3
+    expect(result.positions[0].feeEur).toBe('2.3');
+    expect(result.positions[1].realizedPnlEur).toBe('0');
+    // abs(-1.0 * 0.91) = 0.91
+    expect(result.positions[1].feeEur).toBe('0.91');
+    expect(result.skipped).toHaveLength(0);
+  });
+
+  it('skips futures_open with zero fee', () => {
+    const openLong = makeTx({ canonicalType: 'futures_open_long', symbol: 'BTCUSDT', fee: '0' });
+
+    const result = runFuturesPnlEngine([openLong]);
+
     expect(result.positions).toHaveLength(0);
-    expect(result.skipped).toHaveLength(2);
-    expect(result.skipped.map((s) => s.transactionId)).toContain(openLong.id);
-    expect(result.skipped.map((s) => s.transactionId)).toContain(openShort.id);
-    expect(result.skipped[0].reason).toBe('not a futures transaction');
-    expect(result.skipped[1].reason).toBe('not a futures transaction');
+    expect(result.skipped).toHaveLength(1);
+    expect(result.skipped[0].reason).toBe('open position with no fee');
   });
 
   it('skips non-futures transactions', () => {

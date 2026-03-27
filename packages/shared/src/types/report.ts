@@ -25,6 +25,12 @@ export interface ReportData {
    * Sorted by sellDate ASC, then symbol ASC.
    */
   tradeAppendix: TradeAppendixRow[];
+  /**
+   * Full futures appendix — ALL closed futures positions, funding payments,
+   * and fee records for the year.
+   * Sorted by date ASC, then symbol ASC.
+   */
+  futuresAppendix: FuturesAppendixRow[];
 }
 
 /**
@@ -52,11 +58,11 @@ export interface SpotSummary {
    * 'over'   → net gain > 1000 EUR, full amount taxable.
    */
   freigrenzeStatus: 'under' | 'over';
-  /** Total number of disposal transactions processed. */
+  /** Total number of FIFO lot consumptions (disposal records) processed. */
   tradeCount: number;
   /**
-   * Number of disposal transactions where haltefristMet = true
-   * (held ≥ 366 days — tax-free regardless of Freigrenze).
+   * Number of lot consumptions where haltefristMet = true
+   * (held >= 366 days — tax-free regardless of Freigrenze).
    */
   taxFreeTradeCount: number;
 }
@@ -135,6 +141,8 @@ export interface EarnCoinBreakdown {
 export interface TradeAppendixRow {
   /** lot_consumptions.id — stable row identifier. */
   id: number;
+  /** sell transaction ID — used for grouping lot consumptions from the same sale. */
+  sellTransactionId: number;
   /** Base asset symbol (e.g. 'BTC', 'ETH'). */
   symbol: string;
   /** ISO 8601 — date the lot was acquired (fifo_lots.acquired_at). */
@@ -159,5 +167,31 @@ export interface TradeAppendixRow {
    */
   haltefristMet: boolean;
   /** Exchange where the sell occurred. */
+  exchange: string;
+}
+
+/**
+ * One row in the futures appendix — represents a single closed futures position,
+ * funding payment, or fee record.
+ *
+ * Unlike spot trades, futures have no FIFO lot matching.
+ * Each record is a standalone P&L event.
+ */
+export interface FuturesAppendixRow {
+  /** futures_positions.id — stable row identifier. */
+  id: number;
+  /** FK to transactions table. */
+  transactionId: number;
+  /** Base asset symbol (e.g. 'BTC', 'ETH'). */
+  symbol: string;
+  /** ISO 8601 — date/time of the transaction (transactions.traded_at). */
+  date: string;
+  /** Human-readable direction: 'Close Long', 'Close Short', 'Funding', or 'Gebühr'. */
+  direction: string;
+  /** Realized P&L in EUR (positive = profit, negative = loss). */
+  realizedPnlEur: MoneyString;
+  /** Trading/funding fees in EUR. */
+  feeEur: MoneyString;
+  /** Exchange where the position was closed. */
   exchange: string;
 }

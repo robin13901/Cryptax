@@ -80,12 +80,12 @@ describe('formatPercent', () => {
 });
 
 describe('gainLossColor', () => {
-  it('returns var(--crypto-green) for positive value', () => {
-    expect(gainLossColor('100')).toBe('var(--crypto-green)');
+  it('returns green accent for positive value', () => {
+    expect(gainLossColor('100')).toBe('var(--accent-green, #34d399)');
   });
 
-  it('returns var(--crypto-red) for negative value', () => {
-    expect(gainLossColor('-50')).toBe('var(--crypto-red)');
+  it('returns red accent for negative value', () => {
+    expect(gainLossColor('-50')).toBe('var(--accent-red, #f87171)');
   });
 
   it('returns neutral color for zero', () => {
@@ -96,11 +96,11 @@ describe('gainLossColor', () => {
     expect(gainLossColor('NaN')).toBe('var(--text-secondary, rgba(255,255,255,0.6))');
   });
 
-  it('returns var(--crypto-green) for positive number', () => {
-    expect(gainLossColor(42)).toBe('var(--crypto-green)');
+  it('returns green accent for positive number', () => {
+    expect(gainLossColor(42)).toBe('var(--accent-green, #34d399)');
   });
 
-  it('returns var(--crypto-red) for negative number', () => {
-    expect(gainLossColor(-1)).toBe('var(--crypto-red)');
+  it('returns red accent for negative number', () => {
+    expect(gainLossColor(-1)).toBe('var(--accent-red, #f87171)');
   });
 });

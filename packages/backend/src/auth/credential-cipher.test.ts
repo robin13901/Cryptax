@@ -74,7 +74,7 @@ describe('credential-cipher', () => {
       const parsed = JSON.parse(blob) as Record<string, string>;
 
       // Flip one hex character in the ciphertext
-      const badCiphertext = parsed.ciphertext.slice(0, -2) + 'ff';
+      const badCiphertext = `${parsed.ciphertext.slice(0, -2)}ff`;
       const tampered = JSON.stringify({ ...parsed, ciphertext: badCiphertext });
 
       expect(() => decryptCredentials(tampered, MASTER_KEY)).toThrow();

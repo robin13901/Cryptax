@@ -1,9 +1,4 @@
-import {
-  createCipheriv,
-  createDecipheriv,
-  pbkdf2Sync,
-  randomBytes,
-} from 'node:crypto';
+import { createCipheriv, createDecipheriv, pbkdf2Sync, randomBytes } from 'node:crypto';
 import { eq } from 'drizzle-orm';
 import { db } from '../db/client.js';
 import { appSettings } from '../db/schema.js';

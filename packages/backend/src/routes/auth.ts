@@ -8,8 +8,7 @@ import { db } from '../db/client.js';
 import { appSettings } from '../db/schema.js';
 
 // JWT secret: use env var or generate ephemeral secret on startup
-export const JWT_SECRET =
-  process.env.JWT_SECRET ?? randomBytes(32).toString('hex');
+export const JWT_SECRET = process.env.JWT_SECRET ?? randomBytes(32).toString('hex');
 
 export function registerAuthRoutes(app: Hono): void {
   /**

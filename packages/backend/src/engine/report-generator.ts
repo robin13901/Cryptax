@@ -22,6 +22,7 @@
 import type {
   EarnCoinBreakdown,
   EarnSummary,
+  FuturesAppendixRow,
   FuturesSummary,
   ReportData,
   SpotSummary,
@@ -98,6 +99,11 @@ export class ReportGenerator {
     // -------------------------------------------------------------------------
     const tradeAppendix = this.buildTradeAppendix(taxYear);
 
+    // -------------------------------------------------------------------------
+    // Step 6: Build FuturesAppendix from futures_positions JOIN transactions
+    // -------------------------------------------------------------------------
+    const futuresAppendix = this.buildFuturesAppendix(taxYear);
+
     return {
       taxYear,
       generatedAt,
@@ -105,6 +111,7 @@ export class ReportGenerator {
       futuresSummary,
       earnSummary,
       tradeAppendix,
+      futuresAppendix,
     };
   }
 
@@ -117,9 +124,7 @@ export class ReportGenerator {
     const row = this.db
       .select()
       .from(taxSummaries)
-      .where(
-        sql`${taxSummaries.taxYear} = ${taxYear} AND ${taxSummaries.bucket} = 'private_sale'`
-      )
+      .where(sql`${taxSummaries.taxYear} = ${taxYear} AND ${taxSummaries.bucket} = 'private_sale'`)
       .limit(1)
       .all();
 
@@ -132,13 +137,11 @@ export class ReportGenerator {
     const freigrenzeStatus: 'under' | 'over' =
       parseFloat(netEur) <= parseFloat(TAX_CONSTANTS.SPOT_FREIGRENZE_EUR) ? 'under' : 'over';
 
-    // Count unique sell transactions where haltefrist_met = true for this year
+    // Count lot consumptions where haltefrist_met = true for this year
     const taxFreeResult = this.db
-      .select({ cnt: sql<number>`COUNT(DISTINCT ${lotConsumptions.sellTransactionId})` })
+      .select({ cnt: sql<number>`COUNT(*)` })
       .from(lotConsumptions)
-      .where(
-        sql`${lotConsumptions.taxYear} = ${taxYear} AND ${lotConsumptions.haltefristMet} = 1`
-      )
+      .where(sql`${lotConsumptions.taxYear} = ${taxYear} AND ${lotConsumptions.haltefristMet} = 1`)
       .all();
 
     const taxFreeTradeCount = Number(taxFreeResult[0]?.cnt ?? 0);
@@ -159,9 +162,7 @@ export class ReportGenerator {
     const row = this.db
       .select()
       .from(taxSummaries)
-      .where(
-        sql`${taxSummaries.taxYear} = ${taxYear} AND ${taxSummaries.bucket} = 'futures_pnl'`
-      )
+      .where(sql`${taxSummaries.taxYear} = ${taxYear} AND ${taxSummaries.bucket} = 'futures_pnl'`)
       .limit(1)
       .all();
 
@@ -196,9 +197,7 @@ export class ReportGenerator {
     const row = this.db
       .select()
       .from(taxSummaries)
-      .where(
-        sql`${taxSummaries.taxYear} = ${taxYear} AND ${taxSummaries.bucket} = 'staking_earn'`
-      )
+      .where(sql`${taxSummaries.taxYear} = ${taxYear} AND ${taxSummaries.bucket} = 'staking_earn'`)
       .limit(1)
       .all();
 
@@ -217,7 +216,9 @@ export class ReportGenerator {
     const totalIncomeEur = String(incomeResult[0]?.total ?? '0');
 
     const freigrenzeStatus: 'under' | 'over' =
-      parseFloat(totalIncomeEur) <= parseFloat(TAX_CONSTANTS.EARN_FREIGRENZE_EUR) ? 'under' : 'over';
+      parseFloat(totalIncomeEur) <= parseFloat(TAX_CONSTANTS.EARN_FREIGRENZE_EUR)
+        ? 'under'
+        : 'over';
 
     // Per-coin breakdown
     const coinRows = this.db
@@ -252,6 +253,7 @@ export class ReportGenerator {
     const rows = this.db
       .select({
         id: lotConsumptions.id,
+        sellTransactionId: lotConsumptions.sellTransactionId,
         symbol: fifoLots.symbol,
         buyDate: fifoLots.acquiredAt,
         sellDate: transactions.tradedAt,
@@ -273,6 +275,7 @@ export class ReportGenerator {
 
     return rows.map((r) => ({
       id: r.id,
+      sellTransactionId: r.sellTransactionId,
       symbol: r.symbol,
       buyDate: r.buyDate,
       sellDate: r.sellDate,
@@ -283,6 +286,45 @@ export class ReportGenerator {
       feeEur: r.feeEur,
       heldDays: r.heldDays,
       haltefristMet: Boolean(r.haltefristMet),
+      exchange: r.exchange,
+    }));
+  }
+
+  private buildFuturesAppendix(taxYear: number): FuturesAppendixRow[] {
+    const directionMap: Record<string, string> = {
+      futures_close_long: 'Close Long',
+      futures_close_short: 'Close Short',
+      futures_funding: 'Funding',
+      futures_fee: 'Gebühr',
+      futures_open_long: 'Gebühr',
+      futures_open_short: 'Gebühr',
+    };
+
+    const rows = this.db
+      .select({
+        id: futuresPositions.id,
+        transactionId: futuresPositions.transactionId,
+        symbol: futuresPositions.symbol,
+        date: transactions.tradedAt,
+        canonicalType: transactions.canonicalType,
+        realizedPnlEur: futuresPositions.realizedPnlEur,
+        feeEur: futuresPositions.feeEur,
+        exchange: transactions.exchange,
+      })
+      .from(futuresPositions)
+      .innerJoin(transactions, eq(futuresPositions.transactionId, transactions.id))
+      .where(eq(futuresPositions.taxYear, taxYear))
+      .orderBy(asc(transactions.tradedAt), asc(futuresPositions.symbol))
+      .all();
+
+    return rows.map((r) => ({
+      id: r.id,
+      transactionId: r.transactionId!,
+      symbol: r.symbol,
+      date: r.date,
+      direction: directionMap[r.canonicalType] ?? r.canonicalType,
+      realizedPnlEur: r.realizedPnlEur,
+      feeEur: r.feeEur,
       exchange: r.exchange,
     }));
   }

@@ -18,7 +18,7 @@ const SetupCard = ({ onSuccess }: SetupCardProps) => {
       return 'Passwort muss mindestens 8 Zeichen lang sein';
     }
     if (password !== confirm) {
-      return 'Passworter stimmen nicht ueberein';
+      return 'Passwörter stimmen nicht überein';
     }
     return null;
   };
@@ -71,7 +71,7 @@ const SetupCard = ({ onSuccess }: SetupCardProps) => {
             </div>
 
             <p className="setup-card__hint">
-              Erster Start – bitte lege ein Passwort fest, um die App zu schuetzen.
+              Erster Start – bitte lege ein Passwort fest, um die App zu schützen.
             </p>
 
             <form className="setup-card__form" onSubmit={handleSubmit}>
@@ -82,7 +82,6 @@ const SetupCard = ({ onSuccess }: SetupCardProps) => {
                   placeholder="Passwort"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  autoFocus
                   autoComplete="new-password"
                 />
               </div>
@@ -91,7 +90,7 @@ const SetupCard = ({ onSuccess }: SetupCardProps) => {
                 <input
                   type="password"
                   className="setup-card__input"
-                  placeholder="Passwort bestaetigen"
+                  placeholder="Passwort bestätigen"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
                   autoComplete="new-password"

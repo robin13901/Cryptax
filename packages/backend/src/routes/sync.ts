@@ -1,6 +1,6 @@
+import type { SyncResult } from '@cryptax/shared';
 import { eq } from 'drizzle-orm';
 import type { Hono } from 'hono';
-import type { SyncResult } from '@cryptax/shared';
 import { db } from '../db/client.js';
 import { exchangeConnections } from '../db/schema.js';
 import { syncExchange } from '../exchange/sync-engine.js';

@@ -88,7 +88,7 @@ const ExchangeCard = ({
               title="Synchronisieren"
               aria-label={`${connection.label} synchronisieren`}
             >
-              {syncing ? 'Laeuft...' : 'Synchronisieren'}
+              {syncing ? 'Läuft...' : 'Synchronisieren'}
             </button>
           )}
 

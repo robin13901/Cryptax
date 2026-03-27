@@ -19,9 +19,9 @@
  *   4. Edge cases (empty data, zero values)
  */
 
-import { describe, it, expect } from 'vitest';
 import type { ReportData, TradeAppendixRow } from '@cryptax/shared';
-import { buildPdf, formatEurPdf, formatDateDe } from './pdf-builder.js';
+import { describe, expect, it } from 'vitest';
+import { buildPdf, formatDateDe, formatEurPdf } from './pdf-builder.js';
 
 // ---------------------------------------------------------------------------
 // Test fixture — realistic German tax report data
@@ -65,6 +65,7 @@ const mockReportData: ReportData = {
   tradeAppendix: [
     {
       id: 1,
+      sellTransactionId: 100,
       symbol: 'BTC',
       buyDate: '2023-06-01T00:00:00.000Z',
       sellDate: '2024-02-15T00:00:00.000Z',
@@ -79,6 +80,7 @@ const mockReportData: ReportData = {
     },
     {
       id: 2,
+      sellTransactionId: 200,
       symbol: 'ETH',
       buyDate: '2022-03-10T00:00:00.000Z',
       sellDate: '2024-04-20T00:00:00.000Z',
@@ -92,6 +94,7 @@ const mockReportData: ReportData = {
       exchange: 'Bitget',
     },
   ],
+  futuresAppendix: [],
 };
 
 /** Fixture with minimal/zero data for edge case tests */
@@ -125,6 +128,7 @@ const emptyReportData: ReportData = {
     perCoinBreakdown: [],
   },
   tradeAppendix: [],
+  futuresAppendix: [],
 };
 
 // ---------------------------------------------------------------------------
@@ -329,7 +333,8 @@ const SYMBOLS = ['BTC', 'ETH', 'SOL', 'BNB', 'ADA', 'DOT', 'AVAX', 'MATIC'];
 function generateMockRows(count: number): TradeAppendixRow[] {
   return Array.from({ length: count }, (_, i) => {
     const haltefristMet = i % 3 === 0; // every 3rd row is tax-free
-    const gainLoss = i % 4 === 0 ? `-${(i * 7.5 + 50).toFixed(2)}` : `${(i * 12.3 + 100).toFixed(2)}`;
+    const gainLoss =
+      i % 4 === 0 ? `-${(i * 7.5 + 50).toFixed(2)}` : `${(i * 12.3 + 100).toFixed(2)}`;
     const heldDays = haltefristMet ? 400 + i : 180 + (i % 150);
     return {
       id: i + 1,
@@ -485,7 +490,7 @@ describe('trade appendix pagination', () => {
 
     const data = mockDataWithRows(rows);
     const buf = await buildPdf(data, { compress: false });
-    const content = buf.toString('latin1');
+    const _content = buf.toString('latin1');
 
     // With compress:false, some text content may be readable in content streams
     // At minimum verify valid PDF structure and page count

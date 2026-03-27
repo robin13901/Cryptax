@@ -10,7 +10,7 @@
  * Note: The Freigrenze is applied to the NET gain (gains minus losses) for the year.
  * Tax-free (Haltefrist-met) gains are excluded from the net gain calculation entirely.
  */
-import { TAX_CONSTANTS, fromDecimal, toDecimal, ZERO } from '@cryptax/shared';
+import { fromDecimal, TAX_CONSTANTS, toDecimal, ZERO } from '@cryptax/shared';
 import type { ConsumptionRecord, SpotTaxResult } from './types.js';
 
 // ---------------------------------------------------------------------------
@@ -49,11 +49,11 @@ export function calculateSpotTax(consumptions: ConsumptionRecord[]): SpotTaxResu
     let totalLosses = ZERO; // taxable losses (haltefristMet=false, gainLoss < 0) — stored negative
     let taxFreeGain = ZERO; // tax-exempt gains (haltefristMet=true, gainLoss > 0)
     let totalFees = ZERO; // all fees for the year (informational)
-    const sellIds = new Set<number>();
+    let tradeCount = 0;
 
     for (const record of records) {
       totalFees = totalFees.plus(record.feeEur);
-      sellIds.add(record.sellTransactionId);
+      tradeCount += 1;
 
       if (record.haltefristMet) {
         // Tax-free: gains go to taxFreeGain, losses are irrelevant for taxation
@@ -89,7 +89,7 @@ export function calculateSpotTax(consumptions: ConsumptionRecord[]): SpotTaxResu
       taxFreeGainEur: fromDecimal(taxFreeGain),
       taxableAmountEur: fromDecimal(taxableAmount),
       totalFeesEur: fromDecimal(totalFees),
-      tradeCount: sellIds.size,
+      tradeCount,
     });
   }
 

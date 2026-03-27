@@ -1,5 +1,5 @@
-import { bitget as BitgetExchange } from 'ccxt';
 import type { Trade } from 'ccxt';
+import { bitget as BitgetExchange } from 'ccxt';
 import type { ExchangeAdapter } from './exchange-adapter.js';
 
 // ---------------------------------------------------------------------------
@@ -88,7 +88,7 @@ export class BitgetAdapter implements ExchangeAdapter {
   private async fetchAllTrades(
     symbol: string | undefined,
     since: number | undefined,
-    params: Record<string, unknown>,
+    params: Record<string, unknown>
   ): Promise<Trade[]> {
     const all: Trade[] = [];
     let cursor: number | undefined = since;

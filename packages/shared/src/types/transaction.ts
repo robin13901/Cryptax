@@ -61,6 +61,10 @@ export interface TransactionListItem {
   id: number;
   orderId: string | null;
   symbol: string;
+  /** Base asset extracted from symbol (e.g. "BTC" from "BTC/EUR") */
+  baseCoin: string;
+  /** Full trading pair (e.g. "BTC/EUR", "BTCUSDT") — null for single-asset rows */
+  tradingPair: string | null;
   canonicalType: CanonicalType;
   sourceType: SourceType;
   side: TransactionSide;
@@ -71,6 +75,10 @@ export interface TransactionListItem {
   tradedAt: string;
   taxYear: number;
   exchange: string;
+  /** Total value in quote currency (e.g. USDT), from CSV or price×amount */
+  totalValue: MoneyString | null;
+  /** Aggregated FIFO/futures/earn P&L in EUR (null if engine not yet run or no tax event) */
+  gainLossEur: MoneyString | null;
 }
 
 /** Paginated transaction list response for GET /api/transactions */
@@ -80,6 +88,7 @@ export interface TransactionPageResponse {
   hasMore: boolean;
   offset: number;
   limit: number;
+  availableYears: number[];
 }
 
 /** FIFO lot consumption detail for transaction detail view */

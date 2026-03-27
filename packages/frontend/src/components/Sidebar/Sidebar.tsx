@@ -163,10 +163,7 @@ function renderIcon(id: TabId) {
 
 function Sidebar({ activeTab, onTabChange, collapsed, onToggleCollapse }: SidebarProps) {
   return (
-    <aside
-      className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`}
-      aria-label="Navigation"
-    >
+    <aside className={`sidebar${collapsed ? ' sidebar--collapsed' : ''}`} aria-label="Navigation">
       {/* Branding area */}
       <div className="sidebar__brand">
         <span className="sidebar__logo">C</span>

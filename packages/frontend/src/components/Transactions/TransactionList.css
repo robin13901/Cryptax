@@ -26,16 +26,18 @@
 /* Table wrapper with horizontal scroll */
 .tx-table-wrapper {
   overflow-x: auto;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.025);
+  background: rgba(10, 14, 24, 0.75);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
 }
 
 .tx-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
-  min-width: 680px;
+  font-size: 0.9rem;
+  min-width: 900px;
 }
 
 /* Header */
@@ -65,22 +67,51 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
+.tx-th--numeric {
+  text-align: right;
+}
+
 .tx-sort-indicator {
   margin-left: 0.3em;
   font-size: 0.65rem;
   opacity: 0.8;
 }
 
+/* Toggleable currency headers */
+.tx-th--toggleable {
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.tx-th--toggleable:hover {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.tx-currency-badge {
+  display: inline-block;
+  margin-left: 0.4em;
+  padding: 0.1em 0.4em;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  border-radius: 999px;
+  background: rgba(0, 112, 242, 0.2);
+  color: rgba(0, 150, 255, 0.9);
+  vertical-align: middle;
+  line-height: 1.3;
+}
+
 /* Rows */
 .tx-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   cursor: pointer;
   transition: background 0.12s ease;
   outline: none;
 }
 
 .tx-row:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .tx-row:focus-visible {
@@ -89,7 +120,7 @@
 }
 
 .tx-row--selected {
-  background: rgba(0, 112, 242, 0.1) !important;
+  background: rgba(0, 112, 242, 0.1);
 }
 
 .tx-row:last-child {
@@ -98,15 +129,15 @@
 
 /* Cells */
 .tx-cell {
-  padding: 0.55rem 0.85rem;
-  color: rgba(255, 255, 255, 0.85);
+  padding: 0.65rem 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
   vertical-align: middle;
   white-space: nowrap;
 }
 
 .tx-cell--date {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
 
@@ -115,15 +146,20 @@
   color: rgba(255, 255, 255, 0.95);
 }
 
+.tx-cell--pair {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.82rem;
+}
+
 .tx-cell--side {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.85rem;
 }
 
 .tx-cell--number {
   text-align: right;
   font-variant-numeric: tabular-nums;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
 }
 
 /* Empty / loading states */
@@ -156,8 +192,12 @@
 }
 
 @keyframes tx-shimmer {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
 }
 
 /* Infinite scroll sentinel */
@@ -188,7 +228,9 @@
 }
 
 @keyframes tx-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* End marker */

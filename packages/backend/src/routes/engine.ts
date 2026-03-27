@@ -21,6 +21,28 @@ let isRunning = false;
  *   POST  /api/engine/run     — Trigger full tax calculation pipeline
  *   GET   /api/engine/status  — Return current engine run status
  */
+/**
+ * Triggers the tax engine in the background.
+ * Guards against concurrent runs. Silently skips if engine is already running
+ * or if there are null-price errors (engine can't compute yet).
+ */
+export function triggerEngineBackground(): void {
+  if (isRunning) return;
+  isRunning = true;
+  try {
+    const nullErrors = checkNullPrices(db);
+    if (nullErrors.length > 0) {
+      return;
+    }
+    runTaxCalculation(db);
+    console.log('[engine] background run completed');
+  } catch (err) {
+    console.error('[engine] background run failed:', err);
+  } finally {
+    isRunning = false;
+  }
+}
+
 export function registerEngineRoutes(app: Hono) {
   // -------------------------------------------------------------------------
   // GET /api/engine/status

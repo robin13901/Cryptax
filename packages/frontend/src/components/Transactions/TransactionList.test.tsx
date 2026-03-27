@@ -13,6 +13,8 @@ function makeItem(id: number, overrides: Partial<TransactionListItem> = {}): Tra
     id,
     orderId: `order-${id}`,
     symbol: 'BTC',
+    baseCoin: 'BTC',
+    tradingPair: null,
     canonicalType: 'buy',
     sourceType: 'spot_tx',
     side: 'buy',
@@ -23,13 +25,15 @@ function makeItem(id: number, overrides: Partial<TransactionListItem> = {}): Tra
     tradedAt: '2024-06-15T10:30:00Z',
     taxYear: 2024,
     exchange: 'Bitget',
+    totalValue: '15000.00',
+    gainLossEur: null,
     ...overrides,
   };
 }
 
 function makePageResponse(
   items: TransactionListItem[],
-  overrides: Partial<TransactionPageResponse> = {},
+  overrides: Partial<TransactionPageResponse> = {}
 ): TransactionPageResponse {
   return {
     items,
@@ -37,6 +41,7 @@ function makePageResponse(
     hasMore: false,
     offset: 0,
     limit: 50,
+    availableYears: [2024],
     ...overrides,
   };
 }
@@ -56,9 +61,9 @@ describe('TransactionList', () => {
 
   it('shows initial loading skeleton, then renders rows after fetch', async () => {
     const items = [
-      makeItem(1, { symbol: 'BTC', canonicalType: 'buy' }),
-      makeItem(2, { symbol: 'ETH', canonicalType: 'sell' }),
-      makeItem(3, { symbol: 'SOL', canonicalType: 'earn_interest' }),
+      makeItem(1, { symbol: 'BTC', baseCoin: 'BTC', canonicalType: 'buy' }),
+      makeItem(2, { symbol: 'ETH', baseCoin: 'ETH', canonicalType: 'sell' }),
+      makeItem(3, { symbol: 'SOL', baseCoin: 'SOL', canonicalType: 'earn_interest' }),
     ];
     vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
@@ -150,9 +155,7 @@ describe('TransactionList', () => {
     render(<TransactionList />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Fehler beim Laden der Transaktionen/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Fehler beim Laden der Transaktionen/i)).toBeInTheDocument();
     });
   });
 
@@ -166,13 +169,11 @@ describe('TransactionList', () => {
     render(<TransactionList />);
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Fehler beim Laden der Transaktionen/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Fehler beim Laden der Transaktionen/i)).toBeInTheDocument();
     });
   });
 
-  it('renders table headers (Datum, Coin, Typ, Richtung, Menge, EUR Wert, Gebühr)', async () => {
+  it('renders table headers (Datum, Coin, Paar, Typ, Richtung, Anteile, Kurs, Wert, P&L, Gebühr)', async () => {
     vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(makePageResponse([])),
@@ -183,10 +184,14 @@ describe('TransactionList', () => {
     // Table headers are rendered immediately (not async-dependent)
     expect(screen.getByText('Datum')).toBeInTheDocument();
     expect(screen.getByText('Coin')).toBeInTheDocument();
+    expect(screen.getByText('Paar')).toBeInTheDocument();
     expect(screen.getByText('Typ')).toBeInTheDocument();
     expect(screen.getByText('Richtung')).toBeInTheDocument();
-    expect(screen.getByText('Menge')).toBeInTheDocument();
-    expect(screen.getByText('EUR Wert')).toBeInTheDocument();
+    expect(screen.getByText('Anteile')).toBeInTheDocument();
+    expect(screen.getByText('Kurs')).toBeInTheDocument();
+    expect(screen.getByText('Wert')).toBeInTheDocument();
+    expect(screen.getByText('P&L')).toBeInTheDocument();
+    expect(screen.getByText('Gebühr')).toBeInTheDocument();
   });
 
   it('renders Kauf side label for buy transaction', async () => {
@@ -229,40 +234,41 @@ describe('TransactionList', () => {
       } as Response)
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          transaction: {
-            id: 1,
-            orderId: 'order-1',
-            exchange: 'Bitget',
-            sourceType: 'spot_tx',
-            canonicalType: 'buy',
-            symbol: 'BTC',
-            side: 'buy',
-            amount: '0.5',
-            price: '30000.00',
-            fee: '5.00',
-            totalValue: '15000.00',
-            tradedAt: '2024-06-15T10:30:00Z',
-            taxYear: 2024,
-            sourceFile: null,
-            rawRow: null,
-            checksum: 'abc',
-            importedAt: '2024-06-15T10:30:00Z',
-            eurPrice: '30000.00',
-            priceSource: 'coingecko',
-            priceResolvedAt: '2024-06-15T10:30:00Z',
-            priceFailureReason: null,
-          },
-          lotConsumptions: [],
-          futuresPosition: null,
-          earnIncome: null,
-          taxImpact: {
-            bucket: 'private_sale',
-            totalGainLossEur: '0.00',
-            isTaxFree: false,
-            reason: 'Kauf-Transaktion ist kein steuerpflichtiges Ereignis',
-          },
-        }),
+        json: () =>
+          Promise.resolve({
+            transaction: {
+              id: 1,
+              orderId: 'order-1',
+              exchange: 'Bitget',
+              sourceType: 'spot_tx',
+              canonicalType: 'buy',
+              symbol: 'BTC',
+              side: 'buy',
+              amount: '0.5',
+              price: '30000.00',
+              fee: '5.00',
+              totalValue: '15000.00',
+              tradedAt: '2024-06-15T10:30:00Z',
+              taxYear: 2024,
+              sourceFile: null,
+              rawRow: null,
+              checksum: 'abc',
+              importedAt: '2024-06-15T10:30:00Z',
+              eurPrice: '30000.00',
+              priceSource: 'coingecko',
+              priceResolvedAt: '2024-06-15T10:30:00Z',
+              priceFailureReason: null,
+            },
+            lotConsumptions: [],
+            futuresPosition: null,
+            earnIncome: null,
+            taxImpact: {
+              bucket: 'private_sale',
+              totalGainLossEur: '0.00',
+              isTaxFree: false,
+              reason: 'Kauf-Transaktion ist kein steuerpflichtiges Ereignis',
+            },
+          }),
       } as Response);
 
     render(<TransactionList />);
@@ -293,6 +299,65 @@ describe('TransactionList', () => {
 
     await waitFor(() => {
       expect(screen.getByText(/Alle 2 Transaktionen geladen/)).toBeInTheDocument();
+    });
+  });
+
+  it('toggles currency mode when clicking a toggleable header', async () => {
+    const items = [
+      makeItem(1, {
+        symbol: 'BTC',
+        eurPrice: '50000',
+        price: '52000.00',
+        amount: '0.1',
+        totalValue: '5200',
+        gainLossEur: '500',
+      }),
+    ];
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(makePageResponse(items)),
+    } as Response);
+
+    const user = userEvent.setup();
+    render(<TransactionList />);
+
+    await waitFor(() => {
+      expect(screen.getByText('BTC')).toBeInTheDocument();
+    });
+
+    // Initially in EUR mode — currency badges show €
+    const eurBadges = screen.getAllByText('€');
+    expect(eurBadges.length).toBe(4); // Kurs, Wert, P&L, Gebühr
+
+    // Click a toggleable header (e.g., "Kurs") to switch to token mode
+    await user.click(screen.getByText('Kurs'));
+
+    // Badges should now show "Token"
+    const tokenBadges = screen.getAllByText('Token');
+    expect(tokenBadges.length).toBe(4);
+  });
+
+  it('displays P&L with color for sell transactions', async () => {
+    const items = [
+      makeItem(1, {
+        symbol: 'ETH',
+        canonicalType: 'sell',
+        side: 'sell',
+        eurPrice: '3000',
+        amount: '1',
+        gainLossEur: '500',
+      }),
+    ];
+    vi.mocked(global.fetch).mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve(makePageResponse(items)),
+    } as Response);
+
+    render(<TransactionList />);
+
+    await waitFor(() => {
+      // P&L should show formatted EUR value with sign
+      expect(screen.getByText('+500,00 €')).toBeInTheDocument();
     });
   });
 });

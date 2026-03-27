@@ -44,5 +44,5 @@ export function formatPercent(value: number, decimals = 1): string {
 export function gainLossColor(value: string | number): string {
   const num = typeof value === 'string' ? parseFloat(value) : value;
   if (Number.isNaN(num) || num === 0) return 'var(--text-secondary, rgba(255,255,255,0.6))';
-  return num > 0 ? 'var(--crypto-green)' : 'var(--crypto-red)';
+  return num > 0 ? 'var(--accent-green, #34d399)' : 'var(--accent-red, #f87171)';
 }

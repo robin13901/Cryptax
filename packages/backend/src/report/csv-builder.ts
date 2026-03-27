@@ -14,8 +14,8 @@
  *
  * Columns (13 total):
  *   Nr, Symbol, Kaufdatum, Verkaufdatum, Menge, Einstandswert EUR,
- *   Erloes EUR, Gewinn/Verlust EUR, Gebuehr EUR, Haltedauer Tage,
- *   Haltefrist erfuellt, Steuerfrei, Boerse
+ *   Erlös EUR, Gewinn/Verlust EUR, Gebühr EUR, Haltedauer Tage,
+ *   Haltefrist erfüllt, Steuerfrei, Börse
  */
 
 import type { ReportData } from '@cryptax/shared';
@@ -35,13 +35,13 @@ const HEADER_COLUMNS = [
   'Verkaufdatum',
   'Menge',
   'Einstandswert EUR',
-  'Erloes EUR',
+  'Erlös EUR',
   'Gewinn/Verlust EUR',
-  'Gebuehr EUR',
+  'Gebühr EUR',
   'Haltedauer Tage',
-  'Haltefrist erfuellt',
+  'Haltefrist erfüllt',
   'Steuerfrei',
-  'Boerse',
+  'Börse',
 ] as const;
 
 // ---------------------------------------------------------------------------
@@ -96,19 +96,19 @@ export function buildCsv(data: ReportData): string {
 
     lines.push(
       buildRow([
-        String(index + 1),           // Nr (1-indexed)
-        row.symbol,                   // Symbol
-        row.buyDate,                  // Kaufdatum
-        row.sellDate,                 // Verkaufdatum
-        row.amountConsumed,           // Menge
-        row.costBasisEur,             // Einstandswert EUR
-        row.proceedsEur,              // Erloes EUR
-        row.gainLossEur,              // Gewinn/Verlust EUR
-        row.feeEur,                   // Gebuehr EUR
-        String(row.heldDays),         // Haltedauer Tage
-        jaOrNein,                     // Haltefrist erfuellt
-        jaOrNein,                     // Steuerfrei (same logic, explicit column)
-        row.exchange,                 // Boerse
+        String(index + 1), // Nr (1-indexed)
+        row.symbol, // Symbol
+        row.buyDate, // Kaufdatum
+        row.sellDate, // Verkaufdatum
+        row.amountConsumed, // Menge
+        row.costBasisEur, // Einstandswert EUR
+        row.proceedsEur, // Erlös EUR
+        row.gainLossEur, // Gewinn/Verlust EUR
+        row.feeEur, // Gebühr EUR
+        String(row.heldDays), // Haltedauer Tage
+        jaOrNein, // Haltefrist erfüllt
+        jaOrNein, // Steuerfrei (same logic, explicit column)
+        row.exchange, // Börse
       ])
     );
   });
@@ -117,15 +117,15 @@ export function buildCsv(data: ReportData): string {
   // Summary section — blank separator row then key tax figures
   // ---------------------------------------------------------------------------
   const freigrenzeLabel =
-    data.spotSummary.freigrenzeStatus === 'under' ? 'Eingehalten' : 'Ueberschritten';
+    data.spotSummary.freigrenzeStatus === 'under' ? 'Eingehalten' : 'Überschritten';
 
-  lines.push('');                                                            // blank row
+  lines.push(''); // blank row
   lines.push(buildRow(['Zusammenfassung', '']));
   lines.push(buildRow(['Steuerjahr', String(data.taxYear)]));
   lines.push(buildRow(['Spot Netto EUR', data.spotSummary.netEur]));
   lines.push(buildRow(['Spot Freigrenze', freigrenzeLabel]));
   lines.push(buildRow(['Futures Netto EUR', data.futuresSummary.netEur]));
-  lines.push(buildRow(['Geschaetzte Abgeltungssteuer EUR', data.futuresSummary.estimatedTaxEur]));
+  lines.push(buildRow(['Geschätzte Abgeltungssteuer EUR', data.futuresSummary.estimatedTaxEur]));
   lines.push(buildRow(['Staking Einkommen EUR', data.earnSummary.totalIncomeEur]));
 
   // Join all lines with CRLF, add trailing CRLF, prepend BOM

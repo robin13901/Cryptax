@@ -1,7 +1,11 @@
+import type { ExchangeConnection, ExchangeCredentials } from '@cryptax/shared';
 import { eq } from 'drizzle-orm';
 import type { Hono } from 'hono';
-import type { ExchangeConnection, ExchangeCredentials } from '@cryptax/shared';
-import { decryptCredentials, encryptCredentials, getCredentialMasterKey } from '../auth/credential-cipher.js';
+import {
+  decryptCredentials,
+  encryptCredentials,
+  getCredentialMasterKey,
+} from '../auth/credential-cipher.js';
 import { db } from '../db/client.js';
 import { exchangeConnections } from '../db/schema.js';
 
@@ -52,9 +56,12 @@ export function registerExchangeRoutes(app: Hono): void {
     const creds = body.credentials;
     if (
       !creds ||
-      typeof creds.apiKey !== 'string' || creds.apiKey.trim() === '' ||
-      typeof creds.secret !== 'string' || creds.secret.trim() === '' ||
-      typeof creds.password !== 'string' || creds.password.trim() === ''
+      typeof creds.apiKey !== 'string' ||
+      creds.apiKey.trim() === '' ||
+      typeof creds.secret !== 'string' ||
+      creds.secret.trim() === '' ||
+      typeof creds.password !== 'string' ||
+      creds.password.trim() === ''
     ) {
       return c.json(
         { error: 'credentials must include non-empty apiKey, secret, and password' },
@@ -118,9 +125,7 @@ export function registerExchangeRoutes(app: Hono): void {
       return c.json({ error: 'Exchange connection not found' }, 404);
     }
 
-    db.delete(exchangeConnections)
-      .where(eq(exchangeConnections.id, rawId))
-      .run();
+    db.delete(exchangeConnections).where(eq(exchangeConnections.id, rawId)).run();
 
     return c.json({ deleted: true });
   });

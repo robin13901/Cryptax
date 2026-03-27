@@ -95,7 +95,7 @@ function processBuy(
   pools: Map<string, InMemoryLot[]>
 ): void {
   const base = normalizeBase(tx);
-  const amount = toDecimal(tx.amount);
+  const amount = toDecimal(tx.amount).abs();
   const eurPrice = toDecimal(tx.eurPrice);
 
   // costBasisEur = eurPrice * amount
@@ -104,7 +104,8 @@ function processBuy(
   // feeEur: fee is in base coin units for spot_tx, convert to EUR via eurPrice.
   // For spot_order, fee may be in quote currency — using eurPrice as multiplier
   // is an acceptable approximation (fees are small and this is consistent).
-  const feeEur = toDecimal(tx.fee).times(eurPrice);
+  // spot_tx CSVs store fees as negative — use abs()
+  const feeEur = toDecimal(tx.fee).abs().times(eurPrice);
 
   // costPerUnitEur = (costBasisEur + feeEur) / amount
   const costPerUnitEur = costBasisEur.plus(feeEur).div(amount);
@@ -143,9 +144,11 @@ function processSell(
   sellsWithoutLots: FifoEngineResult['sellsWithoutLots']
 ): void {
   const base = normalizeBase(tx);
-  const sellAmount = toDecimal(tx.amount);
+  // spot_tx CSVs store sell amounts as negative (e.g. "-233.32") — use abs()
+  const sellAmount = toDecimal(tx.amount).abs();
   const sellEurPrice = toDecimal(tx.eurPrice);
-  const totalSellFee = toDecimal(tx.fee);
+  // spot_tx CSVs store fees as negative (e.g. "-0.16") — use abs()
+  const totalSellFee = toDecimal(tx.fee).abs();
 
   const pool = pools.get(base) ?? [];
 

@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import type { ExchangeConnection } from '@cryptax/shared';
 import Database from 'better-sqlite3';
 import { drizzle } from 'drizzle-orm/better-sqlite3';
 import { Hono } from 'hono';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ExchangeConnection } from '@cryptax/shared';
 import * as schema from '../db/schema.js';
 
 // ---------------------------------------------------------------------------

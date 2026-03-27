@@ -4,6 +4,8 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Dashboard from './Dashboard';
 
+const defaultProps = { selectedYear: 2024, onYearChange: vi.fn() };
+
 // ---------------------------------------------------------------------------
 // Mock data fixture
 // ---------------------------------------------------------------------------
@@ -54,6 +56,12 @@ function makeYearSummary(overrides: Partial<YearSummaryResponse> = {}): YearSumm
       { month: '2024-01', pnl: '500.00' },
       { month: '2024-02', pnl: '-200.00' },
     ],
+    dailyPnl: [
+      { date: '2024-01-10', net: '700.00' },
+      { date: '2024-01-20', net: '-300.00' },
+      { date: '2024-02-05', net: '1600.00' },
+      { date: '2024-02-15', net: '-400.00' },
+    ],
     perCoinGainLoss: [
       { symbol: 'BTC', net: '3000.00' },
       { symbol: 'ETH', net: '800.00' },
@@ -70,6 +78,7 @@ function makeYearSummary(overrides: Partial<YearSummaryResponse> = {}): YearSumm
     earnFreigrenzeEur: '256',
     spotNetForFreigrenze: '800.00',
     earnTotalForFreigrenze: '150.00',
+    computedAt: '2024-12-31T23:59:59.000Z',
     ...overrides,
   };
 }
@@ -88,17 +97,17 @@ describe('Dashboard', () => {
   });
 
   it('shows empty state message when engineHasRun is false', async () => {
-    const noEngineData = makeYearSummary({ engineHasRun: false });
+    const noEngineData = makeYearSummary({ engineHasRun: false, computedAt: null });
     vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
       json: () => Promise.resolve(noEngineData),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Steuer-Engine noch nicht ausgefuehrt/i),
+        screen.getByText(/Berechnung läuft oder keine Transaktionen vorhanden/i)
       ).toBeInTheDocument();
     });
   });
@@ -109,11 +118,11 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       expect(
-        screen.queryByText(/Steuer-Engine noch nicht ausgefuehrt/i),
+        screen.queryByText(/Berechnung läuft oder keine Transaktionen vorhanden/i)
       ).not.toBeInTheDocument();
     });
   });
@@ -124,7 +133,7 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       expect(screen.getByText('Gesamtgewinn')).toBeInTheDocument();
@@ -141,7 +150,7 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       // totalTradeCount = 60
@@ -155,7 +164,7 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       // YearSelector renders a <select> with year options
@@ -177,7 +186,7 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalled();
@@ -194,7 +203,7 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    const { container } = render(<Dashboard />);
+    const { container } = render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       // FreigrenzeBar renders a section with freigrenze-related content
@@ -205,14 +214,14 @@ describe('Dashboard', () => {
   it('does not render FreigrenzeBar when engine has not run', async () => {
     vi.mocked(global.fetch).mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve(makeYearSummary({ engineHasRun: false })),
+      json: () => Promise.resolve(makeYearSummary({ engineHasRun: false, computedAt: null })),
     } as Response);
 
-    const { container } = render(<Dashboard />);
+    const { container } = render(<Dashboard {...defaultProps} />);
 
     await waitFor(() => {
       expect(
-        screen.getByText(/Steuer-Engine noch nicht ausgefuehrt/i),
+        screen.getByText(/Berechnung läuft oder keine Transaktionen vorhanden/i)
       ).toBeInTheDocument();
     });
 
@@ -227,7 +236,7 @@ describe('Dashboard', () => {
       json: () => Promise.resolve(makeYearSummary()),
     } as Response);
 
-    render(<Dashboard />);
+    render(<Dashboard {...defaultProps} />);
 
     // Wait for initial data and year selector to render with options
     await waitFor(() => {
@@ -241,10 +250,7 @@ describe('Dashboard', () => {
     // Select year 2023
     await user.selectOptions(selector, '2023');
 
-    // Fetch should eventually be called for year 2023
-    await waitFor(() => {
-      const calls = vi.mocked(global.fetch).mock.calls.map((c) => c[0] as string);
-      expect(calls.some((url) => url.includes('/api/summary/2023'))).toBe(true);
-    });
+    // onYearChange should be called with the new year
+    expect(defaultProps.onYearChange).toHaveBeenCalledWith(2023);
   });
 });

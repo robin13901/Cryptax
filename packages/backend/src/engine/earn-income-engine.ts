@@ -21,10 +21,10 @@ import type { EarnIncomeResult, EngineTransaction, InMemoryLot } from './types.j
 
 /**
  * Canonical types that generate both income records and FIFO lots.
- * earn_withdrawal is intentionally excluded — it is an internal Bitget transfer,
- * not a taxable receipt.
+ * Only actual yield/interest is taxable income — deposits (earn_deposit)
+ * are internal transfers and NOT taxable.
  */
-const EARN_TAXABLE_TYPES = new Set(['earn_interest', 'earn_deposit'] as const);
+const EARN_TAXABLE_TYPES = new Set(['earn_interest'] as const);
 
 // ---------------------------------------------------------------------------
 // runEarnIncomeEngine
@@ -35,8 +35,8 @@ const EARN_TAXABLE_TYPES = new Set(['earn_interest', 'earn_deposit'] as const);
  * and returns income records + FIFO lots for each qualifying transaction.
  *
  * Processing rules:
- * - earn_interest / earn_deposit: record income + create FIFO lot
- * - earn_withdrawal: skipped (internal transfer, not taxable)
+ * - earn_interest: record income + create FIFO lot
+ * - earn_deposit / earn_withdrawal: skipped (internal transfers, not taxable)
  * - all other canonical types: skipped
  *
  * Income record: { transactionId, symbol, amount, eurValueAtReceipt, receivedAt, taxYear }
@@ -60,8 +60,8 @@ export function runEarnIncomeEngine(transactions: EngineTransaction[]): EarnInco
     ) {
       // Provide a specific reason for earn_withdrawal vs generic skip
       const reason =
-        tx.canonicalType === 'earn_withdrawal'
-          ? 'earn_withdrawal is an internal Bitget transfer — not taxable'
+        tx.canonicalType === 'earn_withdrawal' || tx.canonicalType === 'earn_deposit'
+          ? 'earn deposit/withdrawal is an internal Bitget transfer — not taxable'
           : `not an earn transaction (canonicalType: ${tx.canonicalType})`;
       skipped.push({ transactionId: tx.id, reason });
       continue;

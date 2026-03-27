@@ -67,7 +67,7 @@ describe('runEarnIncomeEngine', () => {
     expect(result.skipped).toHaveLength(0);
   });
 
-  it('records income for earn_deposit transaction', () => {
+  it('skips earn_deposit (internal transfer, not income)', () => {
     const tx = makeTx({
       canonicalType: 'earn_deposit',
       symbol: 'BTC',
@@ -78,13 +78,10 @@ describe('runEarnIncomeEngine', () => {
 
     const result = runEarnIncomeEngine([tx]);
 
-    expect(result.incomeRecords).toHaveLength(1);
-    expect(result.incomeRecords[0].transactionId).toBe(tx.id);
-    expect(result.incomeRecords[0].symbol).toBe('BTC');
-    expect(result.incomeRecords[0].amount).toBe('0.5');
-    // 0.5 * 50000 = 25000
-    expect(result.incomeRecords[0].eurValueAtReceipt).toBe('25000');
-    expect(result.skipped).toHaveLength(0);
+    expect(result.incomeRecords).toHaveLength(0);
+    expect(result.lotsCreated).toHaveLength(0);
+    expect(result.skipped).toHaveLength(1);
+    expect(result.skipped[0].reason).toMatch(/earn deposit/);
   });
 
   it('creates FIFO lot for each earn transaction', () => {
@@ -147,7 +144,7 @@ describe('runEarnIncomeEngine', () => {
     expect(result.lotsCreated).toHaveLength(0);
     expect(result.skipped).toHaveLength(1);
     expect(result.skipped[0].transactionId).toBe(tx.id);
-    expect(result.skipped[0].reason).toMatch(/earn_withdrawal/);
+    expect(result.skipped[0].reason).toMatch(/earn deposit\/withdrawal/);
   });
 
   it('skips non-earn transactions', () => {
@@ -177,7 +174,7 @@ describe('runEarnIncomeEngine', () => {
     }
   });
 
-  it('processes multiple earn transactions', () => {
+  it('processes multiple earn_interest transactions', () => {
     const earn1 = makeTx({
       canonicalType: 'earn_interest',
       symbol: 'ETH',
@@ -186,7 +183,7 @@ describe('runEarnIncomeEngine', () => {
       taxYear: 2024,
     });
     const earn2 = makeTx({
-      canonicalType: 'earn_deposit',
+      canonicalType: 'earn_interest',
       symbol: 'BTC',
       amount: '0.1',
       eurPrice: '40000',

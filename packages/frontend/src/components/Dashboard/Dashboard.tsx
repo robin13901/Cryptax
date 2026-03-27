@@ -1,8 +1,5 @@
 import type { YearSummaryResponse } from '@cryptax/shared';
-import { useEffect, useState } from 'react';
-import { FreigrenzeBar } from './FreigrenzeBar';
-import { KpiCards } from './KpiCards';
-import { YearSelector } from './YearSelector';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ChartCard from './charts/ChartCard';
 import GainLossBarChart from './charts/GainLossBarChart';
 import MonthlyBarChart from './charts/MonthlyBarChart';
@@ -10,52 +7,77 @@ import PnlLineChart from './charts/PnlLineChart';
 import PortfolioDonutChart from './charts/PortfolioDonutChart';
 import SpotFuturesChart from './charts/SpotFuturesChart';
 import YearOverYearChart from './charts/YearOverYearChart';
+import { FreigrenzeBar } from './FreigrenzeBar';
+import { KpiCards } from './KpiCards';
+import { YearSelector } from './YearSelector';
 import './Dashboard.css';
 
-function Dashboard() {
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+const POLL_INTERVAL_MS = 3000;
+
+interface DashboardProps {
+  selectedYear: number;
+  onYearChange: (year: number) => void;
+}
+
+function Dashboard({ selectedYear, onYearChange }: DashboardProps) {
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [data, setData] = useState<YearSummaryResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastComputedRef = useRef<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const initialFetchDone = useRef(false);
 
-  // Fetch summary data whenever selectedYear changes
-  useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-
-    fetch(`/api/summary/${selectedYear}`)
-      .then((res) => {
+  const fetchSummary = useCallback(
+    async (year: number) => {
+      try {
+        const res = await fetch(`/api/summary/${year}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<YearSummaryResponse>;
-      })
-      .then((json) => {
-        if (cancelled) return;
-        setData(json);
+        const json = (await res.json()) as YearSummaryResponse;
 
-        // Auto-select most recent year if we just loaded the default year
-        const years = json.availableYears ?? [];
-        setAvailableYears(years);
+        const newComputedAt = json.computedAt ?? null;
+        if (newComputedAt !== lastComputedRef.current || !initialFetchDone.current) {
+          lastComputedRef.current = newComputedAt;
+          initialFetchDone.current = true;
+          setData(json);
 
-        if (years.length > 0) {
-          const mostRecent = Math.max(...years);
-          if (selectedYear === new Date().getFullYear() && mostRecent !== selectedYear) {
-            setSelectedYear(mostRecent);
+          const years = json.availableYears ?? [];
+          setAvailableYears(years);
+
+          if (years.length > 0) {
+            const mostRecent = Math.max(...years);
+            if (year === new Date().getFullYear() && mostRecent !== year) {
+              onYearChange(mostRecent);
+            }
           }
         }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setData(null);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+      } catch {
+        // Keep showing stale data on poll failures
+      } finally {
+        setLoading(false);
+      }
+    },
+    [onYearChange]
+  );
+
+  useEffect(() => {
+    setLoading(true);
+    lastComputedRef.current = null;
+    initialFetchDone.current = false;
+    void fetchSummary(selectedYear);
+  }, [selectedYear, fetchSummary]);
+
+  useEffect(() => {
+    pollRef.current = setInterval(() => {
+      void fetchSummary(selectedYear);
+    }, POLL_INTERVAL_MS);
 
     return () => {
-      cancelled = true;
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+        pollRef.current = null;
+      }
     };
-  }, [selectedYear]);
+  }, [selectedYear, fetchSummary]);
 
   const engineHasRun = data?.engineHasRun ?? false;
 
@@ -66,19 +88,12 @@ function Dashboard() {
 
   return (
     <div className="dashboard">
-      {/* Year selector row */}
       <div className="dashboard__header">
-        <YearSelector
-          years={availableYears}
-          selected={selectedYear}
-          onChange={setSelectedYear}
-        />
+        <YearSelector years={availableYears} selected={selectedYear} onChange={onYearChange} />
       </div>
 
-      {/* KPI cards */}
       <KpiCards data={data} loading={loading} />
 
-      {/* Freigrenze bar */}
       {engineHasRun && data !== null && (
         <div className="dashboard__freigrenze">
           <FreigrenzeBar
@@ -90,41 +105,42 @@ function Dashboard() {
         </div>
       )}
 
-      {/* Empty state shown when engine has not run */}
       {!engineHasRun && !loading && (
         <div className="empty-state">
           <div className="empty-state-icon">&#9881;</div>
-          <p>Steuer-Engine noch nicht ausgefuehrt</p>
+          <p>Berechnung läuft oder keine Transaktionen vorhanden</p>
           <p style={{ fontSize: '0.78rem' }}>
-            Importiere Transaktionen und fuehre die Steuer-Engine aus, um Ergebnisse zu sehen.
+            Importiere Transaktionen und löse Preise auf — die Steuerberechnung startet automatisch.
           </p>
         </div>
       )}
 
-      {/* Chart grid — rendered when engine has run and data is available */}
       {engineHasRun && data !== null && (
         <div className="dashboard__charts">
+          {/* Row 1: P&L line — full width */}
           <ChartCard title="P&L Entwicklung (kumulativ)" className="chart-card--wide">
             <PnlLineChart data={data} />
           </ChartCard>
 
-          <ChartCard title="Portfolio Verteilung">
-            <PortfolioDonutChart data={data} />
+          {/* Row 2: Monthly + Gain/Loss per coin — 50/50 */}
+          <ChartCard title="Monatliche Performance (Spot)">
+            <MonthlyBarChart data={data} />
           </ChartCard>
 
           <ChartCard title="Gewinn / Verlust je Coin (Top 10)">
             <GainLossBarChart data={data} />
           </ChartCard>
 
-          <ChartCard title="Monatliche Performance (Spot)">
-            <MonthlyBarChart data={data} />
+          {/* Row 3: Portfolio + Spot vs Futures + Year over Year — thirds */}
+          <ChartCard title="Portfolio Verteilung" className="chart-card--third">
+            <PortfolioDonutChart data={data} />
           </ChartCard>
 
-          <ChartCard title="Spot vs. Futures">
+          <ChartCard title="Spot vs. Futures" className="chart-card--third">
             <SpotFuturesChart data={data} />
           </ChartCard>
 
-          <ChartCard title="Jahresvergleich">
+          <ChartCard title="Jahresvergleich" className="chart-card--third">
             <YearOverYearChart data={data} />
           </ChartCard>
         </div>

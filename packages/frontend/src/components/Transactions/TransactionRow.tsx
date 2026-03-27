@@ -1,14 +1,16 @@
 import type { TransactionListItem } from '@cryptax/shared';
-import { formatEur, formatNumber } from '../../utils/format';
+import { formatEur, formatNumber, gainLossColor } from '../../utils/format';
 import CategoryBadge from './CategoryBadge';
+import type { CurrencyMode } from './TransactionList';
 
 interface TransactionRowProps {
   item: TransactionListItem;
   selected: boolean;
   onSelect: (id: number) => void;
+  currencyMode: CurrencyMode;
 }
 
-const TransactionRow = ({ item, selected, onSelect }: TransactionRowProps) => {
+const TransactionRow = ({ item, selected, onSelect, currencyMode }: TransactionRowProps) => {
   const dateStr = new Intl.DateTimeFormat('de-DE', {
     year: 'numeric',
     month: '2-digit',
@@ -19,11 +21,27 @@ const TransactionRow = ({ item, selected, onSelect }: TransactionRowProps) => {
 
   const amount = parseFloat(item.amount);
   const eurPrice = item.eurPrice != null ? parseFloat(item.eurPrice) : null;
-  const eurValue = eurPrice != null && !Number.isNaN(amount) ? eurPrice * amount : null;
+  const price = item.price != null ? parseFloat(item.price) : null;
+  const gainLoss = item.gainLossEur != null ? parseFloat(item.gainLossEur) : null;
   const fee = parseFloat(item.fee);
 
-  const sideLabel =
-    item.side === 'buy' ? 'Kauf' : item.side === 'sell' ? 'Verkauf' : '--';
+  const sideLabel = item.side === 'buy' ? 'Kauf' : item.side === 'sell' ? 'Verkauf' : '--';
+
+  // EUR-mode values
+  const eurValue = eurPrice != null && !Number.isNaN(amount) ? eurPrice * amount : null;
+  const feeEur = eurPrice != null && !Number.isNaN(fee) ? fee * eurPrice : null;
+
+  // Token-mode values (price is in quote currency e.g. USDT)
+  const tokenValue =
+    item.totalValue != null
+      ? parseFloat(item.totalValue)
+      : price != null && !Number.isNaN(amount)
+        ? price * amount
+        : null;
+  const gainLossToken =
+    gainLoss != null && eurPrice != null && eurPrice !== 0 ? gainLoss / eurPrice : null;
+
+  const isEur = currencyMode === 'eur';
 
   return (
     <tr
@@ -36,19 +54,57 @@ const TransactionRow = ({ item, selected, onSelect }: TransactionRowProps) => {
       aria-selected={selected}
     >
       <td className="tx-cell tx-cell--date">{dateStr}</td>
-      <td className="tx-cell tx-cell--coin">{item.symbol}</td>
+      <td className="tx-cell tx-cell--coin">{item.baseCoin}</td>
+      <td className="tx-cell tx-cell--pair">{item.tradingPair ?? '--'}</td>
       <td className="tx-cell tx-cell--type">
         <CategoryBadge canonicalType={item.canonicalType} />
       </td>
       <td className="tx-cell tx-cell--side">{sideLabel}</td>
-      <td className="tx-cell tx-cell--amount tx-cell--number">
-        {formatNumber(amount, 6)}
+      <td className="tx-cell tx-cell--amount tx-cell--number">{formatNumber(amount, 6)}</td>
+      {/* Kurs */}
+      <td className="tx-cell tx-cell--number">
+        {isEur
+          ? eurPrice != null
+            ? formatEur(eurPrice)
+            : '--'
+          : price != null
+            ? formatNumber(price, 6)
+            : '--'}
       </td>
-      <td className="tx-cell tx-cell--eur tx-cell--number">
-        {eurValue != null ? formatEur(eurValue) : '--'}
+      {/* Wert */}
+      <td className="tx-cell tx-cell--number">
+        {isEur
+          ? eurValue != null
+            ? formatEur(eurValue)
+            : '--'
+          : tokenValue != null
+            ? formatNumber(tokenValue, 2)
+            : '--'}
       </td>
-      <td className="tx-cell tx-cell--fee tx-cell--number">
-        {!Number.isNaN(fee) && fee !== 0 ? formatEur(fee) : '--'}
+      {/* P&L */}
+      <td
+        className="tx-cell tx-cell--number"
+        style={{
+          color: gainLoss != null ? gainLossColor(gainLoss) : undefined,
+        }}
+      >
+        {isEur
+          ? gainLoss != null
+            ? formatEur(gainLoss, true)
+            : '--'
+          : gainLossToken != null
+            ? formatNumber(gainLossToken, 2)
+            : '--'}
+      </td>
+      {/* Gebühr */}
+      <td className="tx-cell tx-cell--number">
+        {isEur
+          ? feeEur != null && !Number.isNaN(feeEur) && feeEur !== 0
+            ? formatEur(feeEur)
+            : '--'
+          : !Number.isNaN(fee) && fee !== 0
+            ? formatNumber(fee, 6)
+            : '--'}
       </td>
     </tr>
   );

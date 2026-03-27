@@ -31,9 +31,9 @@ vi.mock('../db/client.js', () => ({
   },
 }));
 
+import { registerAuthRoutes } from '../routes/auth.js';
 // Import after mock is registered
 import { hashPassword, verifyPassword } from './crypto.js';
-import { registerAuthRoutes } from '../routes/auth.js';
 
 // ---------------------------------------------------------------------------
 // Migration helper
@@ -67,9 +67,7 @@ const AUTH_ROUTES_FILE = path.resolve(process.cwd(), 'packages/backend/src/route
 
 function readAuthSourceFiles(): { file: string; content: string }[] {
   const authDir = AUTH_SRC_DIR;
-  const files = fs
-    .readdirSync(authDir)
-    .filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts'));
+  const files = fs.readdirSync(authDir).filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts'));
   const results = files.map((f) => ({
     file: f,
     content: fs.readFileSync(path.join(authDir, f), 'utf8'),
