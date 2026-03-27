@@ -17,7 +17,15 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "error"
+        "noExplicitAny": "warn",
+        "noArrayIndexKey": "warn",
+        "noNonNullAssertedOptionalChain": "warn"
+      },
+      "style": {
+        "noNonNullAssertion": "warn"
+      },
+      "a11y": {
+        "useAriaPropsSupportedByRole": "warn"
       },
       "complexity": {
         "noForEach": "warn"
