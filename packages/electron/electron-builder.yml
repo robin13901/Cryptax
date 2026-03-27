@@ -1,0 +1,43 @@
+appId: com.cryptax.app
+productName: Cryptax
+copyright: Copyright 2026
+
+directories:
+  output: dist-installer
+  buildResources: build-resources
+
+# Drizzle SQL migration files must live outside asar (read by fs at runtime)
+extraResources:
+  - from: ../backend/drizzle
+    to: drizzle
+    filter:
+      - "**/*.sql"
+      - "**/meta/*.json"
+
+# Native .node files must NOT be inside asar
+asarUnpack:
+  - "**/*.node"
+  - "**/node_modules/better-sqlite3/**"
+
+# Rebuild native modules against Electron's ABI
+npmRebuild: true
+
+files:
+  - out/**/*
+  - package.json
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  perMachine: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+
+# Optional: add icon later
+# icon: build-resources/icon.png
