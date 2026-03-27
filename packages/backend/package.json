@@ -3,6 +3,15 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./app": "./src/app.ts",
+    "./app.js": "./src/app.ts",
+    "./db/client": "./src/db/client.ts",
+    "./db/client.js": "./src/db/client.ts",
+    "./routes/engine": "./src/routes/engine.ts",
+    "./routes/engine.js": "./src/routes/engine.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -b"
