@@ -10,11 +10,11 @@ See: .planning/PROJECT.md (updated 2026-03-21)
 ## Current Position
 
 Phase: 9 of 9 (Electron Desktop App)
-Plan: 2 of 6 in phase
+Plan: 3 of 6 in phase
 Status: In progress
-Last activity: 2026-03-27 — Completed 09-02-PLAN.md (Electron workspace scaffold — config files and deps)
+Last activity: 2026-03-27 — Completed 09-03-PLAN.md (Electron main process, preload, db-path, server modules)
 
-Progress: [█████████░] 95% (57/61 plans complete)
+Progress: [█████████░] 95% (58/61 plans complete)
 
 ## Performance Metrics
 
@@ -187,11 +187,17 @@ Recent decisions affecting current work:
 - 09-01-d: initDb() throws if called twice (already initialized guard) — prevents accidental double-init
 - 09-01-e: Auto-init in ensureInitialized() reads DB_PATH env var — full backward compatibility for tests/dev
 
-- 09-02-a: vite@^7.3.1 pinned in electron workspace — electron-vite v5 peer dep is vite <=7; root stays on vite v8
 - 09-02-b: @vitejs/plugin-react@^5.1.4 (not v6) — v6 requires vite v8, v5.x supports vite v4-8
 - 09-02-c: postinstall removed from package.json — electron-builder install-app-deps fails before electron binary installed; moved to explicit rebuild script
 - 09-02-d: import.meta.dirname in electron.vite.config.ts — type=module ESM context; __dirname undefined; Node 23 has import.meta.dirname natively
 - 09-02-e: ELECTRON_SKIP_BINARY_DOWNLOAD=1 required on Windows with Cylance AV — asar file held by AV during npm reify rename causes EBUSY
+
+- 09-03-a: initDb() called before dynamic import of createApp — DB path injected before any backend module access
+- 09-03-b: Dynamic import for @cryptax/backend/app.js in server.ts — defers createApp() until after initDb() completes
+- 09-03-c: resolveDbPath/resolveMigrationsPath called inside whenReady callback — app.getPath('userData') requires ready state
+- 09-03-d: ELECTRON_RENDERER_URL env var for dev mode — electron-vite sets this automatically; falls back to out/renderer/index.html in prod
+- 09-03-e: preload exposes only platform string — renderer uses HTTP fetch to localhost:3001, no IPC channels needed
+- 09-03-f: stopBackendServer() in window-all-closed — graceful server shutdown before app.quit()
 
 - 08-01-a: Do not import GlassSurface for sidebar — replicate glass CSS directly; GlassSurface requires fixed width/height props incompatible with 100vh flex column layout
 - 08-01-b: Inline SVG icons as named React functions — zero icon library; stroke="currentColor" inherits active/inactive color automatically
@@ -223,6 +229,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T10:55:51Z
-Stopped at: Completed 09-02-PLAN.md — Electron workspace scaffold (config files, deps, tsconfig)
+Last session: 2026-03-27T11:03:41Z
+Stopped at: Completed 09-03-PLAN.md — Electron main process, preload, db-path, server modules
 Resume file: None
