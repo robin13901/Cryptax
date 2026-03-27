@@ -20,6 +20,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 6: Steuerreport + PDF Export** — Finanzamt-ready tax report generated and exportable as PDF and CSV
 - [ ] **Phase 7: Exchange API + Security** — Bitget API sync via ccxt, password protection, encrypted credential storage
 - [ ] **Phase 8: UI Redesign — Sidebar Layout** — Collapsible sidebar navigation replacing top pill tabs for a professional dashboard feel
+- [ ] **Phase 9: Electron Desktop App** — Transform the web app into a fast, efficient Electron desktop application with identical design and functionality
 
 ---
 
@@ -244,9 +245,34 @@ Plans:
 
 ---
 
+### Phase 9: Electron Desktop App
+
+**Goal:** The entire Cryptax application is packaged as a native Electron desktop app — the Hono backend runs as an embedded local server inside the Electron main process, the React frontend loads in the BrowserWindow, and the SQLite database lives in the user's app data directory. The app launches instantly, looks and behaves identically to the current web version, and is distributable as a single installer for Windows (and optionally macOS/Linux).
+
+**Depends on:** Phase 8
+
+**Success Criteria:**
+1. Running `npm run electron:dev` launches an Electron window with the full Cryptax app running identically to the web version.
+2. The SQLite database file is created in the user's app data directory (`%APPDATA%/Cryptax/cryptax.db` on Windows), not in the project root or installation directory.
+3. Running `npm run make:win` produces a Windows NSIS installer that installs and runs the app with no native module errors.
+4. The installed app starts, shows the login/setup screen, and all tabs (Dashboard, Transaktionen, Steuerreport, Einstellungen) work correctly.
+5. All 944+ existing vitest tests pass with zero regressions, and both web (`npm run dev`) and Electron (`npm run electron:dev`) dev workflows coexist.
+
+**Plans:** 6 plans in 5 waves
+
+Plans:
+- [ ] 09-01-PLAN.md — Backend refactor: extract createApp() factory, make db/client.ts path-configurable (Wave 1)
+- [ ] 09-02-PLAN.md — Electron workspace scaffold: package.json, electron-vite config, electron-builder.yml (Wave 2)
+- [ ] 09-03-PLAN.md — Main process + preload: Electron entry, embedded Hono server, db-path resolution (Wave 2)
+- [ ] 09-04-PLAN.md — Dev workflow integration: root scripts, import resolution, end-to-end dev verification (Wave 3)
+- [ ] 09-05-PLAN.md — Windows NSIS packaging: electron-builder build, native module rebuild, installer (Wave 4)
+- [ ] 09-06-PLAN.md — Final smoke test + verification: full workflow test, test suite confirmation (Wave 5)
+
+---
+
 ## Progress
 
-**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 (strict data dependency chain, Phase 8 is UI polish).
+**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 (strict data dependency chain, Phase 9 is desktop packaging).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -258,5 +284,6 @@ Plans:
 | 6. Steuerreport + PDF Export | 7/7 | Gaps found (4/5) | 2026-03-23 |
 | 7. Exchange API + Security | 0/7 | Not started | - |
 | 8. UI Redesign — Sidebar Layout | 4/4 | Complete | 2026-03-26 |
+| 9. Electron Desktop App | 0/6 | Planned | - |
 
-**Total plans:** 55 across 8 phases
+**Total plans:** 61 across 9 phases
