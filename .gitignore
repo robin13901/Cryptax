@@ -22,6 +22,15 @@ coverage/
 *.db-wal
 *.db-shm
 
-# Environment files
+# Credential-adjacent files (SECU-04)
 .env
 .env.local
+.env.production
+*.key
+*.pem
+credentials.json
+secrets/
+
+# Playwright E2E artifacts
+/test-results/
+/playwright-report/

@@ -16,7 +16,11 @@ import * as schema from '../db/schema.js';
 function applyMigrations(sqlite: ReturnType<typeof Database>) {
   const migrationsDir = path.resolve(process.cwd(), 'packages/backend/drizzle');
 
-  for (const file of ['0000_initial.sql', '0001_import_batches.sql']) {
+  for (const file of [
+    '0000_initial.sql',
+    '0001_import_batches.sql',
+    '0002_eur_price_columns.sql',
+  ]) {
     const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
     const statements = sql
       .split('--> statement-breakpoint')

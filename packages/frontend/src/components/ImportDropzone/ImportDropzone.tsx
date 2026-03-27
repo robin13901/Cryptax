@@ -33,6 +33,12 @@ function ImportDropzone({ onImportComplete }: ImportDropzoneProps) {
         body: formData,
       });
 
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({ error: `HTTP ${res.status}` }));
+        console.error('Import failed:', errBody);
+        return;
+      }
+
       const response = (await res.json()) as ImportResponse;
       onImportComplete(response);
     } catch (err) {

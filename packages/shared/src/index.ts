@@ -15,12 +15,34 @@ export {
   toDecimal,
   ZERO,
 } from './decimal/index.js';
+export type { EngineRunResponse } from './types/engine.js';
+export type {
+  ConnectionTestResult,
+  ExchangeConnection,
+  ExchangeCredentials,
+  SyncResult,
+} from './types/exchange.js';
 export type {
   ImportBatch,
   ImportFileError,
   ImportResponse,
   PerFileResult,
 } from './types/import.js';
+export type {
+  EnrichmentResponse,
+  ManualPriceEntry,
+  PriceStatusResponse,
+} from './types/price.js';
+export type {
+  EarnCoinBreakdown,
+  EarnSummary,
+  FuturesAppendixRow,
+  FuturesSummary,
+  ReportData,
+  SpotSummary,
+  TradeAppendixRow,
+} from './types/report.js';
+export type { YearSummaryResponse } from './types/summary.js';
 export type {
   DashboardKpi,
   EarnIncome,
@@ -34,9 +56,14 @@ export type {
   CanonicalType,
   ImportError,
   ImportSummary,
+  LotConsumptionDetail,
   MoneyString,
+  PriceFailureReason,
+  PriceSource,
   SourceType,
   Transaction,
+  TransactionDetailResponse,
   TransactionListItem,
+  TransactionPageResponse,
   TransactionSide,
 } from './types/transaction.js';

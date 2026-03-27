@@ -1,0 +1,137 @@
+.exchange-card {
+  width: 100%;
+}
+
+.exchange-card__inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  flex-wrap: wrap;
+}
+
+.exchange-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.exchange-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.exchange-card__exchange-badge {
+  background: rgba(0, 112, 242, 0.3);
+  border: 1px solid rgba(0, 112, 242, 0.5);
+  border-radius: 6px;
+  color: rgba(100, 180, 255, 0.95);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.5rem;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.exchange-card__label {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.exchange-card__sync-time {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.78rem;
+  margin: 0;
+}
+
+.exchange-card__actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.exchange-card__btn {
+  border-radius: 7px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.exchange-card__btn--sync {
+  background: rgba(0, 112, 242, 0.2);
+  border: 1px solid rgba(0, 112, 242, 0.4);
+  color: rgba(120, 180, 255, 0.9);
+}
+
+.exchange-card__btn--sync:hover {
+  background: rgba(0, 112, 242, 0.35);
+}
+
+.exchange-card__btn--delete {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #fca5a5;
+}
+
+.exchange-card__btn--delete:hover {
+  background: rgba(239, 68, 68, 0.25);
+}
+
+.exchange-card__btn--cancel {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.exchange-card__btn--cancel:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.exchange-card__btn--confirm-delete {
+  background: rgba(239, 68, 68, 0.35);
+  border: 1px solid rgba(239, 68, 68, 0.6);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.exchange-card__btn--confirm-delete:hover {
+  background: rgba(239, 68, 68, 0.55);
+  transform: translateY(-1px);
+}
+
+.exchange-card__confirm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 280px;
+}
+
+.exchange-card__confirm-text {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.exchange-card__confirm-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}

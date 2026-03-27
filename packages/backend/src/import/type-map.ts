@@ -16,14 +16,14 @@ import type { CanonicalType, SourceType } from '@cryptax/shared';
  * - futures_tx 'risk_captital_user_transfer' is intentionally misspelled —
  *   this is Bitget's exact typo in the CSV; correcting it would break mapping.
  * - spot_tx 'Exchange income' / 'Exchange spending' represent swap pair legs.
- * - spot_tx 'Position profit' is futures PnL settled to spot wallet.
+ * - spot_tx 'Position profit' is interest earned on earn-product collateral.
  */
 export const CANONICAL_TYPE_MAP: Record<SourceType, Record<string, CanonicalType>> = {
   spot_tx: {
     Buy: 'buy',
     Sell: 'sell',
     Interest: 'earn_interest',
-    Gains: 'earn_interest',
+    Gains: 'buy',
     Financial: 'transfer_in',
     Deposit: 'transfer_in',
     'Deposit credited': 'transfer_in',
@@ -31,7 +31,7 @@ export const CANONICAL_TYPE_MAP: Record<SourceType, Record<string, CanonicalType
     'Transfer out': 'transfer_out',
     'Automatic withdrawal': 'transfer_out',
     Consumption: 'transfer_out',
-    'Position profit': 'futures_funding',
+    'Position profit': 'earn_interest',
     'Exchange income': 'buy',
     'Exchange spending': 'sell',
   },
@@ -50,7 +50,7 @@ export const CANONICAL_TYPE_MAP: Record<SourceType, Record<string, CanonicalType
   },
 
   earn: {
-    Staking: 'earn_deposit',
+    Staking: 'transfer_in',
   },
 
   spot_order: {

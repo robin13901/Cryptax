@@ -2,6 +2,18 @@ export type MoneyString = string;
 
 export type SourceType = 'spot_tx' | 'futures_tx' | 'spot_order' | 'futures_order' | 'earn';
 
+export type PriceSource =
+  | 'bitget-direct'
+  | 'bitget-usdt'
+  | 'csv-fill'
+  | 'csv-pair'
+  | 'self'
+  | 'coingecko'
+  | 'manual'
+  | null;
+
+export type PriceFailureReason = 'no-bitget-pair' | 'coingecko-miss' | 'api-error' | null;
+
 export type CanonicalType =
   | 'buy'
   | 'sell'
@@ -39,19 +51,86 @@ export interface Transaction {
   rawRow: string | null;
   checksum: string;
   importedAt: string;
+  eurPrice: MoneyString | null;
+  priceSource: PriceSource;
+  priceResolvedAt: string | null;
+  priceFailureReason: PriceFailureReason;
 }
 
 export interface TransactionListItem {
   id: number;
+  orderId: string | null;
   symbol: string;
+  /** Base asset extracted from symbol (e.g. "BTC" from "BTC/EUR") */
+  baseCoin: string;
+  /** Full trading pair (e.g. "BTC/EUR", "BTCUSDT") — null for single-asset rows */
+  tradingPair: string | null;
   canonicalType: CanonicalType;
+  sourceType: SourceType;
   side: TransactionSide;
   amount: MoneyString;
   price: MoneyString | null;
   fee: MoneyString;
+  eurPrice: MoneyString | null;
   tradedAt: string;
   taxYear: number;
   exchange: string;
+  /** Total value in quote currency (e.g. USDT), from CSV or price×amount */
+  totalValue: MoneyString | null;
+  /** Aggregated FIFO/futures/earn P&L in EUR (null if engine not yet run or no tax event) */
+  gainLossEur: MoneyString | null;
+}
+
+/** Paginated transaction list response for GET /api/transactions */
+export interface TransactionPageResponse {
+  items: TransactionListItem[];
+  total: number;
+  hasMore: boolean;
+  offset: number;
+  limit: number;
+  availableYears: number[];
+}
+
+/** FIFO lot consumption detail for transaction detail view */
+export interface LotConsumptionDetail {
+  lotId: number;
+  amountConsumed: MoneyString;
+  costBasisEur: MoneyString;
+  proceedsEur: MoneyString;
+  gainLossEur: MoneyString;
+  feeEur: MoneyString;
+  heldDays: number;
+  haltefristMet: boolean;
+  /** Buy date from the FIFO lot */
+  acquiredAt: string;
+  /** Cost per unit from the FIFO lot */
+  costPerUnitEur: MoneyString;
+  /** Symbol from the FIFO lot */
+  symbol: string;
+}
+
+/** Full transaction detail with tax impact */
+export interface TransactionDetailResponse {
+  transaction: Transaction;
+  /** FIFO lot consumptions (for sell transactions) */
+  lotConsumptions: LotConsumptionDetail[];
+  /** Futures position data (for futures close transactions) */
+  futuresPosition: {
+    realizedPnlEur: MoneyString;
+    feeEur: MoneyString;
+  } | null;
+  /** Earn income data (for earn transactions) */
+  earnIncome: {
+    amount: MoneyString;
+    eurValueAtReceipt: MoneyString;
+  } | null;
+  /** Tax summary for this specific transaction */
+  taxImpact: {
+    bucket: 'private_sale' | 'futures_pnl' | 'staking_earn' | null;
+    totalGainLossEur: MoneyString;
+    isTaxFree: boolean;
+    reason: string;
+  };
 }
 
 export interface ImportError {

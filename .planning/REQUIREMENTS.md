@@ -38,58 +38,58 @@
 
 ### Price Resolution (PRCE)
 
-- [ ] **PRCE-01**: Fetch historical EUR price at trade timestamp via Bitget candle API
-- [ ] **PRCE-02**: Fallback: COIN→USDT × USDT→EUR conversion when direct EUR pair unavailable
-- [ ] **PRCE-03**: CoinGecko fallback for coins not listed on Bitget
-- [ ] **PRCE-04**: Price cache in SQLite — don't re-fetch already resolved prices
-- [ ] **PRCE-05**: Bulk price enrichment with rate limiting (600 req/min Bitget, 30 req/min CoinGecko)
-- [ ] **PRCE-06**: Europe/Berlin timezone handling for all timestamp→UTC conversions
-- [ ] **PRCE-07**: Price resolution status — show which transactions still need prices
+- [x] **PRCE-01**: Fetch historical EUR price at trade timestamp via Bitget candle API
+- [x] **PRCE-02**: Fallback: COIN→USDT × USDT→EUR conversion when direct EUR pair unavailable
+- [x] **PRCE-03**: CoinGecko fallback for coins not listed on Bitget
+- [x] **PRCE-04**: Price cache in SQLite — don't re-fetch already resolved prices
+- [x] **PRCE-05**: Bulk price enrichment with rate limiting (600 req/min Bitget, 30 req/min CoinGecko)
+- [x] **PRCE-06**: Europe/Berlin timezone handling for all timestamp→UTC conversions
+- [x] **PRCE-07**: Price resolution status — show which transactions still need prices
 
 ### Tax Calculation (TAXC)
 
-- [ ] **TAXC-01**: FIFO lot tracking per coin — create lots on buy, consume on sell, track remaining quantity
-- [ ] **TAXC-02**: Partial lot splitting — when sell crosses lot boundaries, split and consume proportionally
-- [ ] **TAXC-03**: Haltefrist calculation per lot — determine if held ≥365 days at time of sale
-- [ ] **TAXC-04**: Spot tax: gains tax-free if Haltefrist met, Einkommensteuer if not, Freigrenze 1.000€ cliff (not deduction)
-- [ ] **TAXC-05**: Futures/derivatives tax: Abgeltungssteuer 26,375% (inkl. Soli) on all realized P&L, no Haltefrist
-- [ ] **TAXC-06**: Staking/Earn income: Einkommensteuer at EUR value at Zufluss timestamp
-- [ ] **TAXC-07**: Fee deduction — trading fees reduce taxable gain (Werbungskosten)
-- [ ] **TAXC-08**: Separate tax buckets — Spot (§23 EStG), Futures (§20 EStG), Earn (§22 Nr. 3 EStG) never mixed
-- [ ] **TAXC-09**: Per-year tax summary — aggregate taxable amounts by tax year
-- [ ] **TAXC-10**: Stateless re-runnable engine — truncate FIFO results and recompute from transactions on every run
-- [ ] **TAXC-11**: Block calculation if any transaction has NULL price — correctness gate
+- [x] **TAXC-01**: FIFO lot tracking per coin — create lots on buy, consume on sell, track remaining quantity
+- [x] **TAXC-02**: Partial lot splitting — when sell crosses lot boundaries, split and consume proportionally
+- [x] **TAXC-03**: Haltefrist calculation per lot — determine if held ≥365 days at time of sale
+- [x] **TAXC-04**: Spot tax: gains tax-free if Haltefrist met, Einkommensteuer if not, Freigrenze 1.000€ cliff (not deduction)
+- [x] **TAXC-05**: Futures/derivatives tax: Abgeltungssteuer 26,375% (inkl. Soli) on all realized P&L, no Haltefrist
+- [x] **TAXC-06**: Staking/Earn income: Einkommensteuer at EUR value at Zufluss timestamp
+- [x] **TAXC-07**: Fee deduction — trading fees reduce taxable gain (Werbungskosten)
+- [x] **TAXC-08**: Separate tax buckets — Spot (§23 EStG), Futures (§20 EStG), Earn (§22 Nr. 3 EStG) never mixed
+- [x] **TAXC-09**: Per-year tax summary — aggregate taxable amounts by tax year
+- [x] **TAXC-10**: Stateless re-runnable engine — truncate FIFO results and recompute from transactions on every run
+- [x] **TAXC-11**: Block calculation if any transaction has NULL price — correctness gate
 
 ### Dashboard (DASH)
 
-- [ ] **DASH-01**: KPI cards with real data: Gesamtgewinn/-verlust, Anzahl Trades, steuerpflichtiger Betrag, geschätzte Steuer
-- [ ] **DASH-02**: P&L over time chart (line chart, cumulative gains/losses per month)
-- [ ] **DASH-03**: Portfolio distribution chart (pie/donut chart, allocation by coin)
-- [ ] **DASH-04**: Gain/loss per coin chart (bar chart, top gainers and losers)
-- [ ] **DASH-05**: Monthly performance chart (bar chart, monthly realized gains)
-- [ ] **DASH-06**: Spot vs Futures comparison chart (grouped bar or stacked)
-- [ ] **DASH-07**: Year selector — switch between tax years, all charts update
-- [ ] **DASH-08**: Year-over-year comparison view
+- [x] **DASH-01**: KPI cards with real data: Gesamtgewinn/-verlust, Anzahl Trades, steuerpflichtiger Betrag, geschätzte Steuer
+- [x] **DASH-02**: P&L over time chart (line chart, cumulative gains/losses per month)
+- [x] **DASH-03**: Portfolio distribution chart (pie/donut chart, allocation by coin)
+- [x] **DASH-04**: Gain/loss per coin chart (bar chart, top gainers and losers)
+- [x] **DASH-05**: Monthly performance chart (bar chart, monthly realized gains)
+- [x] **DASH-06**: Spot vs Futures comparison chart (grouped bar or stacked)
+- [x] **DASH-07**: Year selector — switch between tax years, all charts update
+- [x] **DASH-08**: Year-over-year comparison view
 
 ### Transactions (TRAN)
 
-- [ ] **TRAN-01**: Transaction list showing all imported transactions with key fields
-- [ ] **TRAN-02**: Filter by type (Spot, Futures, Earn, Gebühren), by coin, by date range
-- [ ] **TRAN-03**: Search transactions by coin name, order ID, or amount
-- [ ] **TRAN-04**: Sort by date, amount, coin, type
-- [ ] **TRAN-05**: Category badges (Spot, Futures, Earn, Fee) with color coding
-- [ ] **TRAN-06**: Transaction detail view — show full row data, associated FIFO lots, tax impact
+- [x] **TRAN-01**: Transaction list showing all imported transactions with key fields
+- [x] **TRAN-02**: Filter by type (Spot, Futures, Earn, Gebühren), by coin, by date range
+- [x] **TRAN-03**: Search transactions by coin name, order ID, or amount
+- [x] **TRAN-04**: Sort by date, amount, coin, type
+- [x] **TRAN-05**: Category badges (Spot, Futures, Earn, Fee) with color coding
+- [x] **TRAN-06**: Transaction detail view — show full row data, associated FIFO lots, tax impact
 
 ### Steuerreport (REPT)
 
-- [ ] **REPT-01**: Anlage SO summary — total taxable spot gains, Freigrenze status, number of transactions
-- [ ] **REPT-02**: Anlage KAP summary — total futures/derivatives gains, Abgeltungssteuer amount
-- [ ] **REPT-03**: Staking income summary — total Zufluss value per year
-- [ ] **REPT-04**: Full trade appendix — every taxable transaction with buy date, sell date, gain/loss, Haltefrist
-- [ ] **REPT-05**: PDF export — Finanzamt-ready document with German text, proper formatting, embedded fonts
-- [ ] **REPT-06**: CSV export — machine-readable format for Steuerberater
-- [ ] **REPT-07**: Report preview in browser before export
-- [ ] **REPT-08**: Per-year report selection — generate report for any imported tax year
+- [x] **REPT-01**: Anlage SO summary — total taxable spot gains, Freigrenze status, number of transactions
+- [x] **REPT-02**: Anlage KAP summary — total futures/derivatives gains, Abgeltungssteuer amount
+- [x] **REPT-03**: Staking income summary — total Zufluss value per year
+- [x] **REPT-04**: Full trade appendix — every taxable transaction with buy date, sell date, gain/loss, Haltefrist
+- [x] **REPT-05**: PDF export — Finanzamt-ready document with German text, proper formatting, embedded fonts
+- [x] **REPT-06**: CSV export — machine-readable format for Steuerberater
+- [x] **REPT-07**: Report preview in browser before export
+- [x] **REPT-08**: Per-year report selection — generate report for any imported tax year
 
 ### Security (SECU)
 
@@ -100,13 +100,13 @@
 
 ### Testing & Quality (TEST)
 
-- [ ] **TEST-01**: Unit tests for FIFO engine with known tax scenarios (golden master tests)
+- [x] **TEST-01**: Unit tests for FIFO engine with known tax scenarios (golden master tests)
 - [x] **TEST-02**: Unit tests for CSV parsers — all 5 formats with edge cases (BOM, tabs, delimiters)
-- [ ] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
-- [ ] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
-- [ ] **TEST-05**: Component tests for React components with Testing Library
-- [ ] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
-- [ ] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
+- [x] **TEST-03**: Unit tests for tax calculation — Freigrenze cliff, Haltefrist boundary, fee deduction
+- [x] **TEST-04**: Unit tests for price resolution — direct EUR, USDT fallback, missing price handling
+- [x] **TEST-05**: Component tests for React components with Testing Library
+- [x] **TEST-06**: Integration tests for API endpoints (import → calculate → report flow)
+- [x] **TEST-07**: E2E tests with Playwright for critical user flows (import CSV → view dashboard → export report)
 - [x] **TEST-08**: 90%+ code coverage enforced via Vitest + Codecov
 
 ### CI/CD & DevOps (CICD)
@@ -181,14 +181,14 @@ Testing requirements are distributed to the phase where the code they test lives
 | IMPT-10 | Phase 2 | CSV Import Pipeline | Complete |
 | IMPT-11 | Phase 2 | CSV Import Pipeline | Complete |
 | TEST-02 | Phase 2 | CSV parser tests — written with parsers | Complete |
-| PRCE-01 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-02 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-03 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-04 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-05 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-06 | Phase 3 | EUR Price Enrichment | Pending |
-| PRCE-07 | Phase 3 | EUR Price Enrichment | Pending |
-| TEST-04 | Phase 3 | Price resolution tests — written with enrichment | Pending |
+| PRCE-01 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-02 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-03 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-04 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-05 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-06 | Phase 3 | EUR Price Enrichment | Complete |
+| PRCE-07 | Phase 3 | EUR Price Enrichment | Complete |
+| TEST-04 | Phase 3 | Price resolution tests — written with enrichment | Complete |
 | TAXC-01 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
 | TAXC-02 | Phase 4 | FIFO Engine + Tax Calculation | Pending |
 | TAXC-03 | Phase 4 | FIFO Engine + Tax Calculation | Pending |

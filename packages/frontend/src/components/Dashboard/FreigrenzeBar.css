@@ -1,0 +1,81 @@
+:root {
+  --freigrenze-green: #34d399;
+  --freigrenze-amber: #fbbf24;
+  --freigrenze-red: #f87171;
+}
+
+.freigrenze-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.freigrenze-bar-item {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  backdrop-filter: blur(20px);
+}
+
+.freigrenze-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.freigrenze-bar-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.freigrenze-bar-sublabel {
+  font-size: 0.68rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.freigrenze-bar-amounts {
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.freigrenze-bar-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.freigrenze-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition:
+    width 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    background-color 0.3s ease;
+}
+
+.freigrenze-bar-pct {
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.3);
+  text-align: right;
+}
+
+.freigrenze-bar-warning {
+  font-size: 0.7rem;
+  color: var(--freigrenze-red);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .freigrenze-container {
+    grid-template-columns: 1fr;
+  }
+}

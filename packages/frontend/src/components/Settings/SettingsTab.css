@@ -1,0 +1,136 @@
+.settings-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.settings-tab__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.settings-tab__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.settings-tab__section-title {
+  color: #ffffff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.settings-tab__section-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.settings-tab__btn {
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+  white-space: nowrap;
+}
+
+.settings-tab__btn--add {
+  background: rgba(0, 112, 242, 0.35);
+  border: 1px solid rgba(0, 112, 242, 0.55);
+  color: #ffffff;
+}
+
+.settings-tab__btn--add:hover {
+  background: rgba(0, 112, 242, 0.55);
+  transform: translateY(-1px);
+}
+
+.settings-tab__btn--sync-all {
+  background: rgba(95, 220, 138, 0.15);
+  border: 1px solid rgba(95, 220, 138, 0.35);
+  color: #5cd67b;
+}
+
+.settings-tab__btn--sync-all:hover {
+  background: rgba(95, 220, 138, 0.28);
+}
+
+.settings-tab__form-surface {
+  width: 100%;
+}
+
+.settings-tab__form-inner {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.settings-tab__form-title {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.settings-tab__loading {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.875rem;
+  margin: 0;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.settings-tab__empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.settings-tab__empty-text {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.875rem;
+  margin: 0;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.55;
+}
+
+.settings-tab__connection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.settings-tab__app-settings-surface {
+  width: 100%;
+}
+
+.settings-tab__app-settings-inner {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.settings-tab__subsection-title {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}

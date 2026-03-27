@@ -1,0 +1,332 @@
+/* TransactionDetail slide-in panel */
+
+.tx-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 200;
+}
+
+.tx-detail-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 480px;
+  max-width: 100vw;
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 14, 24, 0.88);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+/* Header */
+.tx-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  flex-shrink: 0;
+}
+
+.tx-detail-nav-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0.3rem 0.55rem;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.tx-detail-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.tx-detail-nav-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.tx-detail-title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tx-detail-close-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  padding: 0.3rem 0.55rem;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.tx-detail-close-btn:hover {
+  background: rgba(255, 100, 100, 0.2);
+  color: #fff;
+  border-color: rgba(255, 100, 100, 0.3);
+}
+
+/* Scrollable body */
+.tx-detail-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tx-detail-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.tx-detail-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tx-detail-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+/* Section */
+.tx-detail-section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+}
+
+.tx-detail-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin-bottom: 0.75rem;
+}
+
+/* Definition list */
+.tx-detail-dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+  row-gap: 0.35rem;
+  margin: 0;
+}
+
+.tx-detail-dt {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  align-self: center;
+}
+
+.tx-detail-dd {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  margin: 0;
+  text-align: right;
+  word-break: break-all;
+}
+
+/* FIFO lot table */
+.tx-detail-lot-table-wrapper {
+  overflow-x: auto;
+  margin: 0 -0.1rem;
+}
+
+.tx-detail-lot-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.74rem;
+}
+
+.tx-detail-lot-table th {
+  text-align: right;
+  padding: 0.3rem 0.4rem;
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.tx-detail-lot-table th:first-child {
+  text-align: left;
+}
+
+.tx-detail-lot-table td {
+  text-align: right;
+  padding: 0.35rem 0.4rem;
+  color: rgba(255, 255, 255, 0.8);
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+
+.tx-detail-lot-table td:first-child {
+  text-align: left;
+  font-family: inherit;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.tx-detail-lot-table tr:last-child td {
+  border-bottom: none;
+}
+
+.tx-detail-lot-table .gain {
+  color: var(--crypto-green, #5fdc8a);
+}
+
+.tx-detail-lot-table .loss {
+  color: var(--crypto-red, #f87171);
+}
+
+.tx-detail-lot-exempt {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(95, 220, 138, 0.15);
+  color: var(--crypto-green, #5fdc8a);
+  border: 1px solid rgba(95, 220, 138, 0.25);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+}
+
+/* Tax impact */
+.tx-detail-tax-impact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.tx-detail-tax-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tx-detail-tax-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.tx-detail-tax-value {
+  font-size: 0.88rem;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.tx-detail-tax-value--total {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.tx-detail-reason {
+  font-size: 0.73rem;
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+  margin-top: 0.1rem;
+}
+
+/* Bucket badge */
+.tx-detail-bucket {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 5px;
+  padding: 0.15rem 0.5rem;
+}
+
+.tx-detail-bucket--private_sale {
+  background: rgba(96, 165, 250, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(96, 165, 250, 0.25);
+}
+
+.tx-detail-bucket--futures_pnl {
+  background: rgba(167, 139, 250, 0.15);
+  color: #c4b5fd;
+  border: 1px solid rgba(167, 139, 250, 0.25);
+}
+
+.tx-detail-bucket--staking_earn {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fde68a;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+
+.tx-detail-bucket--null {
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Tax-free badge */
+.tx-detail-taxfree-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(95, 220, 138, 0.12);
+  color: var(--crypto-green, #5fdc8a);
+  border: 1px solid rgba(95, 220, 138, 0.2);
+  border-radius: 4px;
+  padding: 0.12rem 0.45rem;
+}
+
+/* Loading / empty states */
+.tx-detail-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.85rem;
+}
+
+.tx-detail-loading-spinner {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-top-color: rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: tx-detail-spin 0.7s linear infinite;
+  margin-right: 0.75rem;
+}
+
+@keyframes tx-detail-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

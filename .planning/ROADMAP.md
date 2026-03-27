@@ -14,11 +14,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + CI/CD** — Monorepo, SQLite schema, Hono server skeleton, CI pipeline, Decimal.js enforced from day one
 - [x] **Phase 2: CSV Import Pipeline** — All 5 Bitget CSV formats parsed, normalized, stored; import UI operational
-- [ ] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
-- [ ] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
-- [ ] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
+- [x] **Phase 3: EUR Price Enrichment** — Historical EUR prices resolved and cached for all transactions
+- [x] **Phase 4: FIFO Engine + Tax Calculation** — Three-bucket German tax engine producing correct per-year tax summaries
+- [x] **Phase 5: Dashboard + Transaction UI** — Frontend wired to real data; all KPI cards, charts, and transaction list live
 - [ ] **Phase 6: Steuerreport + PDF Export** — Finanzamt-ready tax report generated and exportable as PDF and CSV
 - [ ] **Phase 7: Exchange API + Security** — Bitget API sync via ccxt, password protection, encrypted credential storage
+- [ ] **Phase 8: UI Redesign — Sidebar Layout** — Collapsible sidebar navigation replacing top pill tabs for a professional dashboard feel
+- [ ] **Phase 9: Electron Desktop App** — Transform the web app into a fast, efficient Electron desktop application with identical design and functionality
 
 ---
 
@@ -96,15 +98,14 @@ Plans:
 4. Re-running price enrichment for already-resolved transactions completes instantly (cache hit, no API calls); the price resolution status UI shows which transactions still have NULL prices.
 5. All timestamp conversions correctly handle Europe/Berlin DST boundaries — a trade at 2024-03-31 02:30 (spring-forward night) resolves to the correct UTC timestamp.
 
-**Estimated Plans:** 6
+**Plans:** 5 plans in 4 waves
 
 Plans:
-- [ ] 03-01: Bitget price client — port Python reference script to TypeScript; `/api/v2/spot/market/history-candles` endpoint; COIN->EUR primary strategy; Europe/Berlin timezone handling via date-fns-tz (PRCE-01, PRCE-06)
-- [ ] 03-02: USDT fallback strategy — COIN->USDT x USDT->EUR two-step conversion; same timestamp for both legs (PRCE-02)
-- [ ] 03-03: CoinGecko fallback client — historical price lookup for delisted/obscure coins; free tier rate limiting (PRCE-03)
-- [ ] 03-04: Price cache layer — SQLite price_cache table; cache-first lookup; record source (bitget-direct, bitget-usdt, coingecko) (PRCE-04)
-- [ ] 03-05: Bulk enrichment engine — p-throttle rate limiting at 10 req/s for Bitget, 0.5 req/s for CoinGecko; progress tracking; NULL price status endpoint (PRCE-05, PRCE-07)
-- [ ] 03-06: Price enrichment API + UI — POST /api/prices/enrich, GET /api/prices/status; frontend status indicator for unresolved prices; unit tests for all three resolution strategies including DST edge cases (TEST-04)
+- [x] 03-01-PLAN.md — Schema migration + deps + timezone/symbol utils (Wave 1)
+- [x] 03-02-PLAN.md — Bitget candle client + price cache layer (Wave 2)
+- [x] 03-03-PLAN.md — CoinGecko fallback client (Wave 2)
+- [x] 03-04-PLAN.md — Resolution strategy + enrichment engine (Wave 3)
+- [x] 03-05-PLAN.md — Price enrichment API + UI + integration (Wave 4)
 
 ---
 
@@ -123,17 +124,17 @@ Plans:
 4. The engine refuses to run (returns an error) if any transaction has a NULL EUR price, and the error message identifies which transactions are missing prices.
 5. Truncating derived tables and rerunning the engine on the same transaction set produces byte-identical tax summaries both times (stateless re-runnable idempotency).
 
-**Estimated Plans:** 8
+**Plans:** 8 plans in 5 waves
 
 Plans:
-- [ ] 04-01: FIFO lot engine core — FifoEngine class; lot creation on buy (asset-isolated); lot consumption on sell with `lot.remaining` (not `original_amount`); partial lot splitting (TAXC-01, TAXC-02)
-- [ ] 04-02: Haltefrist + spot tax calculator — per-lot >=365-day calculation; §23 EStG tax-free vs. taxable split; Freigrenze cliff at 1.000 EUR; fee deduction as Werbungskosten (TAXC-03, TAXC-04, TAXC-07)
-- [ ] 04-03: Futures P&L engine — FuturesPnlEngine; aggregate signed realized P&L per position; Abgeltungssteuer 26.375% on all realized gains; no Haltefrist, no Freigrenze; strict isolation from FIFO (TAXC-05)
-- [ ] 04-04: Earn income engine — EarnIncomeEngine; §22 Nr. 3 EStG income at EUR value at Zufluss timestamp; 256 EUR Freigrenze cliff; new FIFO lots created for received coins (TAXC-06)
-- [ ] 04-05: Tax bucket isolation + orchestrator — TaxCalculator orchestrating all three engines; §23/§20/§22 buckets never mixed; cross-year FIFO lot continuity (2024 lots feed 2025 disposals) (TAXC-08, TAXC-09)
-- [ ] 04-06: Engine API + stateless re-run — POST /api/engine/run; truncate derived tables and recompute from transactions; NULL price gate (TAXC-10, TAXC-11)
-- [ ] 04-07: FIFO engine unit tests — golden master tests for known tax scenarios; Freigrenze boundary tests (999.99, 1000.00, 1000.01); Haltefrist boundary tests (364, 365, 366 days); fee deduction tests (TEST-01, TEST-03)
-- [ ] 04-08: Property-based FIFO tests — fast-check property testing for FIFO invariants: lot.remaining never negative, total consumed never exceeds total acquired per asset, bucket totals are additive across years
+- [x] 04-01-PLAN.md — Engine types + null-price gate + HALTEFRIST_DAYS fix (Wave 1)
+- [x] 04-02-PLAN.md — FIFO lot engine core: lot creation, consumption, partial splits (Wave 2, TDD)
+- [x] 04-03-PLAN.md — Futures P&L engine: realized P&L, fees, isolation from FIFO (Wave 2, TDD)
+- [x] 04-04-PLAN.md — Spot tax calculator: Haltefrist, Freigrenze cliff, fee deduction (Wave 3, TDD)
+- [x] 04-05-PLAN.md — Earn income engine: income at Zufluss + FIFO lot creation (Wave 3, TDD)
+- [x] 04-06-PLAN.md — Tax calculator orchestrator: wires all engines, DB writes, summaries (Wave 4)
+- [x] 04-07-PLAN.md — Engine API route: POST /api/engine/run + shared response types (Wave 5)
+- [x] 04-08-PLAN.md — Golden master tests + fast-check property-based FIFO invariant tests (Wave 5)
 
 ---
 
@@ -152,16 +153,16 @@ Plans:
 4. Clicking a transaction opens a detail view showing full row data, associated FIFO lots consumed, and the tax impact of that specific trade.
 5. The Freigrenze progress indicator correctly shows proximity to the 1.000 EUR cliff with color-coded warning states (green/amber/red).
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 3 waves
 
 Plans:
-- [ ] 05-01: Summary API — GET /api/summary/:year returning KPI data (total gain, trade count, taxable amount, estimated tax, Freigrenze status per bucket)
-- [ ] 05-02: Dashboard KPI cards + year selector — wire DASH-01, DASH-07 to API; year selector updates all components; Freigrenze progress indicator
-- [ ] 05-03: P&L + monthly performance charts — DASH-02 (line chart P&L over time), DASH-05 (bar chart monthly realized gains); wire to real API data
-- [ ] 05-04: Portfolio + per-coin charts — DASH-03 (donut chart portfolio distribution), DASH-04 (bar chart per-coin gain/loss)
-- [ ] 05-05: Spot vs futures + year-over-year charts — DASH-06 (grouped bar spot vs futures), DASH-08 (year-over-year comparison)
-- [ ] 05-06: Transaction list API + UI — GET /api/transactions (paginated, filterable by type/coin/date, searchable, sortable); TRAN-01 through TRAN-05; category badges
-- [ ] 05-07: Transaction detail view + component tests — TRAN-06 detail view with FIFO lot association and tax impact; React component tests with Testing Library for all new components (TEST-05)
+- [x] 05-01-PLAN.md — Summary API: GET /api/summary/:year with KPI data, chart datasets, Freigrenze status (Wave 1)
+- [x] 05-02-PLAN.md — Transaction API: GET /api/transactions (paginated, filterable, sortable) + GET /api/transactions/:id (detail with FIFO lots) (Wave 1)
+- [x] 05-03-PLAN.md — Format utilities (formatEur, formatNumber) + test setup mocks (ResizeObserver, IntersectionObserver) (Wave 1)
+- [x] 05-04-PLAN.md — Dashboard KPI cards + year selector + Freigrenze progress bar (Wave 2)
+- [x] 05-05-PLAN.md — All 6 Recharts visualizations: P&L line, donut, per-coin bar, monthly bar, spot vs futures, year-over-year (Wave 2)
+- [x] 05-06-PLAN.md — Transaction list UI: infinite scroll, sortable columns, category badges, filters, search (Wave 2)
+- [x] 05-07-PLAN.md — Transaction detail slide-in panel + React component tests for all new components (Wave 3)
 
 ---
 
@@ -180,16 +181,16 @@ Plans:
 4. Downloading the CSV export produces a machine-readable file with all taxable transactions, suitable for import by a Steuerberater.
 5. The full import -> price enrichment -> tax calculation -> report generation flow completes without errors in a Playwright E2E test using the actual 2024 and 2025 Bitget CSV test fixtures.
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 6 waves
 
 Plans:
-- [ ] 06-01: Report generator service — ReportGenerator class; aggregate tax_summaries + lot_consumptions + futures_positions + earn_income into report data model (REPT-01, REPT-02, REPT-03, REPT-04)
-- [ ] 06-02: PDF generation — PDFKit 0.18.0; embed TTF font with Latin Extended for German characters; Anlage SO + KAP + Staking income sections (REPT-05)
-- [ ] 06-03: PDF trade appendix — per-trade table with PDFKit's native table API; test pagination at 50/100/200 rows; fallback to coordinate layout if table API has edge case (REPT-04 continued)
-- [ ] 06-04: CSV export — machine-readable CSV of all taxable transactions; column mapping for Steuerberater compatibility (REPT-06)
-- [ ] 06-05: Report API + year selection — GET /api/report/:year/preview (JSON), GET /api/report/:year/pdf, GET /api/report/:year/csv; year selection UI (REPT-07, REPT-08)
-- [ ] 06-06: Report preview UI — browser preview in Steuerreport tab; section navigation; download buttons
-- [ ] 06-07: Integration + E2E tests — integration tests for full API flow (import -> calculate -> report) (TEST-06); Playwright E2E test for complete user journey: drag CSV -> enrich prices -> run engine -> view dashboard -> export PDF (TEST-07)
+- [x] 06-01-PLAN.md — Report types + ReportGenerator service (Wave 1)
+- [x] 06-02-PLAN.md — PDF generation: PDFKit + DejaVu Sans TTF + cover page + summary sections (Wave 2)
+- [x] 06-03-PLAN.md — PDF trade appendix: paginated table with coordinate-based layout (Wave 3)
+- [x] 06-04-PLAN.md — CSV export: semicolon-delimited, UTF-8 BOM, German headers (Wave 2)
+- [x] 06-05-PLAN.md — Report API routes: years, preview, pdf, csv (Wave 4)
+- [x] 06-06-PLAN.md — Report preview UI: ReportTab + ReportPreview components (Wave 5)
+- [x] 06-07-PLAN.md — Integration + E2E tests: backend pipeline + Playwright setup (Wave 6)
 
 ---
 
@@ -208,31 +209,81 @@ Plans:
 4. Incremental sync correctly skips trades already imported — running sync twice with no new trades on Bitget results in zero new rows.
 5. No credentials appear in application logs, console output, error messages, or git-tracked files at any point during setup or sync.
 
-**Estimated Plans:** 7
+**Plans:** 7 plans in 4 waves
 
 Plans:
-- [ ] 07-01: Authentication system — single-user password hash (bcrypt); login screen component; session token (JWT or signed cookie); protected route middleware on all API endpoints (SECU-01)
-- [ ] 07-02: Credential encryption — AES-256-GCM encryption using node:crypto; PBKDF2 key derivation from user password; credential store in SQLite (TEXT blob); decrypt only in memory (SECU-02, SECU-03)
-- [ ] 07-03: Security hardening — audit all log statements for credential leakage; `.gitignore` for any credential-adjacent files; no-credentials rule in CLAUDE.md (SECU-04)
-- [ ] 07-04: ccxt Bitget spot adapter — ccxt 4.5.44 BitgetAdapter implementing ExchangeAdapter interface; pull spot trade history; normalize via existing import pipeline (EXCH-01)
-- [ ] 07-05: ccxt Bitget futures adapter — pull futures trade history; normalize via existing import pipeline; handle deep history pagination (EXCH-02)
-- [ ] 07-06: Exchange management UI — add/edit/delete exchange connections; credential entry form; connection status indicator (EXCH-03)
-- [ ] 07-07: Sync engine — POST /api/exchanges/:id/sync; manual sync trigger; incremental sync (last_sync_at watermark); sync progress UI (EXCH-04, EXCH-05)
+- [ ] 07-01-PLAN.md — Schema migration + auth backend: app_settings table, scrypt password hashing, JWT middleware, auth routes (Wave 1)
+- [ ] 07-02-PLAN.md — Credential encryption + exchange CRUD: AES-256-GCM cipher, exchange connection routes (Wave 2)
+- [ ] 07-03-PLAN.md — Security hardening: log audit tests, .gitignore, credential leakage prevention (Wave 2)
+- [ ] 07-04-PLAN.md — Frontend auth gate: LoginCard, SetupCard, auth state machine, Einstellungen tab (Wave 2)
+- [ ] 07-05-PLAN.md — ccxt Bitget adapter + sync engine: spot/futures fetch, pagination, normalize, batchInsert (Wave 3)
+- [ ] 07-06-PLAN.md — Exchange management UI: SettingsTab, ExchangeCard, CredentialForm, password change (Wave 3)
+- [ ] 07-07-PLAN.md — Sync routes + sync UI: sync endpoint, progress indicator, toast notifications, auto-sync (Wave 4)
+
+---
+
+### Phase 8: UI Redesign — Sidebar Layout
+
+**Goal:** The app uses a collapsible sidebar navigation instead of top pill tabs, giving it a professional dashboard feel that scales well on widescreen monitors while keeping the existing FloatingLines background and GlassSurface frosted glass aesthetic.
+
+**Depends on:** Phase 7
+
+**Success Criteria:**
+1. A glass-frosted sidebar on the left contains all navigation items (Dashboard, Transaktionen, Steuerreport, Einstellungen) with SVG icons and text labels; the active item has a visible blue accent.
+2. The sidebar collapses to icon-only mode (64px) and expands to full mode (240px) with a smooth CSS transition; the collapse state persists in localStorage across page reloads.
+3. The main content area fills the remaining viewport width beside the sidebar; Dashboard charts and Report tables stretch across the available space without max-width caps.
+4. On narrow viewports (768px and below), the sidebar is always in collapsed icon-only mode; the content area adjusts accordingly.
+5. Auth states (loading, setup, login) render full-screen without the sidebar; the sidebar only appears after authentication.
+
+**Plans:** 4 plans in 3 waves
+
+Plans:
+- [x] 08-01-PLAN.md — Sidebar component: Sidebar.tsx + Sidebar.css + unit tests (Wave 1)
+- [x] 08-02-PLAN.md — App.tsx + App.css restructure: sidebar layout replacing top pills (Wave 2)
+- [x] 08-03-PLAN.md — Page container CSS adjustments + full test suite verification (Wave 2)
+- [x] 08-04-PLAN.md — Visual verification checkpoint (Wave 3)
+
+---
+
+### Phase 9: Electron Desktop App
+
+**Goal:** The entire Cryptax application is packaged as a native Electron desktop app — the Hono backend runs as an embedded local server inside the Electron main process, the React frontend loads in the BrowserWindow, and the SQLite database lives in the user's app data directory. The app launches instantly, looks and behaves identically to the current web version, and is distributable as a single installer for Windows (and optionally macOS/Linux).
+
+**Depends on:** Phase 8
+
+**Success Criteria:**
+1. Running `npm run electron:dev` launches an Electron window with the full Cryptax app running identically to the web version.
+2. The SQLite database file is created in the user's app data directory (`%APPDATA%/Cryptax/cryptax.db` on Windows), not in the project root or installation directory.
+3. Running `npm run make:win` produces a Windows NSIS installer that installs and runs the app with no native module errors.
+4. The installed app starts, shows the login/setup screen, and all tabs (Dashboard, Transaktionen, Steuerreport, Einstellungen) work correctly.
+5. All 944+ existing vitest tests pass with zero regressions, and both web (`npm run dev`) and Electron (`npm run electron:dev`) dev workflows coexist.
+
+**Plans:** 6 plans in 5 waves
+
+Plans:
+- [ ] 09-01-PLAN.md — Backend refactor: extract createApp() factory, make db/client.ts path-configurable (Wave 1)
+- [ ] 09-02-PLAN.md — Electron workspace scaffold: package.json, electron-vite config, electron-builder.yml (Wave 2)
+- [ ] 09-03-PLAN.md — Main process + preload: Electron entry, embedded Hono server, db-path resolution (Wave 2)
+- [ ] 09-04-PLAN.md — Dev workflow integration: root scripts, import resolution, end-to-end dev verification (Wave 3)
+- [ ] 09-05-PLAN.md — Windows NSIS packaging: electron-builder build, native module rebuild, installer (Wave 4)
+- [ ] 09-06-PLAN.md — Final smoke test + verification: full workflow test, test suite confirmation (Wave 5)
 
 ---
 
 ## Progress
 
-**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 (strict data dependency chain).
+**Execution Order:** Phases execute sequentially 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 (strict data dependency chain, Phase 9 is desktop packaging).
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + CI/CD | 7/7 | ✓ Complete | 2026-03-21 |
-| 2. CSV Import Pipeline | 8/8 | ✓ Complete | 2026-03-22 |
-| 3. EUR Price Enrichment | 0/6 | Not started | - |
-| 4. FIFO Engine + Tax Calculation | 0/8 | Not started | - |
-| 5. Dashboard + Transaction UI | 0/7 | Not started | - |
-| 6. Steuerreport + PDF Export | 0/7 | Not started | - |
+| 1. Foundation + CI/CD | 7/7 | Complete | 2026-03-21 |
+| 2. CSV Import Pipeline | 8/8 | Complete | 2026-03-22 |
+| 3. EUR Price Enrichment | 5/5 | Complete | 2026-03-22 |
+| 4. FIFO Engine + Tax Calculation | 8/8 | Complete | 2026-03-22 |
+| 5. Dashboard + Transaction UI | 7/7 | Complete | 2026-03-23 |
+| 6. Steuerreport + PDF Export | 7/7 | Gaps found (4/5) | 2026-03-23 |
 | 7. Exchange API + Security | 0/7 | Not started | - |
+| 8. UI Redesign — Sidebar Layout | 4/4 | Complete | 2026-03-26 |
+| 9. Electron Desktop App | 0/6 | Planned | - |
 
-**Total plans:** 50 across 7 phases
+**Total plans:** 61 across 9 phases

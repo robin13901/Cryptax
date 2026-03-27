@@ -4,6 +4,8 @@ import type { Hono } from 'hono';
 import { db } from '../db/client.js';
 import { importBatches, transactions } from '../db/schema.js';
 import { importCSVFile } from '../import/orchestrator.js';
+import { triggerEngineBackground } from './engine.js';
+import { triggerEnrichmentBackground } from './prices.js';
 
 // ---------------------------------------------------------------------------
 // registerImportRoutes
@@ -60,6 +62,9 @@ export function registerImportRoutes(app: Hono) {
         },
       };
 
+      // Fire-and-forget: trigger price enrichment after successful import
+      triggerEnrichmentBackground();
+
       return c.json(response, 200);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
@@ -95,6 +100,8 @@ export function registerImportRoutes(app: Hono) {
       // Remove the batch record itself
       tx.delete(importBatches).where(eq(importBatches.id, id)).run();
     });
+
+    triggerEngineBackground();
 
     return c.json({ deleted: true, batchId: id });
   });

@@ -15,8 +15,8 @@ describe('CANONICAL_TYPE_MAP — spot_tx (14 entries)', () => {
   it('Interest -> earn_interest', () => {
     expect(CANONICAL_TYPE_MAP.spot_tx.Interest).toBe('earn_interest');
   });
-  it('Gains -> earn_interest', () => {
-    expect(CANONICAL_TYPE_MAP.spot_tx.Gains).toBe('earn_interest');
+  it('Gains -> buy (earn product redemption, not income)', () => {
+    expect(CANONICAL_TYPE_MAP.spot_tx.Gains).toBe('buy');
   });
   it('Financial -> transfer_in', () => {
     expect(CANONICAL_TYPE_MAP.spot_tx.Financial).toBe('transfer_in');
@@ -39,8 +39,8 @@ describe('CANONICAL_TYPE_MAP — spot_tx (14 entries)', () => {
   it('Consumption -> transfer_out', () => {
     expect(CANONICAL_TYPE_MAP.spot_tx.Consumption).toBe('transfer_out');
   });
-  it('"Position profit" -> futures_funding', () => {
-    expect(CANONICAL_TYPE_MAP.spot_tx['Position profit']).toBe('futures_funding');
+  it('"Position profit" -> earn_interest', () => {
+    expect(CANONICAL_TYPE_MAP.spot_tx['Position profit']).toBe('earn_interest');
   });
   it('"Exchange income" -> buy', () => {
     expect(CANONICAL_TYPE_MAP.spot_tx['Exchange income']).toBe('buy');
@@ -84,8 +84,8 @@ describe('CANONICAL_TYPE_MAP — futures_tx (9 entries)', () => {
 });
 
 describe('CANONICAL_TYPE_MAP — earn (1 entry)', () => {
-  it('Staking -> earn_deposit', () => {
-    expect(CANONICAL_TYPE_MAP.earn.Staking).toBe('earn_deposit');
+  it('Staking -> transfer_in', () => {
+    expect(CANONICAL_TYPE_MAP.earn.Staking).toBe('transfer_in');
   });
 });
 
@@ -131,7 +131,7 @@ describe('mapCanonicalType', () => {
   });
 
   it('returns correct canonical type for earn format', () => {
-    expect(mapCanonicalType('earn', 'Staking')).toBe('earn_deposit');
+    expect(mapCanonicalType('earn', 'Staking')).toBe('transfer_in');
   });
 
   it('returns correct canonical type for spot_order', () => {

@@ -1,0 +1,59 @@
+.sync-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.sync-progress--syncing {
+  background: rgba(0, 112, 242, 0.12);
+  color: var(--color-text-muted, #a0aec0);
+}
+
+.sync-progress--done {
+  background: rgba(95, 220, 138, 0.12);
+  color: #5fdc8a;
+}
+
+.sync-progress--error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+}
+
+.sync-progress__spinner {
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid rgba(0, 112, 242, 0.3);
+  border-top-color: #0070f2;
+  border-radius: 50%;
+  animation: sync-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.sync-progress__icon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.sync-progress__icon--done {
+  color: #5fdc8a;
+}
+
+.sync-progress__icon--error {
+  color: #f87171;
+}
+
+.sync-progress__text {
+  white-space: nowrap;
+}
+
+@keyframes sync-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -11,14 +11,21 @@
     "@cryptax/shared": "*",
     "@hono/node-server": "^1.19.11",
     "better-sqlite3": "^12.8.0",
+    "ccxt": "^4.5.44",
     "csv-parse": "^6.2.1",
+    "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "drizzle-orm": "^0.45.1",
-    "hono": "^4.12.8"
+    "hono": "^4.12.8",
+    "p-throttle": "^8.1.0",
+    "pdfkit": "^0.18.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.12.0",
+    "@types/pdfkit": "^0.17.5",
     "drizzle-kit": "^0.31.10",
+    "fast-check": "^4.6.0",
     "tsx": "^4.19.4"
   }
 }

@@ -188,15 +188,15 @@ describe('normalizeToTransaction — futures_tx open_long', () => {
 describe('normalizeToTransaction — earn Staking', () => {
   const tx = normalizeToTransaction(EARN_ROW, 'earn', 'earn.csv', EARN_ROW);
 
-  it('canonicalType is earn_deposit', () => {
-    expect(tx.canonicalType).toBe('earn_deposit');
+  it('canonicalType is transfer_in', () => {
+    expect(tx.canonicalType).toBe('transfer_in');
   });
 
   it('symbol comes from Interest coin column', () => {
     expect(tx.symbol).toBe('ETH');
   });
 
-  it('side is buy (earn_deposit maps to buy side)', () => {
+  it('side is buy (transfer_in maps to buy side)', () => {
     expect(tx.side).toBe('buy');
   });
 
