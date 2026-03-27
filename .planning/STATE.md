@@ -5,16 +5,16 @@
 See: .planning/PROJECT.md (updated 2026-03-21)
 
 **Core value:** Accurate German crypto tax calculation with FIFO-based holding period tracking, producing a Finanzamt-ready Steuerreport.
-**Current focus:** Phase 9 (Electron Desktop App) — NOT STARTED
+**Current focus:** Phase 9 (Electron Desktop App) — In progress
 
 ## Current Position
 
-Phase: 9 of 9 (Electron Desktop App) — NOT STARTED
-Plan: 0 of 0 in phase (not yet planned)
-Status: Phase added — awaiting planning
-Last activity: 2026-03-27 — Phase 09 added to roadmap
+Phase: 9 of 9 (Electron Desktop App)
+Plan: 1 of 6 in phase
+Status: In progress
+Last activity: 2026-03-27 — Completed 09-01-PLAN.md (backend createApp factory + lazy DB init)
 
-Progress: [██████████] 100% (55/55 plans complete)
+Progress: [█████████░] 94% (56/61 plans complete)
 
 ## Performance Metrics
 
@@ -181,6 +181,12 @@ Recent decisions affecting current work:
 - 07-07-d: Auto-sync on app mount is fire-and-forget — silent background refresh, no UI feedback
 - 07-07-e: sonner Toaster at bottom-right richColors — avoids covering tab navigation
 
+- 09-01-a: createApp() in app.ts imports all routes — index.ts is a pure entry point (serve only)
+- 09-01-b: cors({ origin: '*' }) in createApp() — supports both web origins and Electron file:// origins
+- 09-01-c: Proxy pattern for db/sqlite exports — lazy init without changing consumer import syntax
+- 09-01-d: initDb() throws if called twice (already initialized guard) — prevents accidental double-init
+- 09-01-e: Auto-init in ensureInitialized() reads DB_PATH env var — full backward compatibility for tests/dev
+
 - 08-01-a: Do not import GlassSurface for sidebar — replicate glass CSS directly; GlassSurface requires fixed width/height props incompatible with 100vh flex column layout
 - 08-01-b: Inline SVG icons as named React functions — zero icon library; stroke="currentColor" inherits active/inactive color automatically
 - 08-01-c: TabId exported from Sidebar.tsx — canonical source; App.tsx will import from Sidebar in 08-02
@@ -210,6 +216,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26
-Stopped at: Phase 08 complete — all 8 phases done, milestone ready for audit
+Last session: 2026-03-27T10:29:35Z
+Stopped at: Completed 09-01-PLAN.md — backend createApp() factory + lazy DB init
 Resume file: None
